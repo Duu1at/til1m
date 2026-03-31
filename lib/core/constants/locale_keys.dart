@@ -10,28 +10,27 @@ abstract class LocaleKeys {
   // welcome
   static const welcomeTitle = 'welcome.title';
   static const welcomeSubtitle = 'welcome.subtitle';
-  static const welcomeSlide1Title = 'welcome.slide_1_title';
-  static const welcomeSlide1Subtitle = 'welcome.slide_1_subtitle';
-  static const welcomeSlide2Title = 'welcome.slide_2_title';
-  static const welcomeSlide2Subtitle = 'welcome.slide_2_subtitle';
-  static const welcomeSlide3Title = 'welcome.slide_3_title';
-  static const welcomeSlide3Subtitle = 'welcome.slide_3_subtitle';
+  static const welcomeFeature1 = 'welcome.feature_1';
+  static const welcomeFeature2 = 'welcome.feature_2';
+  static const welcomeFeature3 = 'welcome.feature_3';
   static const welcomeBtnRegister = 'welcome.btn_register';
-  static const welcomeBtnGuest = 'welcome.btn_guest';
   static const welcomeBtnLogin = 'welcome.btn_login';
+  static const welcomeBtnGuest = 'welcome.btn_guest';
 
   // onboarding
   static const onboardingStepLevel = 'onboarding.step_level';
+  static const onboardingStepLevelSubtitle = 'onboarding.step_level_subtitle';
   static const onboardingStepGoal = 'onboarding.step_goal';
-  static const onboardingStepLanguage = 'onboarding.step_language';
-  static const onboardingStepReminder = 'onboarding.step_reminder';
+  static const onboardingStepGoalSubtitle = 'onboarding.step_goal_subtitle';
+  static const onboardingStepTime = 'onboarding.step_time';
+  static const onboardingStepTimeSubtitle = 'onboarding.step_time_subtitle';
+  static const onboardingTimeFrom = 'onboarding.time_from';
+  static const onboardingTimeTo = 'onboarding.time_to';
   static const onboardingBtnNext = 'onboarding.btn_next';
   static const onboardingBtnFinish = 'onboarding.btn_finish';
-  static const onboardingGoalOption = 'onboarding.goal_option';
+  static const onboardingGoalWords = 'onboarding.goal_words';
   static const onboardingGoalCustom = 'onboarding.goal_custom';
-  static const onboardingLangRu = 'onboarding.lang_ru';
-  static const onboardingLangKy = 'onboarding.lang_ky';
-  static const onboardingLangBoth = 'onboarding.lang_both';
+  static const onboardingGoalCustomHint = 'onboarding.goal_custom_hint';
 
   // auth
   static const authEmail = 'auth.email';

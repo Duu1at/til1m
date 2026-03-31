@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordup/core/constants/app_constants.dart';
+import 'package:wordup/core/constants/locale_keys.dart';
 import 'package:wordup/core/router/app_router.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -14,26 +16,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  int _currentSlide = 0;
-
-  final List<_SlideData> _slides = const [
-    _SlideData(
-      icon: Icons.style,
-      title: 'Карточки с изображениями',
-      subtitle: 'Изучай слова с картинками, транскрипцией и аудио',
-    ),
-    _SlideData(
-      icon: Icons.edit,
-      title: 'Режим написания слов',
-      subtitle: 'Проверяй правописание и закрепляй знания',
-    ),
-    _SlideData(
-      icon: Icons.bar_chart,
-      title: 'Отслеживай свой прогресс',
-      subtitle: 'Streak, статистика и алгоритм повторения SM-2',
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -48,20 +30,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
-  Future<void> _markSeen() async {
+  Future<void> _go(String route) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(AppConstants.keyIsFirstLaunch, false);
-  }
-
-  Future<void> _navigate(String route) async {
-    await _markSeen();
     if (!mounted) return;
     context.go(route);
   }
 
   Future<void> _continueAsGuest() async {
-    await _markSeen();
     final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(AppConstants.keyIsFirstLaunch, false);
     await prefs.setBool(AppConstants.keyGuestMode, true);
     if (!mounted) return;
     context.go(AppRoutes.onboarding);
@@ -69,74 +47,118 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    const primary = Color(0xFF4F46E5);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Spacer(),
-              const Icon(Icons.school, size: 72, color: Color(0xFF4F46E5)),
-              const SizedBox(height: 16),
-              Text(
-                'WordUp',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF4F46E5),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Изучай английские слова\nс переводом на русский и кыргызский',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                height: 160,
-                child: PageView.builder(
-                  itemCount: _slides.length,
-                  onPageChanged: (i) => setState(() => _currentSlide = i),
-                  itemBuilder: (context, i) => _SlideCard(data: _slides[i]),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _slides.length,
-                  (i) => AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: i == _currentSlide ? 24 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: i == _currentSlide
-                          ? const Color(0xFF4F46E5)
-                          : const Color(0xFFE2E8F0),
-                    ),
+              const Spacer(flex: 2),
+              Center(
+                child: Container(
+                  width: 88,
+                  height: 88,
+                  decoration: BoxDecoration(
+                    color: primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: const Icon(
+                    Icons.school_rounded,
+                    size: 48,
+                    color: primary,
                   ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  LocaleKeys.welcomeTitle.tr(),
+                  style: theme.textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: primary,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  LocaleKeys.welcomeSubtitle.tr(),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              _FeatureRow(
+                icon: Icons.chat_bubble_outline_rounded,
+                text: LocaleKeys.welcomeFeature1.tr(),
+              ),
+              const SizedBox(height: 16),
+              _FeatureRow(
+                icon: Icons.verified_outlined,
+                text: LocaleKeys.welcomeFeature2.tr(),
+              ),
+              const SizedBox(height: 16),
+              _FeatureRow(
+                icon: Icons.loop_rounded,
+                text: LocaleKeys.welcomeFeature3.tr(),
+              ),
+              const Spacer(flex: 3),
               ElevatedButton(
-                onPressed: () => unawaited(_navigate(AppRoutes.register)),
-                child: const Text('Создать аккаунт'),
+                onPressed: () => unawaited(_go(AppRoutes.register)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 0,
+                ),
+                child: Text(
+                  LocaleKeys.welcomeBtnRegister.tr(),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => unawaited(_continueAsGuest()),
+                onPressed: () => unawaited(_go(AppRoutes.login)),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 52),
+                  side: const BorderSide(color: primary, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
-                child: const Text('Продолжить без аккаунта'),
+                child: Text(
+                  LocaleKeys.welcomeBtnLogin.tr(),
+                  style: const TextStyle(
+                    color: primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
               ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: () => unawaited(_navigate(AppRoutes.login)),
-                child: const Text('Уже есть аккаунт? Войти'),
+              const SizedBox(height: 16),
+              Center(
+                child: TextButton(
+                  onPressed: () => unawaited(_continueAsGuest()),
+                  child: Text(
+                    LocaleKeys.welcomeBtnGuest.tr(),
+                    style: TextStyle(color: Colors.grey[500], fontSize: 14),
+                  ),
+                ),
               ),
+              const SizedBox(height: 12),
             ],
           ),
         ),
@@ -145,54 +167,34 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-class _SlideData {
-  const _SlideData({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+class _FeatureRow extends StatelessWidget {
+  const _FeatureRow({required this.icon, required this.text});
 
   final IconData icon;
-  final String title;
-  final String subtitle;
-}
-
-class _SlideCard extends StatelessWidget {
-  const _SlideCard({required this.data});
-
-  final _SlideData data;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Icon(data.icon, size: 48, color: const Color(0xFF4F46E5)),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    data.title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    data.subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return Row(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: const Color(0xFF4F46E5).withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(
+            Icons.check_rounded,
+            color: Color(0xFF4F46E5),
+            size: 22,
+          ),
         ),
-      ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
     );
   }
 }

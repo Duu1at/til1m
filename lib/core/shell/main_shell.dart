@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wordup/core/constants/locale_keys.dart';
 import 'package:wordup/core/router/app_router.dart';
 
-class MainShell extends StatelessWidget {
+final class MainShell extends StatelessWidget {
   const MainShell({required this.child, super.key});
 
   final Widget child;

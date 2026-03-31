@@ -2,8 +2,7 @@ import 'package:wordup/core/constants/app_constants.dart';
 import 'package:wordup/domain/entities/user_progress.dart';
 import 'package:wordup/domain/repositories/progress_repository.dart';
 
-/// SM-2 algorithm implementation
-class ApplySm2Result {
+final class ApplySm2Result {
   const ApplySm2Result(this._repository);
 
   final ProgressRepository _repository;
@@ -16,7 +15,8 @@ class ApplySm2Result {
     final existing = await _repository.getWordProgress(userId, wordId);
 
     final updated = _calculateNextReview(
-      progress: existing ??
+      progress:
+          existing ??
           UserWordProgress(
             id: '${userId}_$wordId',
             userId: userId,

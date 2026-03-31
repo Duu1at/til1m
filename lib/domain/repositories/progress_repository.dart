@@ -1,7 +1,7 @@
 import 'package:wordup/domain/entities/user_progress.dart';
 import 'package:wordup/domain/entities/word.dart';
 
-abstract class ProgressRepository {
+abstract interface class ProgressRepository {
   Future<List<UserWordProgress>> getTodayReviewQueue(String userId);
   Future<List<UserWordProgress>> getNewWordsQueue(
     String userId,

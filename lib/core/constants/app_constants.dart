@@ -22,6 +22,8 @@ class AppConstants {
   static const String keyDailyGoal = 'daily_goal';
   static const String keyUiLanguage = 'ui_language';
   static const String keyReminderTime = 'reminder_time';
+  static const String keyStudyTimeFrom = 'study_time_from';
+  static const String keyStudyTimeTo = 'study_time_to';
 
   // Hive box names
   static const String hiveBoxWords = 'words';

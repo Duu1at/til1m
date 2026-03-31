@@ -1,6 +1,6 @@
 import 'package:wordup/domain/entities/user_settings.dart';
 
-abstract class AuthRepository {
+abstract interface class AuthRepository {
   Stream<bool> get authStateChanges;
   bool get isAuthenticated;
   String? get currentUserId;

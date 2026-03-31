@@ -1,6 +1,6 @@
 import 'package:wordup/domain/entities/word.dart';
 
-abstract class WordRepository {
+abstract interface class WordRepository {
   Future<List<Word>> getWords({WordLevel? level, int? limit, int? offset});
   Future<Word?> getWordById(String id);
   Future<List<Word>> searchWords(String query);

@@ -14,7 +14,7 @@ import 'package:wordup/presentation/screens/spelling/spelling_screen.dart';
 import 'package:wordup/presentation/screens/statistics/statistics_screen.dart';
 import 'package:wordup/presentation/screens/word_detail/word_detail_screen.dart';
 
-class AppRoutes {
+final class AppRoutes {
   static const String welcome = '/welcome';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
