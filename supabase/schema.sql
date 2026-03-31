@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TYPE word_level AS ENUM ('A1', 'A2', 'B1', 'B2', 'C1', 'C2');
 CREATE TYPE part_of_speech AS ENUM ('noun', 'verb', 'adjective', 'adverb', 'phrase');
-CREATE TYPE ui_language AS ENUM ('ru', 'ky', 'both');
+CREATE TYPE ui_language AS ENUM ('ru', 'ky');
 CREATE TYPE app_theme AS ENUM ('light', 'dark', 'system');
 CREATE TYPE word_status AS ENUM ('new', 'learning', 'known');
 CREATE TYPE translation_language AS ENUM ('ru', 'ky');
