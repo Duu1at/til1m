@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 enum WordLevel { a1, a2, b1, b2, c1, c2 }
 
@@ -14,27 +15,24 @@ extension PartOfSpeechExtension on PartOfSpeech {
   String get label => name;
 }
 
-class WordTranslation extends Equatable {
-  final String language; // 'ru' or 'ky'
-  final String translation;
-  final List<String> synonyms;
-
+@immutable
+final class WordTranslation extends Equatable {
   const WordTranslation({
     required this.language,
     required this.translation,
     this.synonyms = const [],
   });
 
+  final String language; // 'ru' or 'ky'
+  final String translation;
+  final List<String> synonyms;
+
   @override
   List<Object?> get props => [language, translation, synonyms];
 }
 
-class WordExample extends Equatable {
-  final String exampleEn;
-  final String? exampleRu;
-  final String? exampleKy;
-  final int orderIndex;
-
+@immutable
+final class WordExample extends Equatable {
   const WordExample({
     required this.exampleEn,
     this.exampleRu,
@@ -42,11 +40,30 @@ class WordExample extends Equatable {
     this.orderIndex = 0,
   });
 
+  final String exampleEn;
+  final String? exampleRu;
+  final String? exampleKy;
+  final int orderIndex;
+
   @override
   List<Object?> get props => [exampleEn, exampleRu, exampleKy, orderIndex];
 }
 
-class Word extends Equatable {
+@immutable
+final class Word extends Equatable {
+  const Word({
+    required this.id,
+    required this.word,
+    required this.level,
+    required this.partOfSpeech,
+    required this.createdAt,
+    this.transcriptionText,
+    this.audioUrl,
+    this.imageUrl,
+    this.translations = const [],
+    this.examples = const [],
+  });
+
   final String id;
   final String word;
   final String? transcriptionText;
@@ -58,25 +75,9 @@ class Word extends Equatable {
   final List<WordExample> examples;
   final DateTime createdAt;
 
-  const Word({
-    required this.id,
-    required this.word,
-    this.transcriptionText,
-    this.audioUrl,
-    this.imageUrl,
-    required this.level,
-    required this.partOfSpeech,
-    this.translations = const [],
-    this.examples = const [],
-    required this.createdAt,
-  });
-
   String? translationFor(String lang) {
-    try {
-      return translations.firstWhere((t) => t.language == lang).translation;
-    } catch (_) {
-      return null;
-    }
+    final match = translations.where((t) => t.language == lang);
+    return match.isEmpty ? null : match.first.translation;
   }
 
   @override

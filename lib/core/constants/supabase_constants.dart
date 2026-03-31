@@ -1,7 +1,7 @@
 class SupabaseConstants {
   SupabaseConstants._();
 
-  // TODO: Replace with your actual Supabase credentials from .env or --dart-define
+  //h your actual Supabase credentials from .env or --dart-define
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
     defaultValue: 'YOUR_SUPABASE_URL',

@@ -1,0 +1,183 @@
+{
+  "app_name": "WordUp",
+
+  "nav": {
+    "home": "Главная",
+    "learn": "Учиться",
+    "dictionary": "Словарь",
+    "profile": "Профиль"
+  },
+
+  "welcome": {
+    "title": "WordUp",
+    "subtitle": "Изучай английские слова с переводом на русский и кыргызский языки",
+    "slide_1_title": "Карточки с изображениями",
+    "slide_1_subtitle": "Изучай слова с картинками, транскрипцией и аудио",
+    "slide_2_title": "Режим написания слов",
+    "slide_2_subtitle": "Проверяй правописание и закрепляй знания",
+    "slide_3_title": "Отслеживай свой прогресс",
+    "slide_3_subtitle": "Streak, статистика и алгоритм повторения SM-2",
+    "btn_register": "Создать аккаунт",
+    "btn_guest": "Продолжить без аккаунта",
+    "btn_login": "Уже есть аккаунт? Войти"
+  },
+
+  "onboarding": {
+    "step_level": "Выбери свой уровень",
+    "step_goal": "Сколько слов в день?",
+    "step_language": "Язык перевода",
+    "step_reminder": "Время напоминания",
+    "btn_next": "Далее",
+    "btn_finish": "Начать учиться",
+    "goal_option": "{count} слов",
+    "goal_custom": "Своё число",
+    "lang_ru": "Русский",
+    "lang_ky": "Кыргызский",
+    "lang_both": "Оба языка"
+  },
+
+  "auth": {
+    "email": "Email",
+    "password": "Пароль",
+    "btn_login": "Войти",
+    "btn_register": "Зарегистрироваться",
+    "btn_google": "Войти через Google",
+    "btn_forgot": "Забыли пароль?",
+    "reset_title": "Восстановление пароля",
+    "reset_subtitle": "Введите email — мы пришлём ссылку для сброса пароля",
+    "reset_btn": "Отправить",
+    "reset_sent": "Письмо отправлено на {email}",
+    "no_account": "Нет аккаунта? Зарегистрироваться",
+    "have_account": "Уже есть аккаунт? Войти",
+    "error_invalid_email": "Неверный формат email",
+    "error_weak_password": "Пароль должен быть не менее 6 символов",
+    "error_wrong_credentials": "Неверный email или пароль"
+  },
+
+  "home": {
+    "greeting_morning": "Доброе утро! ☀️",
+    "greeting_afternoon": "Добрый день! 👋",
+    "greeting_evening": "Добрый вечер! 🌙",
+    "daily_goal": "Дневная цель",
+    "words_done": "{done} из {total} слов",
+    "streak": "Серия дней",
+    "streak_days": "{count} дней подряд",
+    "review_today": "Повторить сегодня",
+    "new_words": "Новые слова",
+    "start_learning": "Начать учиться",
+    "goal_reached": "Цель выполнена! 🎉",
+    "no_words_today": "Все слова на сегодня изучены"
+  },
+
+  "word": {
+    "unknown_translation": "Перевод недоступен",
+    "examples": "Примеры",
+    "add_favorite": "Добавить в избранное",
+    "remove_favorite": "Убрать из избранного",
+    "btn_know": "Знаю",
+    "btn_dont_know": "Не знаю",
+    "btn_flip": "Перевернуть",
+    "audio_play": "Произношение",
+    "level": "Уровень",
+    "part_of_speech": {
+      "noun": "существительное",
+      "verb": "глагол",
+      "adjective": "прилагательное",
+      "adverb": "наречие",
+      "phrase": "фраза"
+    }
+  },
+
+  "flashcards": {
+    "title": "Карточки",
+    "session_done": "Сессия завершена!",
+    "words_learned": "Изучено слов: {count}",
+    "accuracy": "Точность: {percent}%",
+    "btn_restart": "Начать заново",
+    "btn_finish": "Завершить",
+    "swipe_hint": "Свайп влево — не знаю, вправо — знаю"
+  },
+
+  "spelling": {
+    "title": "Написание",
+    "easy": "Лёгкий",
+    "medium": "Средний",
+    "hard": "Сложный",
+    "check": "Проверить",
+    "correct": "Правильно! ✓",
+    "wrong": "Неверно. Правильный ответ: {word}",
+    "hint": "Подсказка",
+    "placeholder": "Введи слово..."
+  },
+
+  "dictionary": {
+    "title": "Словарь",
+    "search_hint": "Поиск слов...",
+    "filter_all": "Все",
+    "filter_new": "Новые",
+    "filter_learning": "В процессе",
+    "filter_known": "Изучено",
+    "empty": "Слова не найдены",
+    "words_count": "{count} слов"
+  },
+
+  "favorites": {
+    "title": "Избранное",
+    "empty": "Пока нет избранных слов",
+    "empty_hint": "Нажмите ♥ на карточке слова, чтобы добавить",
+    "guest_title": "Войдите, чтобы сохранять слова",
+    "guest_subtitle": "Избранное доступно только для зарегистрированных пользователей",
+    "btn_create_account": "Создать аккаунт"
+  },
+
+  "statistics": {
+    "title": "Статистика",
+    "total_known": "Всего изучено",
+    "streak": "Текущая серия",
+    "accuracy": "Точность в написании",
+    "sessions_week": "Сессий за неделю",
+    "sessions_month": "Сессий за месяц",
+    "progress_by_level": "Прогресс по уровням",
+    "activity": "Активность"
+  },
+
+  "settings": {
+    "title": "Настройки",
+    "daily_goal": "Слов в день",
+    "level": "Мой уровень",
+    "language": "Язык перевода",
+    "reminder": "Напоминание",
+    "reminder_off": "Выключено",
+    "theme": "Тема",
+    "theme_light": "Светлая",
+    "theme_dark": "Тёмная",
+    "theme_system": "Системная",
+    "account": "Аккаунт"
+  },
+
+  "profile": {
+    "title": "Профиль",
+    "guest": "Гостевой режим",
+    "btn_logout": "Выйти из аккаунта",
+    "btn_logout_confirm": "Вы уверены, что хотите выйти?",
+    "btn_cancel": "Отмена",
+    "btn_confirm": "Выйти"
+  },
+
+  "errors": {
+    "no_internet": "Нет подключения к интернету",
+    "generic": "Что-то пошло не так. Попробуйте ещё раз",
+    "try_again": "Попробовать ещё раз"
+  },
+
+  "common": {
+    "loading": "Загрузка...",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "close": "Закрыть",
+    "yes": "Да",
+    "no": "Нет",
+    "words": "{count} слово",
+    "days": "{count} день"
+  }
+}

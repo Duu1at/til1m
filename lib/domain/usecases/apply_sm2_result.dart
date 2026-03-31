@@ -1,12 +1,12 @@
-import '../entities/user_progress.dart';
-import '../repositories/progress_repository.dart';
-import '../../core/constants/app_constants.dart';
+import 'package:wordup/core/constants/app_constants.dart';
+import 'package:wordup/domain/entities/user_progress.dart';
+import 'package:wordup/domain/repositories/progress_repository.dart';
 
 /// SM-2 algorithm implementation
 class ApplySm2Result {
-  final ProgressRepository _repository;
-
   const ApplySm2Result(this._repository);
+
+  final ProgressRepository _repository;
 
   Future<UserWordProgress> call({
     required String userId,

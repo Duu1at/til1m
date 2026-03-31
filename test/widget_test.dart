@@ -8,7 +8,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Placeholder test', (WidgetTester tester) async {
+  testWidgets('Placeholder test', (tester) async {
     expect(true, isTrue);
   });
 }

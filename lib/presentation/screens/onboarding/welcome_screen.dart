@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:wordup/core/constants/app_constants.dart';
+import 'package:wordup/core/router/app_router.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -35,7 +37,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    _checkFirstLaunch();
+    unawaited(_checkFirstLaunch());
   }
 
   Future<void> _checkFirstLaunch() async {
@@ -76,9 +78,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const Spacer(),
               const Icon(Icons.school, size: 72, color: Color(0xFF4F46E5)),
               const SizedBox(height: 16),
-              Text('WordUp', style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF4F46E5))),
+              Text(
+                'WordUp',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF4F46E5),
+                ),
+              ),
               const SizedBox(height: 8),
-              Text('Изучай английские слова\nс переводом на русский и кыргызский', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge),
+              Text(
+                'Изучай английские слова\nс переводом на русский и кыргызский',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               const SizedBox(height: 40),
               SizedBox(
                 height: 160,
@@ -91,31 +103,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_slides.length, (i) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: i == _currentSlide ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: i == _currentSlide ? const Color(0xFF4F46E5) : const Color(0xFFE2E8F0),
+                children: List.generate(
+                  _slides.length,
+                  (i) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: i == _currentSlide ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: i == _currentSlide
+                          ? const Color(0xFF4F46E5)
+                          : const Color(0xFFE2E8F0),
+                    ),
                   ),
-                )),
+                ),
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed: () => _navigate(AppRoutes.register),
+                onPressed: () => unawaited(_navigate(AppRoutes.register)),
                 child: const Text('Создать аккаунт'),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: _continueAsGuest,
-                style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 52)),
+                onPressed: () => unawaited(_continueAsGuest()),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 52),
+                ),
                 child: const Text('Продолжить без аккаунта'),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () => _navigate(AppRoutes.login),
+                onPressed: () => unawaited(_navigate(AppRoutes.login)),
                 child: const Text('Уже есть аккаунт? Войти'),
               ),
             ],
@@ -127,15 +146,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 }
 
 class _SlideData {
+  const _SlideData({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
   final IconData icon;
   final String title;
   final String subtitle;
-  const _SlideData({required this.icon, required this.title, required this.subtitle});
 }
 
 class _SlideCard extends StatelessWidget {
-  final _SlideData data;
   const _SlideCard({required this.data});
+
+  final _SlideData data;
 
   @override
   Widget build(BuildContext context) {
@@ -151,9 +176,17 @@ class _SlideCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(data.title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    data.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(data.subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    data.subtitle,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),

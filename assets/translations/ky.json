@@ -1,0 +1,183 @@
+{
+  "app_name": "WordUp",
+
+  "nav": {
+    "home": "Башкы бет",
+    "learn": "Үйрөнүү",
+    "dictionary": "Сөздүк",
+    "profile": "Профиль"
+  },
+
+  "welcome": {
+    "title": "WordUp",
+    "subtitle": "Англис сөздөрүн орус жана кыргыз тилдериндеги котормосу менен үйрөнүңүз",
+    "slide_1_title": "Сүрөттүү карточкалар",
+    "slide_1_subtitle": "Сөздөрдү сүрөттөр, транскрипция жана аудио менен үйрөнүңүз",
+    "slide_2_title": "Сөз жазуу режими",
+    "slide_2_subtitle": "Орфографияны текшерип, билимиңизди бекитиңиз",
+    "slide_3_title": "Прогрессиңизди көзөмөлдөңүз",
+    "slide_3_subtitle": "Streak, статистика жана SM-2 кайталоо алгоритми",
+    "btn_register": "Аккаунт түзүү",
+    "btn_guest": "Аккаунтсуз улантуу",
+    "btn_login": "Аккаунт барбы? Кирүү"
+  },
+
+  "onboarding": {
+    "step_level": "Деңгээлиңизди тандаңыз",
+    "step_goal": "Күнүнө канча сөз?",
+    "step_language": "Котормо тили",
+    "step_reminder": "Эскертүү убактысы",
+    "btn_next": "Кийинки",
+    "btn_finish": "Үйрөнүүнү баштоо",
+    "goal_option": "{count} сөз",
+    "goal_custom": "Өзүм белгилейм",
+    "lang_ru": "Орусча",
+    "lang_ky": "Кыргызча",
+    "lang_both": "Эки тилде"
+  },
+
+  "auth": {
+    "email": "Email",
+    "password": "Сырсөз",
+    "btn_login": "Кирүү",
+    "btn_register": "Катталуу",
+    "btn_google": "Google аркылуу кирүү",
+    "btn_forgot": "Сырсөздү унуттуңузбу?",
+    "reset_title": "Сырсөздү калыбына келтирүү",
+    "reset_subtitle": "Email киргизиңиз — биз сырсөздү баштапкы абалга келтирүү шилтемесин жөнөтөбүз",
+    "reset_btn": "Жөнөтүү",
+    "reset_sent": "{email} дарегине кат жөнөтүлдү",
+    "no_account": "Аккаунт жокпу? Катталуу",
+    "have_account": "Аккаунт барбы? Кирүү",
+    "error_invalid_email": "Email форматы туура эмес",
+    "error_weak_password": "Сырсөз кеминде 6 символдон турушу керек",
+    "error_wrong_credentials": "Email же сырсөз туура эмес"
+  },
+
+  "home": {
+    "greeting_morning": "Кутман таң! ☀️",
+    "greeting_afternoon": "Кутман күн! 👋",
+    "greeting_evening": "Кутман кеч! 🌙",
+    "daily_goal": "Күнүмдүк максат",
+    "words_done": "{total} дан {done} сөз",
+    "streak": "Күндөр катары",
+    "streak_days": "{count} күн катарынан",
+    "review_today": "Бүгүн кайталоо",
+    "new_words": "Жаңы сөздөр",
+    "start_learning": "Үйрөнүүнү баштоо",
+    "goal_reached": "Максатка жетти! 🎉",
+    "no_words_today": "Бүгүнкү бардык сөздөр үйрөнүлдү"
+  },
+
+  "word": {
+    "unknown_translation": "Котормо жок",
+    "examples": "Мисалдар",
+    "add_favorite": "Тандалмага кошуу",
+    "remove_favorite": "Тандалмадан алып салуу",
+    "btn_know": "Билем",
+    "btn_dont_know": "Билбейм",
+    "btn_flip": "Которуу",
+    "audio_play": "Айтылышы",
+    "level": "Деңгээл",
+    "part_of_speech": {
+      "noun": "зат атооч",
+      "verb": "этиш",
+      "adjective": "сын атооч",
+      "adverb": "тактооч",
+      "phrase": "фраза"
+    }
+  },
+
+  "flashcards": {
+    "title": "Карточкалар",
+    "session_done": "Сессия аяктады!",
+    "words_learned": "Үйрөнүлгөн сөздөр: {count}",
+    "accuracy": "Тактык: {percent}%",
+    "btn_restart": "Кайра баштоо",
+    "btn_finish": "Аяктоо",
+    "swipe_hint": "Солго сүрүү — билбейм, оңго — билем"
+  },
+
+  "spelling": {
+    "title": "Жазуу",
+    "easy": "Жеңил",
+    "medium": "Орточо",
+    "hard": "Кыйын",
+    "check": "Текшерүү",
+    "correct": "Туура! ✓",
+    "wrong": "Туура эмес. Туура жооп: {word}",
+    "hint": "Жардам",
+    "placeholder": "Сөздү жазыңыз..."
+  },
+
+  "dictionary": {
+    "title": "Сөздүк",
+    "search_hint": "Сөздөрдү издөө...",
+    "filter_all": "Баары",
+    "filter_new": "Жаңы",
+    "filter_learning": "Үйрөнүүдө",
+    "filter_known": "Үйрөнүлдү",
+    "empty": "Сөздөр табылган жок",
+    "words_count": "{count} сөз"
+  },
+
+  "favorites": {
+    "title": "Тандалмалар",
+    "empty": "Азырынча тандалма сөздөр жок",
+    "empty_hint": "Сөз карточкасындагы ♥ баскычын басыңыз",
+    "guest_title": "Сөздөрдү сактоо үчүн кириңиз",
+    "guest_subtitle": "Тандалмалар катталган колдонуучулар үчүн гана жеткиликтүү",
+    "btn_create_account": "Аккаунт түзүү"
+  },
+
+  "statistics": {
+    "title": "Статистика",
+    "total_known": "Жалпы үйрөнүлгөн",
+    "streak": "Учурдагы катар",
+    "accuracy": "Жазуудагы тактык",
+    "sessions_week": "Жума бою сессиялар",
+    "sessions_month": "Ай бою сессиялар",
+    "progress_by_level": "Деңгээл боюнча прогресс",
+    "activity": "Активдүүлүк"
+  },
+
+  "settings": {
+    "title": "Жөндөөлөр",
+    "daily_goal": "Күнүнө сөздөр",
+    "level": "Менин деңгээлим",
+    "language": "Котормо тили",
+    "reminder": "Эскертүү",
+    "reminder_off": "Өчүрүлгөн",
+    "theme": "Тема",
+    "theme_light": "Жарык",
+    "theme_dark": "Күңүрт",
+    "theme_system": "Системалык",
+    "account": "Аккаунт"
+  },
+
+  "profile": {
+    "title": "Профиль",
+    "guest": "Конок режими",
+    "btn_logout": "Аккаунттан чыгуу",
+    "btn_logout_confirm": "Чыгууга ишенесизби?",
+    "btn_cancel": "Жок",
+    "btn_confirm": "Чыгуу"
+  },
+
+  "errors": {
+    "no_internet": "Интернет байланышы жок",
+    "generic": "Бир нерсе туура эмес болду. Кайра аракет кылыңыз",
+    "try_again": "Кайра аракет кылуу"
+  },
+
+  "common": {
+    "loading": "Жүктөлүүдө...",
+    "save": "Сактоо",
+    "cancel": "Жок",
+    "close": "Жабуу",
+    "yes": "Ооба",
+    "no": "Жок",
+    "words": "{count} сөз",
+    "days": "{count} күн"
+  }
+}

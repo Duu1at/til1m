@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class WordDetailScreen extends StatelessWidget {
-  final String wordId;
+  const WordDetailScreen({required this.wordId, super.key});
 
-  const WordDetailScreen({super.key, required this.wordId});
+  final String wordId;
 
   @override
   Widget build(BuildContext context) {

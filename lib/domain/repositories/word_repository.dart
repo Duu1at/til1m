@@ -1,4 +1,4 @@
-import '../entities/word.dart';
+import 'package:wordup/domain/entities/word.dart';
 
 abstract class WordRepository {
   Future<List<Word>> getWords({WordLevel? level, int? limit, int? offset});

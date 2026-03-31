@@ -1,18 +1,18 @@
 import 'package:go_router/go_router.dart';
-import '../../presentation/screens/onboarding/welcome_screen.dart';
-import '../../presentation/screens/onboarding/onboarding_screen.dart';
-import '../../presentation/screens/auth/login_screen.dart';
-import '../../presentation/screens/auth/register_screen.dart';
-import '../../presentation/screens/home/home_screen.dart';
-import '../../presentation/screens/word_detail/word_detail_screen.dart';
-import '../../presentation/screens/flashcards/flashcards_screen.dart';
-import '../../presentation/screens/spelling/spelling_screen.dart';
-import '../../presentation/screens/dictionary/dictionary_screen.dart';
-import '../../presentation/screens/favorites/favorites_screen.dart';
-import '../../presentation/screens/statistics/statistics_screen.dart';
-import '../../presentation/screens/settings/settings_screen.dart';
-import '../../presentation/screens/profile/profile_screen.dart';
-import '../shell/main_shell.dart';
+import 'package:wordup/core/shell/main_shell.dart';
+import 'package:wordup/presentation/screens/auth/login_screen.dart';
+import 'package:wordup/presentation/screens/auth/register_screen.dart';
+import 'package:wordup/presentation/screens/dictionary/dictionary_screen.dart';
+import 'package:wordup/presentation/screens/favorites/favorites_screen.dart';
+import 'package:wordup/presentation/screens/flashcards/flashcards_screen.dart';
+import 'package:wordup/presentation/screens/home/home_screen.dart';
+import 'package:wordup/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:wordup/presentation/screens/onboarding/welcome_screen.dart';
+import 'package:wordup/presentation/screens/profile/profile_screen.dart';
+import 'package:wordup/presentation/screens/settings/settings_screen.dart';
+import 'package:wordup/presentation/screens/spelling/spelling_screen.dart';
+import 'package:wordup/presentation/screens/statistics/statistics_screen.dart';
+import 'package:wordup/presentation/screens/word_detail/word_detail_screen.dart';
 
 class AppRoutes {
   static const String welcome = '/welcome';

@@ -1,7 +1,17 @@
+import 'package:flutter/material.dart';
+
 class AppConstants {
   AppConstants._();
 
   static const String appName = 'WordUp';
+
+  // Localization
+  static const String translationsPath = 'assets/translations';
+  static const List<Locale> supportedLocales = [
+    Locale('ru'),
+    Locale('ky'),
+  ];
+  static const Locale fallbackLocale = Locale('ru');
   static const String appVersion = '1.0.0';
 
   // SharedPreferences keys

@@ -1,17 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 enum WordStatus { newWord, learning, known }
 
-class UserWordProgress extends Equatable {
-  final String id;
-  final String userId;
-  final String wordId;
-  final WordStatus status;
-  final DateTime? nextReviewAt;
-  final double easeFactor;
-  final int repetitions;
-  final DateTime? lastReviewedAt;
-
+@immutable
+final class UserWordProgress extends Equatable {
   const UserWordProgress({
     required this.id,
     required this.userId,
@@ -22,6 +15,15 @@ class UserWordProgress extends Equatable {
     this.repetitions = 0,
     this.lastReviewedAt,
   });
+
+  final String id;
+  final String userId;
+  final String wordId;
+  final WordStatus status;
+  final DateTime? nextReviewAt;
+  final double easeFactor;
+  final int repetitions;
+  final DateTime? lastReviewedAt;
 
   bool get isDueToday {
     if (nextReviewAt == null) return true;

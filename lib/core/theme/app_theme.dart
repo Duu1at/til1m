@@ -23,10 +23,7 @@ class AppTheme {
 
   static ThemeData get lightTheme => ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: primaryColor,
-          brightness: Brightness.light,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         fontFamily: 'Inter',
         appBarTheme: const AppBarTheme(
           centerTitle: true,

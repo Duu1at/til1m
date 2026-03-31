@@ -51,3 +51,9 @@ app.*.map.json
 
 # dart-define secrets
 *.secrets
+
+# Work
+work/**
+
+# Claude
+.claude/**

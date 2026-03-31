@@ -1,16 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'word.dart';
+import 'package:flutter/material.dart';
+import 'package:wordup/domain/entities/word.dart';
 
 enum AppTheme { light, dark, system }
 
-class UserSettings extends Equatable {
-  final String? userId;
-  final int dailyGoal;
-  final WordLevel englishLevel;
-  final UiLanguage uiLanguage;
-  final String? reminderTime; // "HH:mm" format
-  final AppTheme theme;
-
+@immutable
+final class UserSettings extends Equatable {
   const UserSettings({
     this.userId,
     this.dailyGoal = 5,
@@ -19,6 +14,13 @@ class UserSettings extends Equatable {
     this.reminderTime,
     this.theme = AppTheme.system,
   });
+
+  final String? userId;
+  final int dailyGoal;
+  final WordLevel englishLevel;
+  final UiLanguage uiLanguage;
+  final String? reminderTime; // 'HH:mm' format
+  final AppTheme theme;
 
   UserSettings copyWith({
     String? userId,
@@ -39,5 +41,12 @@ class UserSettings extends Equatable {
   }
 
   @override
-  List<Object?> get props => [userId, dailyGoal, englishLevel, uiLanguage, reminderTime, theme];
+  List<Object?> get props => [
+    userId,
+    dailyGoal,
+    englishLevel,
+    uiLanguage,
+    reminderTime,
+    theme,
+  ];
 }
