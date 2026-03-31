@@ -1,0 +1,5 @@
+package com.wordup.wordup
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
