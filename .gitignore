@@ -57,3 +57,14 @@ work/**
 
 # Claude
 .claude/**
+
+# VSCode
+.vscode/
+
+# Environment variables
+.env.dev
+.env.prod
+
+# Scripts
+run_dev.sh
+run_prod.sh
