@@ -88,8 +88,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     await prefs.setBool(AppConstants.keyOnboardingDone, true);
 
+    final pendingAuth = prefs.getString(AppConstants.keyPendingAuth);
+    await prefs.remove(AppConstants.keyPendingAuth);
+
     if (!mounted) return;
-    context.go(AppRoutes.home);
+    if (pendingAuth == 'register') {
+      context.go(AppRoutes.register);
+    } else {
+      context.go(AppRoutes.home);
+    }
   }
 
   String _formatTime(TimeOfDay t) {

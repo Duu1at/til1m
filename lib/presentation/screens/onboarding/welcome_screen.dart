@@ -16,30 +16,15 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_checkFirstLaunch());
-  }
-
-  Future<void> _checkFirstLaunch() async {
+  Future<void> _goRegister() async {
     final prefs = await SharedPreferences.getInstance();
-    final isFirst = prefs.getBool(AppConstants.keyIsFirstLaunch) ?? true;
-    if (!isFirst && mounted) {
-      context.go(AppRoutes.home);
-    }
-  }
-
-  Future<void> _go(String route) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.keyIsFirstLaunch, false);
+    await prefs.setString(AppConstants.keyPendingAuth, 'register');
     if (!mounted) return;
-    context.go(route);
+    context.go(AppRoutes.onboarding);
   }
 
   Future<void> _continueAsGuest() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.keyIsFirstLaunch, false);
     await prefs.setBool(AppConstants.keyGuestMode, true);
     if (!mounted) return;
     context.go(AppRoutes.onboarding);
@@ -115,7 +100,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               const Spacer(flex: 3),
               ElevatedButton(
-                onPressed: () => unawaited(_go(AppRoutes.register)),
+                onPressed: () => unawaited(_goRegister()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: theme.colorScheme.onPrimary,
@@ -138,7 +123,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               const SizedBox(height: AppConstants.paddingM),
               OutlinedButton(
-                onPressed: () => unawaited(_go(AppRoutes.login)),
+                onPressed: () => context.go(AppRoutes.login),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(
                     double.infinity,

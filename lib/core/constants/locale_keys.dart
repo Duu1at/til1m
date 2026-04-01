@@ -1,6 +1,14 @@
 // Generated locale keys — используй эти константы вместо raw строк
 // Пример: Text(LocaleKeys.homeTitle.tr())
 abstract class LocaleKeys {
+  // language select
+  static const langSelectTitle = 'lang_select.title';
+  static const langSelectSubtitle = 'lang_select.subtitle';
+  static const langSelectRu = 'lang_select.ru';
+  static const langSelectRuSubtitle = 'lang_select.ru_subtitle';
+  static const langSelectKy = 'lang_select.ky';
+  static const langSelectKySubtitle = 'lang_select.ky_subtitle';
+
   // nav
   static const navHome = 'nav.home';
   static const navLearn = 'nav.learn';

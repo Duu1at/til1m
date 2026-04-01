@@ -24,6 +24,8 @@ class AppConstants {
   static const String keyReminderTime = 'reminder_time';
   static const String keyStudyTimeFrom = 'study_time_from';
   static const String keyStudyTimeTo = 'study_time_to';
+  static const String keyLanguageSelected = 'language_selected';
+  static const String keyPendingAuth = 'pending_auth';
 
   // Hive box names
   static const String hiveBoxWords = 'words';

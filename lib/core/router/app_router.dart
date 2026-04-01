@@ -6,6 +6,7 @@ import 'package:wordup/presentation/screens/dictionary/dictionary_screen.dart';
 import 'package:wordup/presentation/screens/favorites/favorites_screen.dart';
 import 'package:wordup/presentation/screens/flashcards/flashcards_screen.dart';
 import 'package:wordup/presentation/screens/home/home_screen.dart';
+import 'package:wordup/presentation/screens/language_select/language_select_screen.dart';
 import 'package:wordup/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:wordup/presentation/screens/onboarding/welcome_screen.dart';
 import 'package:wordup/presentation/screens/profile/profile_screen.dart';
@@ -15,6 +16,7 @@ import 'package:wordup/presentation/screens/statistics/statistics_screen.dart';
 import 'package:wordup/presentation/screens/word_detail/word_detail_screen.dart';
 
 final class AppRoutes {
+  static const String languageSelect = '/language-select';
   static const String welcome = '/welcome';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
@@ -31,8 +33,12 @@ final class AppRoutes {
 }
 
 final appRouter = GoRouter(
-  initialLocation: AppRoutes.welcome,
+  initialLocation: AppRoutes.languageSelect,
   routes: [
+    GoRoute(
+      path: AppRoutes.languageSelect,
+      builder: (context, state) => const LanguageSelectScreen(),
+    ),
     GoRoute(
       path: AppRoutes.welcome,
       builder: (context, state) => const WelcomeScreen(),
