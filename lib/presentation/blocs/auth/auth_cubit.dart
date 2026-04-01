@@ -14,12 +14,7 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _repo;
   late final StreamSubscription<bool> _authSub;
 
-  /// Called once on creation.
-  /// Emits the current session state synchronously, then subscribes to
-  /// Supabase onAuthStateChange — which fires on token refresh, sign-out,
-  /// sign-in from another tab, etc.
   void _init() {
-    // Synchronous check — Supabase SDK restores the stored session on init.
     emit(_repo.isAuthenticated ? AuthAuthenticated() : AuthUnauthenticated());
 
     _authSub = _repo.authStateChanges.listen((isAuth) {
@@ -34,14 +29,10 @@ class AuthCubit extends Cubit<AuthState> {
     return super.close();
   }
 
-  // ── Auth actions ──────────────────────────────────────────────────────────
-
   Future<void> signInWithEmail(String email, String password) async {
     emit(AuthLoading());
     try {
       await _repo.signInWithEmail(email, password);
-      // AuthAuthenticated will be emitted by _authSub when Supabase fires
-      // onAuthStateChange — no need to emit AuthSuccess manually.
     } on AppAuthException catch (e) {
       emit(AuthError(e.message));
     } on Object catch (e) {
@@ -84,7 +75,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> signOut() async {
     await _repo.signOut();
-    // AuthUnauthenticated will be emitted by _authSub.
   }
 
   Future<void> sendPasswordReset(String email) async {
