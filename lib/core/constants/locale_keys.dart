@@ -46,6 +46,7 @@ abstract class LocaleKeys {
   static const authBtnLogin = 'auth.btn_login';
   static const authBtnRegister = 'auth.btn_register';
   static const authBtnGoogle = 'auth.btn_google';
+  static const authBtnApple = 'auth.btn_apple';
   static const authBtnForgot = 'auth.btn_forgot';
   static const authResetTitle = 'auth.reset_title';
   static const authResetSubtitle = 'auth.reset_subtitle';
@@ -170,4 +171,5 @@ abstract class LocaleKeys {
   static const commonNo = 'common.no';
   static const commonWords = 'common.words';
   static const commonDays = 'common.days';
+  static const commonOr = 'common.or';
 }

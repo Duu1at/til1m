@@ -1,13 +1,189 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:io';
 
-class RegisterScreen extends StatelessWidget {
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:wordup/core/constants/app_constants.dart';
+import 'package:wordup/core/constants/locale_keys.dart';
+import 'package:wordup/core/router/app_router.dart';
+import 'package:wordup/presentation/blocs/auth/auth_cubit.dart';
+import 'package:wordup/presentation/widgets/widgets.dart';
+
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String? _emailError;
+  String? _passwordError;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  bool _validate() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    setState(() {
+      _emailError = email.isEmpty || !email.contains('@')
+          ? LocaleKeys.authErrorInvalidEmail.tr(context: context)
+          : null;
+      _passwordError = password.length < 6
+          ? LocaleKeys.authErrorWeakPassword.tr(context: context)
+          : null;
+    });
+    return _emailError == null && _passwordError == null;
+  }
+
+  Future<void> _signUp() async {
+    if (!_validate()) return;
+    await context.read<AuthCubit>().signUpWithEmail(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Регистрация')),
-      body: const Center(child: Text('Регистрация — в разработке')),
+    final theme = Theme.of(context);
+
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: theme.colorScheme.error,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is AuthLoading;
+
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_rounded),
+              onPressed: () => context.go(AppRoutes.welcome),
+            ),
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.paddingWide,
+                vertical: AppConstants.paddingXL,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    LocaleKeys.authBtnRegister.tr(context: context),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppConstants.paddingSection),
+                  AuthEmailField(
+                    controller: _emailController,
+                    label: LocaleKeys.authEmail.tr(context: context),
+                    errorText: _emailError,
+                  ),
+                  const SizedBox(height: AppConstants.paddingL),
+                  AuthPasswordField(
+                    controller: _passwordController,
+                    label: LocaleKeys.authPassword.tr(context: context),
+                    errorText: _passwordError,
+                    onSubmitted: isLoading ? null : _signUp,
+                  ),
+                  const SizedBox(height: AppConstants.paddingXL),
+                  ElevatedButton(
+                    onPressed: isLoading ? null : _signUp,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      minimumSize: const Size(
+                        double.infinity,
+                        AppConstants.buttonHeight,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.radiusL,
+                        ),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: isLoading
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            LocaleKeys.authBtnRegister.tr(context: context),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                  ),
+                  const SizedBox(height: AppConstants.paddingXL),
+                  AuthOrDivider(
+                    text: LocaleKeys.commonOr.tr(context: context),
+                  ),
+                  const SizedBox(height: AppConstants.paddingXL),
+                  AuthSocialButton(
+                    label: LocaleKeys.authBtnGoogle.tr(context: context),
+                    onPressed: isLoading
+                        ? () {}
+                        : () => unawaited(
+                            context.read<AuthCubit>().signInWithGoogle(),
+                          ),
+                  ),
+                  if (Platform.isIOS) ...[
+                    const SizedBox(height: AppConstants.paddingL),
+                    AuthSocialButton(
+                      label: LocaleKeys.authBtnApple.tr(context: context),
+                      isApple: true,
+                      onPressed: isLoading
+                          ? () {}
+                          : () => unawaited(
+                              context.read<AuthCubit>().signInWithApple(),
+                            ),
+                    ),
+                  ],
+                  const SizedBox(height: AppConstants.paddingXL),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => context.go(AppRoutes.login),
+                      child: Text(
+                        LocaleKeys.authHaveAccount.tr(context: context),
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppConstants.paddingM),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -50,6 +50,7 @@
     "btn_login": "Войти",
     "btn_register": "Зарегистрироваться",
     "btn_google": "Войти через Google",
+    "btn_apple": "Войти через Apple",
     "btn_forgot": "Забыли пароль?",
     "reset_title": "Восстановление пароля",
     "reset_subtitle": "Введите email — мы пришлём ссылку для сброса пароля",
@@ -186,6 +187,7 @@
     "yes": "Да",
     "no": "Нет",
     "words": "{count} слово",
-    "days": "{count} день"
+    "days": "{count} день",
+    "or": "или"
   }
 }
