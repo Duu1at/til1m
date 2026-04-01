@@ -63,13 +63,27 @@ class AppConstants {
 
   // Border Radius
   static const double radiusXS = 2;
+  static const double radiusS = 6;
   static const double radiusM = 12;
   static const double radiusL = 14;
   static const double radiusXL = 16;
   static const double radiusXXL = 24;
+  static const double radiusFull = 999;
 
   // Component Sizes
   static const double buttonHeight = 52;
+  static const double buttonHeightS = 40;
   static const double iconBoxSize = 44;
+  static const double iconBoxSizeS = 32;
   static const double logoBoxSize = 88;
+  static const double bottomNavHeight = 64;
+  static const double appBarHeight = 56;
+  static const double cardElevation = 0;
+  static const double dividerThickness = 1;
+
+  // Animation Durations (milliseconds)
+  static const Duration durationFast = Duration(milliseconds: 150);
+  static const Duration durationNormal = Duration(milliseconds: 250);
+  static const Duration durationSlow = Duration(milliseconds: 400);
+  static const Duration durationPage = Duration(milliseconds: 300);
 }
