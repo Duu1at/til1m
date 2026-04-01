@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:wordup/core/constants/app_constants.dart';
 import 'package:wordup/core/constants/locale_keys.dart';
 import 'package:wordup/domain/entities/word.dart';
+import 'package:wordup/presentation/presentation.dart';
 
 class OnboardingLevelStep extends StatelessWidget {
   const OnboardingLevelStep({
@@ -24,34 +26,39 @@ class OnboardingLevelStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+      padding: const EdgeInsets.fromLTRB(
+        AppConstants.paddingXXL,
+        AppConstants.paddingSection,
+        AppConstants.paddingXXL,
+        AppConstants.paddingL,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            LocaleKeys.onboardingStepLevel.tr(),
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            LocaleKeys.onboardingStepLevel.tr(context: context),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppConstants.paddingXS),
           Text(
-            LocaleKeys.onboardingStepLevelSubtitle.tr(),
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Colors.grey[600]),
+            LocaleKeys.onboardingStepLevelSubtitle.tr(context: context),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppConstants.paddingSection),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
+              mainAxisSpacing: AppConstants.paddingM,
+              crossAxisSpacing: AppConstants.paddingM,
               childAspectRatio: 2.2,
               children: _levels.map((item) {
-                return _LevelCard(
+                return OnboardingLevelCard(
                   label: item.label,
                   desc: item.desc,
                   isSelected: selected == item.level,
@@ -61,61 +68,6 @@ class OnboardingLevelStep extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _LevelCard extends StatelessWidget {
-  const _LevelCard({
-    required this.label,
-    required this.desc,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String label;
-  final String desc;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    const primary = Color(0xFF4F46E5);
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isSelected ? primary : const Color(0xFFE2E8F0),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: isSelected ? Colors.white : Colors.black87,
-              ),
-            ),
-            Text(
-              desc,
-              style: TextStyle(
-                fontSize: 11,
-                color: isSelected ? Colors.white70 : Colors.grey[500],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

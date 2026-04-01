@@ -12,12 +12,12 @@
 
 ## Dart модификаторы классов
 
-| Модификатор | Где | Зачем |
-|---|---|---|
-| `abstract interface class` | Repository в domain | Только `implements`, не `extends` |
-| `sealed class` | BLoC Events, States | Exhaustive switch — компилятор проверяет все ветки |
-| `final class` | Конкретные Event/State | Запрет наследования от конкретного состояния |
-| `final` (поле/переменная) | Везде по умолчанию | Иммутабельность, явное намерение |
+| Модификатор                | Где                    | Зачем                                              |
+| -------------------------- | ---------------------- | -------------------------------------------------- |
+| `abstract interface class` | Repository в domain    | Только `implements`, не `extends`                  |
+| `sealed class`             | BLoC Events, States    | Exhaustive switch — компилятор проверяет все ветки |
+| `final class`              | Конкретные Event/State | Запрет наследования от конкретного состояния       |
+| `final` (поле/переменная)  | Везде по умолчанию     | Иммутабельность, явное намерение                   |
 
 ```dart
 // Repository interface
@@ -64,13 +64,13 @@ class WordCard { Word word; } // мутабельное поле
 
 ## Именование
 
-| Что | Стиль | Пример |
-|---|---|---|
-| Файлы | `snake_case` | `word_repository.dart` |
-| Классы | `PascalCase` | `WordRepositoryImpl` |
-| BLoC события | Noun + Past/Requested | `WordLoadRequested`, `AuthLogoutRequested` |
-| Переменные/методы | `camelCase` | `wordsForReview`, `getWordsByLevel` |
-| Приватные | `_prefix` | `_repository`, `_onWordLoadRequested` |
+| Что               | Стиль                 | Пример                                     |
+| ----------------- | --------------------- | ------------------------------------------ |
+| Файлы             | `snake_case`          | `word_repository.dart`                     |
+| Классы            | `PascalCase`          | `WordRepositoryImpl`                       |
+| BLoC события      | Noun + Past/Requested | `WordLoadRequested`, `AuthLogoutRequested` |
+| Переменные/методы | `camelCase`           | `wordsForReview`, `getWordsByLevel`        |
+| Приватные         | `_prefix`             | `_repository`, `_onWordLoadRequested`      |
 
 ```dart
 // ❌ Императив в событиях
@@ -115,12 +115,12 @@ class WordCard extends StatelessWidget {
 
 ## Clean Architecture — импорты
 
-| Слой | Может импортировать |
-|---|---|
-| `domain/` | Dart SDK + `equatable` |
-| `data/` | `domain/` + supabase, hive, dio |
-| `presentation/` | `domain/` + flutter_bloc + Flutter |
-| `core/` | Dart SDK + Flutter (без бизнес-логики) |
+| Слой            | Может импортировать                    |
+| --------------- | -------------------------------------- |
+| `domain/`       | Dart SDK + `equatable`                 |
+| `data/`         | `domain/` + supabase, hive, dio        |
+| `presentation/` | `domain/` + flutter_bloc + Flutter     |
+| `core/`         | Dart SDK + Flutter (без бизнес-логики) |
 
 ```dart
 // ❌
@@ -222,10 +222,10 @@ class _HomeView extends StatelessWidget {
 
 ### Cubit vs BLoC
 
-| Cubit | BLoC |
-|---|---|
+| Cubit                          | BLoC                              |
+| ------------------------------ | --------------------------------- |
 | Простые переходы, тоглы, формы | Несколько событий, сложная логика |
-| Settings, Theme, Onboarding | Auth, Flashcards, Dictionary |
+| Settings, Theme, Onboarding    | Auth, Flashcards, Dictionary      |
 
 ### Events
 
@@ -274,13 +274,13 @@ Container(height: 24, color: Colors.white)
 ColoredBox(color: theme.colorScheme.surface, child: SizedBox(height: 24))
 ```
 
-| Нужно | Используй |
-|---|---|
-| Цвет | `ColoredBox` |
-| Размер | `SizedBox` |
-| Декорация | `DecoratedBox` |
-| Отступ | `Padding` |
-| Выравнивание | `Align` |
+| Нужно        | Используй      |
+| ------------ | -------------- |
+| Цвет         | `ColoredBox`   |
+| Размер       | `SizedBox`     |
+| Декорация    | `DecoratedBox` |
+| Отступ       | `Padding`      |
+| Выравнивание | `Align`        |
 
 ### Цвета — только из темы
 
@@ -379,6 +379,7 @@ Text('Добро пожаловать')
 ```
 
 **Новый текст — 4 шага:**
+
 1. Ключ в `locale_keys.dart`
 2. `en.json`
 3. `ru.json`
@@ -456,13 +457,13 @@ dart run easy_localization:generate
 
 ## Тестирование
 
-| Слой | Тестируем |
-|---|---|
-| Domain: Use Cases | SM-2, вычисления |
-| Domain: Entities | `copyWith`, `props` |
-| Data: Models | `fromJson` / `toJson` |
-| Data: Repositories | offline-first логика |
-| BLoC | переходы состояний |
+| Слой               | Тестируем             |
+| ------------------ | --------------------- |
+| Domain: Use Cases  | SM-2, вычисления      |
+| Domain: Entities   | `copyWith`, `props`   |
+| Data: Models       | `fromJson` / `toJson` |
+| Data: Repositories | offline-first логика  |
+| BLoC               | переходы состояний    |
 
 ```dart
 // BLoC
@@ -490,7 +491,7 @@ test('increases ease factor when user knows the word', () {
 // ❌ Бизнес-логика в виджетах / build()
 // ❌ Supabase вне datasource
 // ❌ Navigator.push — только GoRouter
-// ❌ Хардкод строк в UI — только LocaleKeys
+// ❌ Хардкод строк в UI — только LocaleKeys без tr() надо так LocaleKeys.key.tr(context: context)
 // ❌ Хардкод цветов — только тема
 // ❌ Хардкод размеров — только AppConstants
 // ❌ Container с одним свойством

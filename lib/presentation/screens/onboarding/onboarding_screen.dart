@@ -1,14 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/core/constants/locale_keys.dart';
 import 'package:wordup/core/router/app_router.dart';
 import 'package:wordup/domain/entities/word.dart';
-import 'package:wordup/presentation/screens/onboarding/widgets/onboarding_goal_step.dart';
-import 'package:wordup/presentation/screens/onboarding/widgets/onboarding_level_step.dart';
-import 'package:wordup/presentation/screens/onboarding/widgets/onboarding_time_step.dart';
+import 'package:wordup/presentation/presentation.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -108,7 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _OnboardingProgressBar(
+            OnboardingProgressBar(
               currentPage: _currentPage,
               totalSteps: _totalSteps,
             ),
@@ -144,85 +140,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
-            _OnboardingNextButton(
+            OnboardingNextButton(
               isLastStep: _currentPage == _totalSteps - 1,
               enabled: _canProceed,
               onTap: _next,
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _OnboardingProgressBar extends StatelessWidget {
-  const _OnboardingProgressBar({
-    required this.currentPage,
-    required this.totalSteps,
-  });
-
-  final int currentPage;
-  final int totalSteps;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-      child: Row(
-        children: List.generate(totalSteps, (i) {
-          return Expanded(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: 4,
-              margin: EdgeInsets.only(right: i < totalSteps - 1 ? 8 : 0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
-                color: i <= currentPage
-                    ? const Color(0xFF4F46E5)
-                    : const Color(0xFFE2E8F0),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class _OnboardingNextButton extends StatelessWidget {
-  const _OnboardingNextButton({
-    required this.isLastStep,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final bool isLastStep;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-      child: ElevatedButton(
-        onPressed: enabled ? onTap : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4F46E5),
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: const Color(0xFFE2E8F0),
-          disabledForegroundColor: Colors.grey,
-          minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          elevation: 0,
-        ),
-        child: Text(
-          isLastStep
-              ? LocaleKeys.onboardingBtnFinish.tr()
-              : LocaleKeys.onboardingBtnNext.tr(),
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
       ),
     );

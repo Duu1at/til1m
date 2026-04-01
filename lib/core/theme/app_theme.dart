@@ -10,6 +10,7 @@ final class AppTheme {
   static const Color warningColor = Color(0xFFF59E0B);
   static const Color surfaceColor = Color(0xFFF8FAFC);
   static const Color cardColor = Color(0xFFFFFFFF);
+  static const Color borderColor = Color(0xFFE2E8F0);
 
   // Level colors
   static const Map<String, Color> levelColors = {
@@ -40,7 +41,7 @@ final class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        foregroundColor: cardColor,
         minimumSize: const Size(double.infinity, 52),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -60,7 +61,7 @@ final class AppTheme {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: const BorderSide(color: borderColor),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

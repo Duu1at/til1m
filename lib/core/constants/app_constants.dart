@@ -48,4 +48,28 @@ class AppConstants {
   static const int notificationId = 1001;
   static const String notificationChannelId = 'wordup_daily';
   static const String notificationChannelName = 'Daily Reminder';
+
+  // Spacing & Padding
+  static const double paddingXS = 6;
+  static const double paddingS = 8;
+  static const double paddingM = 12;
+  static const double paddingL = 16;
+  static const double paddingXL = 20;
+  static const double paddingXXL = 24;
+  static const double paddingWide = 28;
+  static const double paddingSection = 32;
+  static const double paddingLarge = 40;
+  static const double paddingHuge = 48;
+
+  // Border Radius
+  static const double radiusXS = 2;
+  static const double radiusM = 12;
+  static const double radiusL = 14;
+  static const double radiusXL = 16;
+  static const double radiusXXL = 24;
+
+  // Component Sizes
+  static const double buttonHeight = 52;
+  static const double iconBoxSize = 44;
+  static const double logoBoxSize = 88;
 }

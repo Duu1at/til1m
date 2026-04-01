@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:wordup/core/constants/app_constants.dart';
 import 'package:wordup/core/constants/locale_keys.dart';
+import 'package:wordup/presentation/presentation.dart';
 
 class OnboardingTimeStep extends StatelessWidget {
   const OnboardingTimeStep({
@@ -40,103 +42,59 @@ class OnboardingTimeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+      padding: const EdgeInsets.fromLTRB(
+        AppConstants.paddingXXL,
+        AppConstants.paddingSection,
+        AppConstants.paddingXXL,
+        AppConstants.paddingL,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            LocaleKeys.onboardingStepTime.tr(),
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            LocaleKeys.onboardingStepTime.tr(context: context),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: AppConstants.paddingXS),
           Text(
-            LocaleKeys.onboardingStepTimeSubtitle.tr(),
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Colors.grey[600]),
+            LocaleKeys.onboardingStepTimeSubtitle.tr(context: context),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: AppConstants.paddingHuge),
           Row(
             children: [
               Expanded(
-                child: _TimePickerCard(
-                  label: LocaleKeys.onboardingTimeFrom.tr(),
+                child: OnboardingTimePickerCard(
+                  label: LocaleKeys.onboardingTimeFrom.tr(context: context),
                   time: _fmt(from),
                   onTap: () => _pickTime(context, from, onFromChanged),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AppConstants.paddingL),
               Expanded(
-                child: _TimePickerCard(
-                  label: LocaleKeys.onboardingTimeTo.tr(),
+                child: OnboardingTimePickerCard(
+                  label: LocaleKeys.onboardingTimeTo.tr(context: context),
                   time: _fmt(to),
                   onTap: () => _pickTime(context, to, onToChanged),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppConstants.paddingSection),
           Center(
             child: Icon(
               Icons.notifications_outlined,
               size: 64,
-              color: Colors.grey[300],
+              color: theme.colorScheme.outlineVariant,
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _TimePickerCard extends StatelessWidget {
-  const _TimePickerCard({
-    required this.label,
-    required this.time,
-    required this.onTap,
-  });
-
-  final String label;
-  final String time;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    const primary = Color(0xFF4F46E5);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[500],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              time,
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: primary,
-                letterSpacing: 1,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
