@@ -67,29 +67,41 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> signInWithGoogle() async {
     const webClientId = String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
     debugPrint(
-      '[Auth] signInWithGoogle → webClientId: '
-      '"${webClientId.isEmpty ? "⚠️ EMPTY — передай --dart-define=GOOGLE_WEB_CLIENT_ID=..." : webClientId}"',
+      '[Auth] signInWithGoogle → webClientId: ${webClientId.isEmpty ? "⚠️ EMPTY" : "present"}',
     );
+
     try {
-      final googleUser = await GoogleSignIn(serverClientId: webClientId).signIn();
-      debugPrint('[Auth] GoogleSignIn result → ${googleUser?.email ?? "null (user cancelled)"}');
+      final googleUser = await GoogleSignIn(
+        clientId:
+            '919292740747-8ipmoan5nke1os8pu737q2uvmokf4a7q.apps.googleusercontent.com',
+        serverClientId: webClientId,
+      ).signIn();
+      debugPrint(
+        '[Auth] GoogleSignIn result → ${googleUser?.email ?? "null (user cancelled)"}',
+      );
       if (googleUser == null) return;
 
       final googleAuth = await googleUser.authentication;
       final idToken = googleAuth.idToken;
+      final accessToken = googleAuth.accessToken;
       debugPrint('[Auth] idToken: ${idToken == null ? "⚠️ NULL" : "present"}');
-      if (idToken == null) {
+
+      if (idToken == null || accessToken == null) {
         throw const AppAuthException('Failed to get Google token');
       }
 
       await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
-        accessToken: googleAuth.accessToken,
+        accessToken: accessToken,
       );
-      debugPrint('[Auth] signInWithGoogle success → user: ${_supabase.auth.currentUser?.id}');
+      debugPrint(
+        '[Auth] signInWithGoogle success → user: ${_supabase.auth.currentUser?.id}',
+      );
     } on AuthException catch (e) {
-      debugPrint('[Auth] signInWithGoogle AuthException → ${e.message} (status: ${e.statusCode})');
+      debugPrint(
+        '[Auth] signInWithGoogle AuthException → ${e.message} (status: ${e.statusCode})',
+      );
       throw AppAuthException(e.message);
     } catch (e, st) {
       debugPrint('[Auth] signInWithGoogle unexpected error → $e\n$st');

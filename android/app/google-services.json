@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "838956818143",
+    "project_id": "til1m-a645d",
+    "storage_bucket": "til1m-a645d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838956818143:android:649496ef81879a12f1136a",
+        "android_client_info": {
+          "package_name": "com.til1m.til1m"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT18I9apEOyKdNN4I1bL1PBaCfJnG9Wj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

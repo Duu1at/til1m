@@ -49,9 +49,6 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!-- Google Sign-In URL scheme.
-	     Замени строку ниже на значение REVERSED_CLIENT_ID из GoogleService-Info.plist
-	     Пример: com.googleusercontent.apps.123456789-abcdefghijklmno -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -59,7 +56,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>PASTE_REVERSED_CLIENT_ID_HERE</string>
+				<string>com.googleusercontent.apps.919292740747-8ipmoan5nke1os8pu737q2uvmokf4a7q</string>
 			</array>
 		</dict>
 	</array>
