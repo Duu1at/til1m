@@ -24,8 +24,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> _continueAsGuest() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.keyGuestMode, true);
     if (!mounted) return;
     context.go(AppRoutes.onboarding);
   }

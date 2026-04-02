@@ -59,6 +59,14 @@
 				<string>com.googleusercontent.apps.919292740747-8ipmoan5nke1os8pu737q2uvmokf4a7q</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.til1m</string>
+			</array>
+		</dict>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

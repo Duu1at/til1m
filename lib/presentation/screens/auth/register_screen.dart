@@ -62,10 +62,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(state.message.tr(context: context)),
               backgroundColor: theme.colorScheme.error,
             ),
           );
+        } else if (state is AuthEmailConfirmationSent) {
+          unawaited(showDialog<void>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => AlertDialog(
+              title: Text(
+                LocaleKeys.authConfirmEmailTitle.tr(context: context),
+              ),
+              content: Text(
+                LocaleKeys.authConfirmEmailBody.tr(
+                  context: context,
+                  args: [state.email],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.go(AppRoutes.login);
+                  },
+                  child: Text(LocaleKeys.commonOk.tr(context: context)),
+                ),
+              ],
+            ),
+          ));
         }
       },
       builder: (context, state) {

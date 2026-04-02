@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +50,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(state.message.tr(context: context)),
                 backgroundColor: theme.colorScheme.error,
               ),
             );
@@ -101,8 +100,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           AppConstants.buttonHeight,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppConstants.radiusL),
+                          borderRadius: BorderRadius.circular(
+                            AppConstants.radiusL,
+                          ),
                         ),
                         elevation: 0,
                       ),

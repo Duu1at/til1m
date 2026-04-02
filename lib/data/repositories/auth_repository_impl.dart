@@ -3,10 +3,15 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/constants/supabase_constants.dart';
 import 'package:til1m/core/errors/app_auth_exception.dart';
+import 'package:til1m/core/errors/auth_error_mapper.dart';
 import 'package:til1m/domain/entities/user_settings.dart';
+import 'package:til1m/domain/entities/word.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -36,7 +41,7 @@ class AuthRepositoryImpl implements AuthRepository {
       debugPrint(
         '[Auth] signIn AuthException → ${e.message} (status: ${e.statusCode})',
       );
-      throw AppAuthException(e.message);
+      throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
     } catch (e, st) {
       debugPrint('[Auth] signIn unexpected error → $e\n$st');
       rethrow;
@@ -44,19 +49,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> signUpWithEmail(String email, String password) async {
+  Future<bool> signUpWithEmail(String email, String password) async {
     debugPrint('[Auth] signUp → email: $email');
     try {
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
       );
-      debugPrint('[Auth] signUp success → user: ${response.user?.id}');
+      final needsConfirmation = response.session == null;
+      debugPrint(
+        '[Auth] signUp success → user: ${response.user?.id}, '
+        'needsConfirmation: $needsConfirmation',
+      );
+      return needsConfirmation;
     } on AuthException catch (e) {
       debugPrint(
         '[Auth] signUp AuthException → ${e.message} (status: ${e.statusCode})',
       );
-      throw AppAuthException(e.message);
+      throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
     } catch (e, st) {
       debugPrint('[Auth] signUp unexpected error → $e\n$st');
       rethrow;
@@ -102,7 +112,7 @@ class AuthRepositoryImpl implements AuthRepository {
       debugPrint(
         '[Auth] signInWithGoogle AuthException → ${e.message} (status: ${e.statusCode})',
       );
-      throw AppAuthException(e.message);
+      throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
     } catch (e, st) {
       debugPrint('[Auth] signInWithGoogle unexpected error → $e\n$st');
       rethrow;
@@ -134,7 +144,7 @@ class AuthRepositoryImpl implements AuthRepository {
         nonce: rawNonce,
       );
     } on AuthException catch (e) {
-      throw AppAuthException(e.message);
+      throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
     }
   }
 
@@ -148,20 +158,115 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _supabase.auth.resetPasswordForEmail(email);
     } on AuthException catch (e) {
-      throw AppAuthException(e.message);
+      throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
     }
   }
 
   @override
-  Future<void> migrateGuestProgress(String userId) async {}
+  Future<void> migrateGuestProgress(String userId) async {
+    try {
+      final progressBox = Hive.box<dynamic>(AppConstants.hiveBoxProgress);
+      if (progressBox.isNotEmpty) {
+        final progressRows = progressBox.keys.map((key) {
+          final raw = Map<String, dynamic>.from(progressBox.get(key) as Map);
+          return {
+            'user_id': userId,
+            'word_id': key as String,
+            'status': raw['status'] as String? ?? 'new',
+            'ease_factor': (raw['ease_factor'] as num?)?.toDouble() ?? 2.5,
+            'repetitions': raw['repetitions'] as int? ?? 0,
+            'next_review_at': raw['next_review_at'] as String?,
+            'last_reviewed_at': raw['last_reviewed_at'] as String?,
+          };
+        }).toList();
 
-  @override
-  Future<UserSettings?> getUserSettings(String userId) async {
-    return null;
+        await _supabase
+            .from(SupabaseConstants.tableUserWordProgress)
+            .upsert(progressRows, onConflict: 'user_id,word_id');
+      }
+
+      final favoritesBox = Hive.box<dynamic>(AppConstants.hiveBoxFavorites);
+      if (favoritesBox.isNotEmpty) {
+        final favRows = favoritesBox.keys
+            .map((wordId) => {'user_id': userId, 'word_id': wordId as String})
+            .toList();
+        await _supabase
+            .from(SupabaseConstants.tableUserFavorites)
+            .upsert(favRows, onConflict: 'user_id,word_id');
+      }
+
+      debugPrint(
+        '[Auth] migrateGuestProgress done → '
+        '${progressBox.length} progress, ${favoritesBox.length} favorites',
+      );
+    } catch (e, st) {
+      debugPrint('[Auth] migrateGuestProgress error → $e\n$st');
+      rethrow;
+    }
   }
 
   @override
-  Future<void> saveUserSettings(UserSettings settings) async {}
+  Future<void> clearGuestLocalData() async {
+    await Hive.box<dynamic>(AppConstants.hiveBoxProgress).clear();
+    await Hive.box<dynamic>(AppConstants.hiveBoxFavorites).clear();
+    debugPrint('[Auth] clearGuestLocalData done');
+  }
+
+  @override
+  Future<UserSettings?> getUserSettings(String userId) async {
+    try {
+      final data = await _supabase
+          .from(SupabaseConstants.tableUserSettings)
+          .select()
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (data == null) return null;
+
+      return UserSettings(
+        userId: data['user_id'] as String,
+        dailyGoal: (data['daily_goal'] as int?) ?? 5,
+        englishLevel: WordLevel.values.firstWhere(
+          (l) =>
+              l.name.toLowerCase() ==
+              (data['english_level'] as String? ?? '').toLowerCase(),
+          orElse: () => WordLevel.a1,
+        ),
+        uiLanguage: UiLanguage.values.firstWhere(
+          (l) => l.name == (data['ui_language'] as String?),
+          orElse: () => UiLanguage.ru,
+        ),
+        reminderTime: data['reminder_time'] as String?,
+        theme: AppTheme.values.firstWhere(
+          (t) => t.name == (data['theme'] as String?),
+          orElse: () => AppTheme.system,
+        ),
+      );
+    } catch (e, st) {
+      debugPrint('[Auth] getUserSettings error → $e\n$st');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> saveUserSettings(UserSettings settings) async {
+    try {
+      await _supabase.from(SupabaseConstants.tableUserSettings).upsert({
+        'user_id': settings.userId,
+        'daily_goal': settings.dailyGoal,
+        'english_level': settings.englishLevel.name.toUpperCase(),
+        'ui_language': settings.uiLanguage.name,
+        'reminder_time': settings.reminderTime,
+        'theme': settings.theme.name,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+    } on AuthException catch (e) {
+      throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
+    } catch (e, st) {
+      debugPrint('[Auth] saveUserSettings error → $e\n$st');
+      rethrow;
+    }
+  }
 
   String _generateNonce([int length = 32]) {
     const charset =

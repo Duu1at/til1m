@@ -36,8 +36,6 @@ final class AppRoutes {
   static const String profile = '/profile';
 }
 
-/// Routes that require an active session.
-/// Unauthenticated users are redirected to [AppRoutes.login].
 const Set<String> _protectedRoutes = {
   AppRoutes.home,
   AppRoutes.flashcards,
@@ -49,106 +47,102 @@ const Set<String> _protectedRoutes = {
   AppRoutes.profile,
 };
 
-/// Routes that only make sense when the user is NOT authenticated.
-/// Authenticated users are redirected to [AppRoutes.home].
 const Set<String> _authOnlyRoutes = {
   AppRoutes.login,
   AppRoutes.register,
 };
 
-/// Creates the application router.
-/// Call once and store the result — do not recreate on every build.
 GoRouter createRouter(AuthCubit authCubit) => GoRouter(
-      initialLocation: AppRoutes.languageSelect,
-      // Re-evaluates [redirect] whenever auth state changes.
-      refreshListenable: GoRouterRefreshStream(authCubit.stream),
-      redirect: (context, state) {
-        final authState = authCubit.state;
+  initialLocation: AppRoutes.languageSelect,
+  refreshListenable: GoRouterRefreshStream(authCubit.stream),
+  redirect: (context, state) {
+    final authState = authCubit.state;
 
-        // Session check not yet complete — let the route render as-is.
-        if (authState is AuthInitial) return null;
+    if (authState is AuthInitial) return null;
 
-        final isAuthenticated = authState is AuthAuthenticated;
-        final location = state.matchedLocation;
+    final isAuthenticated = authState is AuthAuthenticated;
+    final isGuest = authState is AuthGuest;
+    final hasAccess = isAuthenticated || isGuest;
+    final location = state.matchedLocation;
 
-        if (!isAuthenticated && _protectedRoutes.contains(location)) {
-          return AppRoutes.login;
-        }
+    if (!hasAccess && _protectedRoutes.contains(location)) {
+      return AppRoutes.login;
+    }
 
-        if (isAuthenticated && _authOnlyRoutes.contains(location)) {
-          return AppRoutes.home;
-        }
+    if (isAuthenticated && _authOnlyRoutes.contains(location)) {
+      return AppRoutes.home;
+    }
 
-        return null;
+    return null;
+  },
+  routes: [
+    GoRoute(
+      path: AppRoutes.languageSelect,
+      builder: (context, state) => const LanguageSelectScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.welcome,
+      builder: (context, state) => const WelcomeScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.onboarding,
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.login,
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.register,
+      builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.forgotPassword,
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.wordDetail,
+      builder: (context, state) {
+        final wordId = state.pathParameters['id']!;
+        return WordDetailScreen(wordId: wordId);
       },
+    ),
+    ShellRoute(
+      builder: (context, state, child) => MainShell(child: child),
       routes: [
         GoRoute(
-          path: AppRoutes.languageSelect,
-          builder: (context, state) => const LanguageSelectScreen(),
+          path: AppRoutes.home,
+          builder: (context, state) => const HomeScreen(),
         ),
         GoRoute(
-          path: AppRoutes.welcome,
-          builder: (context, state) => const WelcomeScreen(),
+          path: AppRoutes.flashcards,
+          builder: (context, state) => const FlashcardsScreen(),
         ),
         GoRoute(
-          path: AppRoutes.onboarding,
-          builder: (context, state) => const OnboardingScreen(),
+          path: AppRoutes.spelling,
+          builder: (context, state) => const SpellingScreen(),
         ),
         GoRoute(
-          path: AppRoutes.login,
-          builder: (context, state) => const LoginScreen(),
+          path: AppRoutes.dictionary,
+          builder: (context, state) => const DictionaryScreen(),
         ),
         GoRoute(
-          path: AppRoutes.register,
-          builder: (context, state) => const RegisterScreen(),
+          path: AppRoutes.favorites,
+          builder: (context, state) => const FavoritesScreen(),
         ),
         GoRoute(
-          path: AppRoutes.forgotPassword,
-          builder: (context, state) => const ForgotPasswordScreen(),
+          path: AppRoutes.statistics,
+          builder: (context, state) => const StatisticsScreen(),
         ),
         GoRoute(
-          path: AppRoutes.wordDetail,
-          builder: (context, state) {
-            final wordId = state.pathParameters['id']!;
-            return WordDetailScreen(wordId: wordId);
-          },
+          path: AppRoutes.settings,
+          builder: (context, state) => const SettingsScreen(),
         ),
-        ShellRoute(
-          builder: (context, state, child) => MainShell(child: child),
-          routes: [
-            GoRoute(
-              path: AppRoutes.home,
-              builder: (context, state) => const HomeScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.flashcards,
-              builder: (context, state) => const FlashcardsScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.spelling,
-              builder: (context, state) => const SpellingScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.dictionary,
-              builder: (context, state) => const DictionaryScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.favorites,
-              builder: (context, state) => const FavoritesScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.statistics,
-              builder: (context, state) => const StatisticsScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.settings,
-              builder: (context, state) => const SettingsScreen(),
-            ),
-            GoRoute(
-              path: AppRoutes.profile,
-              builder: (context, state) => const ProfileScreen(),
-            ),
-          ],
+        GoRoute(
+          path: AppRoutes.profile,
+          builder: (context, state) => const ProfileScreen(),
         ),
       ],
-    );
+    ),
+  ],
+);

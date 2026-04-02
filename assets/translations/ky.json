@@ -60,7 +60,14 @@
     "have_account": "Аккаунт барбы? Кирүү",
     "error_invalid_email": "Email форматы туура эмес",
     "error_weak_password": "Сырсөз кеминде 6 символдон турушу керек",
-    "error_wrong_credentials": "Email же сырсөз туура эмес"
+    "error_wrong_credentials": "Email же сырсөз туура эмес",
+    "error_email_not_confirmed": "Email тастыкталган эмес. Почтаңды текшер.",
+    "error_user_already_exists": "Бул email менен колдонуучу мурунтан бар",
+    "error_too_many_requests": "Өтө көп аракет. Бир аз күт.",
+    "error_link_expired": "Шилтеме жараксыз же мөөнөтү өткөн. Жаңысын сура.",
+    "error_generic": "Бир нерсе туура эмес болду. Кайра аракет кыл.",
+    "confirm_email_title": "Emailди тастыкта",
+    "confirm_email_body": "{} дарегине кат жөнөттүк\nКаттагы шилтемени басып, колдонмого кирип ал."
   },
 
   "home": {
@@ -188,6 +195,7 @@
     "no": "Жок",
     "words": "{count} сөз",
     "days": "{count} күн",
-    "or": "же"
+    "or": "же",
+    "ok": "Түшүндүм"
   }
 }

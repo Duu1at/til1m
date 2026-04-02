@@ -57,6 +57,13 @@ abstract class LocaleKeys {
   static const authErrorInvalidEmail = 'auth.error_invalid_email';
   static const authErrorWeakPassword = 'auth.error_weak_password';
   static const authErrorWrongCredentials = 'auth.error_wrong_credentials';
+  static const authErrorEmailNotConfirmed = 'auth.error_email_not_confirmed';
+  static const authErrorUserAlreadyExists = 'auth.error_user_already_exists';
+  static const authErrorTooManyRequests = 'auth.error_too_many_requests';
+  static const authErrorLinkExpired = 'auth.error_link_expired';
+  static const authErrorGeneric = 'auth.error_generic';
+  static const authConfirmEmailTitle = 'auth.confirm_email_title';
+  static const authConfirmEmailBody = 'auth.confirm_email_body';
 
   // home
   static const homeGreetingMorning = 'home.greeting_morning';
@@ -172,4 +179,5 @@ abstract class LocaleKeys {
   static const commonWords = 'common.words';
   static const commonDays = 'common.days';
   static const commonOr = 'common.or';
+  static const commonOk = 'common.ok';
 }
