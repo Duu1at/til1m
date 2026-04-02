@@ -1,4 +1,4 @@
-# WordUp — Code Rules
+# Til1m — Code Rules
 
 ## Общие правила
 

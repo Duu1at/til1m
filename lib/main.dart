@@ -20,17 +20,6 @@ void main() async {
 
   await Hive.initFlutter();
 
-  assert(
-    SupabaseConstants.supabaseUrl != 'YOUR_SUPABASE_URL',
-    '\n\n❌ SUPABASE_URL не задан!\n'
-    'Запускай через:\n'
-    '  flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co '
-    '--dart-define=SUPABASE_ANON_KEY=eyJ...\n'
-    'Или используй скрипт: ./run_dev.sh\n',
-  );
-
-  debugPrint('[Supabase] Initializing with URL: ${SupabaseConstants.supabaseUrl}');
-
   await Supabase.initialize(
     url: SupabaseConstants.supabaseUrl,
     anonKey: SupabaseConstants.supabaseAnonKey,
@@ -44,19 +33,19 @@ void main() async {
       supportedLocales: AppConstants.supportedLocales,
       path: AppConstants.translationsPath,
       fallbackLocale: AppConstants.fallbackLocale,
-      child: const WordUpApp(),
+      child: const Til1imApp(),
     ),
   );
 }
 
-class WordUpApp extends StatefulWidget {
-  const WordUpApp({super.key});
+class Til1imApp extends StatefulWidget {
+  const Til1imApp({super.key});
 
   @override
-  State<WordUpApp> createState() => _WordUpAppState();
+  State<Til1imApp> createState() => _Til1imAppState();
 }
 
-class _WordUpAppState extends State<WordUpApp> {
+class _Til1imAppState extends State<Til1imApp> {
   late final AuthCubit _authCubit;
   late final GoRouter _router = createRouter(_authCubit);
 
@@ -77,7 +66,7 @@ class _WordUpAppState extends State<WordUpApp> {
     return BlocProvider.value(
       value: _authCubit,
       child: MaterialApp.router(
-        title: 'WordUp',
+        title: 'Til1m',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,

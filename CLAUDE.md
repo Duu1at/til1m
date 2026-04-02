@@ -1,7 +1,9 @@
-# WordUp — Flutter App (Claude Code Workflow)
+# Til1m — Flutter App (Claude Code Workflow)
 
 ## Проект
+
 Мобильное приложение для изучения английских слов с переводом на русский и кыргызский языки.
+
 - **Платформа:** Flutter (Android + iOS)
 - **Backend:** Supabase (PostgreSQL + Auth + Storage)
 - **State management:** BLoC / Cubit (`flutter_bloc`)
@@ -48,16 +50,19 @@ lib/
 ## Ключевые сущности
 
 ### Word (domain/entities/word.dart)
+
 - `id`, `word`, `transcriptionText`, `audioUrl`, `imageUrl`
 - `level` (WordLevel: a1–c2), `partOfSpeech`
 - `translations` → List<WordTranslation> (ru/ky)
 - `examples` → List<WordExample>
 
 ### UserWordProgress (domain/entities/user_progress.dart)
+
 - SM-2 поля: `easeFactor`, `repetitions`, `nextReviewAt`, `lastReviewedAt`
 - `status`: new / learning / known
 
 ### UserSettings (domain/entities/user_settings.dart)
+
 - `dailyGoal`, `englishLevel`, `uiLanguage`, `reminderTime`, `theme`
 
 ---
@@ -65,6 +70,7 @@ lib/
 ## SM-2 алгоритм
 
 Логика в `domain/usecases/apply_sm2_result.dart`:
+
 - **"Знаю"** → repetitions++, interval × easeFactor, следующее повторение через N дней
 - **"Не знаю"** → repetitions=0, следующее повторение через ~1 час
 - `known` статус при interval >= 21 день
@@ -77,6 +83,7 @@ lib/
 Схема: `supabase/schema.sql`
 
 Таблицы:
+
 - `words` — слова
 - `word_translations` — переводы (ru/ky)
 - `word_examples` — примеры предложений
@@ -91,6 +98,7 @@ RLS включён. Пользователь видит только свои д
 ## Конфигурация Supabase
 
 Credentials передаются через `--dart-define`:
+
 ```bash
 flutter run \
   --dart-define=SUPABASE_URL=https://xxx.supabase.co \
@@ -104,6 +112,7 @@ flutter run \
 ## Навигация (GoRouter)
 
 Роуты в `core/router/app_router.dart`:
+
 - `/welcome` — Welcome Screen (только при первом запуске)
 - `/onboarding` — Онбординг (4 шага)
 - `/login`, `/register` — Авторизация
@@ -129,23 +138,27 @@ Shell (MainShell) отображает нижнюю навигацию с 4 вк
 ## Правила разработки
 
 ### Общие
+
 - Всегда следовать Clean Architecture: UI → BLoC → UseCase → Repository → DataSource
 - BLoC для сложной логики, Cubit для простого состояния
 - Не писать бизнес-логику в виджетах
 - Dart null-safety обязателен везде
 
 ### Именование
+
 - Файлы: `snake_case.dart`
 - Классы: `PascalCase`
 - BLoC: `FeatureBloc`, `FeatureCubit`, `FeatureState`, `FeatureEvent`
 - Репозитории: `abstract WordRepository` в domain, `WordRepositoryImpl` в data
 
 ### Supabase
+
 - Все запросы через RLS — никогда не передавать service key в приложение
 - Использовать `supabase.auth.currentUser` для получения userId
 - Офлайн-fallback: если нет сети, брать из Hive
 
 ### Стиль кода
+
 - Использовать `freezed` для моделей данных где нужна иммутабельность
 - `equatable` для сравнения entities
 - Константы только в `AppConstants` или `SupabaseConstants`
@@ -154,15 +167,15 @@ Shell (MainShell) отображает нижнюю навигацию с 4 вк
 
 ## Приоритеты (Roadmap)
 
-| Версия | Что делать |
-|--------|-----------|
-| v0.1 | Welcome, Onboarding, навигация, Supabase подключение |
-| v0.2 | WordRepository, карточка слова, аудио, изображения |
-| v0.3 | Flashcards + SM-2, Spelling все уровни |
-| v0.4 | Home Widget, Push-уведомления |
-| v0.5 | Auth (email + Google), синхронизация прогресса гостя |
-| v0.6 | Статистика, Streak, прогресс по уровням |
-| v1.0 | Тестирование, публикация |
+| Версия | Что делать                                           |
+| ------ | ---------------------------------------------------- |
+| v0.1   | Welcome, Onboarding, навигация, Supabase подключение |
+| v0.2   | WordRepository, карточка слова, аудио, изображения   |
+| v0.3   | Flashcards + SM-2, Spelling все уровни               |
+| v0.4   | Home Widget, Push-уведомления                        |
+| v0.5   | Auth (email + Google), синхронизация прогресса гостя |
+| v0.6   | Статистика, Streak, прогресс по уровням              |
+| v1.0   | Тестирование, публикация                             |
 
 **Текущая цель: v0.1** — скелет готов, нужно реализовать полноценный онбординг и подключить Supabase.
 
@@ -199,12 +212,13 @@ flutter analyze
 flutter test
 
 # Обновить виджет рабочего стола (Android)
-# Вызывается через HomeWidget.updateWidget(name: 'WordUpWidget')
+# Вызывается через HomeWidget.updateWidget(name: 'Til1mWidget')
 ```
 
 ---
 
 ## Что НЕ входит в MVP (v1.0)
+
 - Распознавание речи
 - Мини-игры (matching, crossword)
 - Пользовательские карточки

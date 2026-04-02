@@ -1,4 +1,4 @@
--- WordUp Database Schema
+-- Til1m Database Schema
 -- Run this in Supabase SQL Editor
 
 -- Enable required extensions
