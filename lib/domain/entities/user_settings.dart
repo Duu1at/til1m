@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:wordup/domain/entities/word.dart';
+import 'package:til1m/domain/entities/word.dart';
 
 enum AppTheme { light, dark, system }
 

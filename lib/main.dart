@@ -6,13 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/core/constants/supabase_constants.dart';
-import 'package:wordup/core/di/service_locator.dart';
-import 'package:wordup/core/router/app_router.dart';
-import 'package:wordup/core/theme/app_theme.dart';
-import 'package:wordup/domain/repositories/auth_repository.dart';
-import 'package:wordup/presentation/blocs/auth/auth_cubit.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/constants/supabase_constants.dart';
+import 'package:til1m/core/di/service_locator.dart';
+import 'package:til1m/core/router/app_router.dart';
+import 'package:til1m/core/theme/app_theme.dart';
+import 'package:til1m/domain/repositories/auth_repository.dart';
+import 'package:til1m/presentation/blocs/auth/auth_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

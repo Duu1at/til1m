@@ -1,5 +1,5 @@
-import 'package:wordup/domain/entities/user_progress.dart';
-import 'package:wordup/domain/entities/word.dart';
+import 'package:til1m/domain/entities/user_progress.dart';
+import 'package:til1m/domain/entities/word.dart';
 
 abstract interface class ProgressRepository {
   Future<List<UserWordProgress>> getTodayReviewQueue(String userId);

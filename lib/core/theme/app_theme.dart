@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/core/theme/app_colors.dart';
-import 'package:wordup/core/theme/app_typography.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/theme/app_colors.dart';
+import 'package:til1m/core/theme/app_typography.dart';
 
 /// Assembles the full Material 3 [ThemeData] for light and dark modes.
 ///

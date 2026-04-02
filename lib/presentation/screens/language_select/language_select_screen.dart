@@ -4,8 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/core/router/app_router.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/router/app_router.dart';
 
 class LanguageSelectScreen extends StatefulWidget {
   const LanguageSelectScreen({super.key});

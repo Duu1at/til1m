@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wordup/core/constants/locale_keys.dart';
-import 'package:wordup/core/router/app_router.dart';
+import 'package:til1m/core/constants/locale_keys.dart';
+import 'package:til1m/core/router/app_router.dart';
 
 final class MainShell extends StatelessWidget {
   const MainShell({required this.child, super.key});

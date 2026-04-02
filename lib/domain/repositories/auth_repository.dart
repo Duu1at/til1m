@@ -1,4 +1,4 @@
-import 'package:wordup/domain/entities/user_settings.dart';
+import 'package:til1m/domain/entities/user_settings.dart';
 
 abstract interface class AuthRepository {
   Stream<bool> get authStateChanges;

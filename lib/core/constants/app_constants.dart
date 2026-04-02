@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'WordUp';
+  static const String appName = 'Til1m';
 
   // Localization
   static const String translationsPath = 'assets/translations';
@@ -34,8 +34,8 @@ class AppConstants {
   static const String hiveBoxSettings = 'settings';
 
   // Widget
-  static const String widgetName = 'WordUpWidget';
-  static const String widgetGroupId = 'group.com.wordup.widget';
+  static const String widgetName = 'Til1mWidget';
+  static const String widgetGroupId = 'group.com.til1m.widget';
 
   // SM-2 defaults
   static const double sm2DefaultEaseFactor = 2.5;
@@ -48,7 +48,7 @@ class AppConstants {
 
   // Notification
   static const int notificationId = 1001;
-  static const String notificationChannelId = 'wordup_daily';
+  static const String notificationChannelId = 'til1m_daily';
   static const String notificationChannelName = 'Daily Reminder';
 
   // Spacing & Padding

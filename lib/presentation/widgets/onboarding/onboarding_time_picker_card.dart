@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wordup/core/constants/app_constants.dart';
+import 'package:til1m/core/constants/app_constants.dart';
 
 class OnboardingTimePickerCard extends StatelessWidget {
   const OnboardingTimePickerCard({

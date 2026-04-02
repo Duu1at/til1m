@@ -4,11 +4,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/core/constants/locale_keys.dart';
-import 'package:wordup/data/repositories/auth_repository_impl.dart';
-import 'package:wordup/presentation/blocs/blocs.dart';
-import 'package:wordup/presentation/widgets/widgets.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/constants/locale_keys.dart';
+import 'package:til1m/data/repositories/auth_repository_impl.dart';
+import 'package:til1m/presentation/blocs/blocs.dart';
+import 'package:til1m/presentation/widgets/widgets.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});

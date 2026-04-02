@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:wordup/core/errors/app_auth_exception.dart';
-import 'package:wordup/domain/entities/user_settings.dart';
-import 'package:wordup/domain/repositories/auth_repository.dart';
+import 'package:til1m/core/errors/app_auth_exception.dart';
+import 'package:til1m/domain/entities/user_settings.dart';
+import 'package:til1m/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl() : _supabase = Supabase.instance.client;

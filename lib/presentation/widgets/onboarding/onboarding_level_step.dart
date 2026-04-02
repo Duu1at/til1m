@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/core/constants/locale_keys.dart';
-import 'package:wordup/domain/entities/word.dart';
-import 'package:wordup/presentation/presentation.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/constants/locale_keys.dart';
+import 'package:til1m/domain/entities/word.dart';
+import 'package:til1m/presentation/presentation.dart';
 
 class OnboardingLevelStep extends StatelessWidget {
   const OnboardingLevelStep({

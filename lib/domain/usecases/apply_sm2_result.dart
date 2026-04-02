@@ -1,6 +1,6 @@
-import 'package:wordup/core/constants/app_constants.dart';
-import 'package:wordup/domain/entities/user_progress.dart';
-import 'package:wordup/domain/repositories/progress_repository.dart';
+import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/domain/entities/user_progress.dart';
+import 'package:til1m/domain/repositories/progress_repository.dart';
 
 final class ApplySm2Result {
   const ApplySm2Result(this._repository);

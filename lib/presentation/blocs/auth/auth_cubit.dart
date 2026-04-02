@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wordup/core/errors/app_auth_exception.dart';
-import 'package:wordup/domain/repositories/auth_repository.dart';
+import 'package:til1m/core/errors/app_auth_exception.dart';
+import 'package:til1m/domain/repositories/auth_repository.dart';
 
 part 'auth_state.dart';
 

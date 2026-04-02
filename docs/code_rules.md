@@ -124,11 +124,11 @@ class WordCard extends StatelessWidget {
 
 ```dart
 // ❌
-import 'package:wordup/data/models/word_model.dart'; // в domain/
+import 'package:til1m/data/models/word_model.dart'; // в domain/
 import 'package:flutter/material.dart';              // в domain/entities/
 
 // ✅
-import 'package:wordup/domain/entities/word.dart';   // в presentation/
+import 'package:til1m/domain/entities/word.dart';   // в presentation/
 ```
 
 ---

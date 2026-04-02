@@ -1,6 +1,6 @@
-name: wordup
-description: "WordUp - English vocabulary learning app with RU/KY translations"
-publish_to: 'none'
+name: til1m
+description: "Til1m - English vocabulary learning app with RU/KY translations"
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
