@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,30 +26,58 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signInWithEmail(String email, String password) async {
+    debugPrint('[Auth] signIn → email: $email');
     try {
       await _supabase.auth.signInWithPassword(email: email, password: password);
+      debugPrint(
+        '[Auth] signIn success → user: ${_supabase.auth.currentUser?.id}',
+      );
     } on AuthException catch (e) {
+      debugPrint(
+        '[Auth] signIn AuthException → ${e.message} (status: ${e.statusCode})',
+      );
       throw AppAuthException(e.message);
+    } catch (e, st) {
+      debugPrint('[Auth] signIn unexpected error → $e\n$st');
+      rethrow;
     }
   }
 
   @override
   Future<void> signUpWithEmail(String email, String password) async {
+    debugPrint('[Auth] signUp → email: $email');
     try {
-      await _supabase.auth.signUp(email: email, password: password);
+      final response = await _supabase.auth.signUp(
+        email: email,
+        password: password,
+      );
+      debugPrint('[Auth] signUp success → user: ${response.user?.id}');
     } on AuthException catch (e) {
+      debugPrint(
+        '[Auth] signUp AuthException → ${e.message} (status: ${e.statusCode})',
+      );
       throw AppAuthException(e.message);
+    } catch (e, st) {
+      debugPrint('[Auth] signUp unexpected error → $e\n$st');
+      rethrow;
     }
   }
 
   @override
   Future<void> signInWithGoogle() async {
+    const webClientId = String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
+    debugPrint(
+      '[Auth] signInWithGoogle → webClientId: '
+      '"${webClientId.isEmpty ? "⚠️ EMPTY — передай --dart-define=GOOGLE_WEB_CLIENT_ID=..." : webClientId}"',
+    );
     try {
-      final googleUser = await GoogleSignIn().signIn();
+      final googleUser = await GoogleSignIn(serverClientId: webClientId).signIn();
+      debugPrint('[Auth] GoogleSignIn result → ${googleUser?.email ?? "null (user cancelled)"}');
       if (googleUser == null) return;
 
       final googleAuth = await googleUser.authentication;
       final idToken = googleAuth.idToken;
+      debugPrint('[Auth] idToken: ${idToken == null ? "⚠️ NULL" : "present"}');
       if (idToken == null) {
         throw const AppAuthException('Failed to get Google token');
       }
@@ -59,8 +87,13 @@ class AuthRepositoryImpl implements AuthRepository {
         idToken: idToken,
         accessToken: googleAuth.accessToken,
       );
+      debugPrint('[Auth] signInWithGoogle success → user: ${_supabase.auth.currentUser?.id}');
     } on AuthException catch (e) {
+      debugPrint('[Auth] signInWithGoogle AuthException → ${e.message} (status: ${e.statusCode})');
       throw AppAuthException(e.message);
+    } catch (e, st) {
+      debugPrint('[Auth] signInWithGoogle unexpected error → $e\n$st');
+      rethrow;
     }
   }
 

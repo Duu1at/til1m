@@ -20,9 +20,21 @@ void main() async {
 
   await Hive.initFlutter();
 
+  assert(
+    SupabaseConstants.supabaseUrl != 'YOUR_SUPABASE_URL',
+    '\n\n❌ SUPABASE_URL не задан!\n'
+    'Запускай через:\n'
+    '  flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co '
+    '--dart-define=SUPABASE_ANON_KEY=eyJ...\n'
+    'Или используй скрипт: ./run_dev.sh\n',
+  );
+
+  debugPrint('[Supabase] Initializing with URL: ${SupabaseConstants.supabaseUrl}');
+
   await Supabase.initialize(
     url: SupabaseConstants.supabaseUrl,
     anonKey: SupabaseConstants.supabaseAnonKey,
+    debug: true,
   );
 
   setupServiceLocator();
