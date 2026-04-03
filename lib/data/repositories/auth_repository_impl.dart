@@ -30,6 +30,18 @@ class AuthRepositoryImpl implements AuthRepository {
   String? get currentUserId => _supabase.auth.currentUser?.id;
 
   @override
+  String? get currentUserEmail => _supabase.auth.currentUser?.email;
+
+  @override
+  String? get currentUserName =>
+      _supabase.auth.currentUser?.userMetadata?['full_name'] as String? ??
+      _supabase.auth.currentUser?.userMetadata?['name'] as String?;
+
+  @override
+  String? get currentUserAvatarUrl =>
+      _supabase.auth.currentUser?.userMetadata?['avatar_url'] as String?;
+
+  @override
   Future<void> signInWithEmail(String email, String password) async {
     debugPrint('[Auth] signIn → email: $email');
     try {

@@ -4,8 +4,10 @@ abstract interface class AuthRepository {
   Stream<bool> get authStateChanges;
   bool get isAuthenticated;
   String? get currentUserId;
+  String? get currentUserEmail;
+  String? get currentUserName;
+  String? get currentUserAvatarUrl;
   Future<void> signInWithEmail(String email, String password);
-  /// Returns true if email confirmation is required before the user can sign in.
   Future<bool> signUpWithEmail(String email, String password);
   Future<void> signInWithGoogle();
   Future<void> signInWithApple();

@@ -51,6 +51,10 @@ class AuthCubit extends Cubit<AuthState> {
     return super.close();
   }
 
+  String? get currentUserEmail => _repo.currentUserEmail;
+  String? get currentUserName => _repo.currentUserName;
+  String? get currentUserAvatarUrl => _repo.currentUserAvatarUrl;
+
   Future<void> signInWithEmail(String email, String password) async {
     emit(AuthLoading());
     try {
