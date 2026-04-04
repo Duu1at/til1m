@@ -25,7 +25,7 @@ class ProgressCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              LocaleKeys.statisticsProgressByLevel.tr(),
+              LocaleKeys.statisticsProgressByLevel.tr(context: context),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -48,7 +48,7 @@ class ProgressCard extends StatelessWidget {
                 const SizedBox(width: AppConstants.paddingXS),
                 Expanded(
                   child: Text(
-                    '${LocaleKeys.dictionaryFilterLearning.tr()}: ${data.learningCount}',
+                    '${LocaleKeys.dictionaryFilterLearning.tr(context: context)}: ${data.learningCount}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),

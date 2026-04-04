@@ -26,11 +26,11 @@ class LanguageTile extends StatelessWidget {
             segments: [
               ButtonSegment(
                 value: UiLanguage.ru,
-                label: Text(LocaleKeys.langSelectRu.tr()),
+                label: Text(LocaleKeys.langSelectRu.tr(context: context)),
               ),
               ButtonSegment(
                 value: UiLanguage.ky,
-                label: Text(LocaleKeys.langSelectKy.tr()),
+                label: Text(LocaleKeys.langSelectKy.tr(context: context)),
               ),
             ],
             selected: {currentLanguage},

@@ -27,7 +27,7 @@ class GuestCallToAction extends StatelessWidget {
             ),
             const SizedBox(height: AppConstants.paddingM),
             Text(
-              LocaleKeys.favoritesGuestTitle.tr(),
+              LocaleKeys.favoritesGuestTitle.tr(context: context),
               style: theme.textTheme.titleSmall?.copyWith(
                 color: theme.colorScheme.onSecondaryContainer,
                 fontWeight: FontWeight.w600,
@@ -36,7 +36,7 @@ class GuestCallToAction extends StatelessWidget {
             ),
             const SizedBox(height: AppConstants.paddingXS),
             Text(
-              LocaleKeys.favoritesGuestSubtitle.tr(),
+              LocaleKeys.favoritesGuestSubtitle.tr(context: context),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSecondaryContainer.withValues(
                   alpha: 0.8,
@@ -49,7 +49,9 @@ class GuestCallToAction extends StatelessWidget {
               width: double.infinity,
               child: FilledButton(
                 onPressed: () => context.go(AppRoutes.register),
-                child: Text(LocaleKeys.favoritesBtnCreateAccount.tr()),
+                child: Text(
+                  LocaleKeys.favoritesBtnCreateAccount.tr(context: context),
+                ),
               ),
             ),
           ],

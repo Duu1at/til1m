@@ -421,7 +421,7 @@ final user = supabase.auth.currentUser;
 if (user == null) { emit(const AuthUnauthenticated()); return; }
 
 // ✅ Предпочитай ?. и ??
-final name = user?.displayName ?? LocaleKeys.guest.tr();
+final name = user?.displayName ?? LocaleKeys.guest.tr(context:context);
 ```
 
 ---

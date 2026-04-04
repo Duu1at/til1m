@@ -16,7 +16,7 @@ class AccountTile extends StatelessWidget {
       ),
       leading: const Icon(Icons.email_outlined),
       title: Text(email ?? '—'),
-      subtitle: Text(LocaleKeys.authEmail.tr()),
+      subtitle: Text(LocaleKeys.authEmail.tr(context: context)),
     );
   }
 }

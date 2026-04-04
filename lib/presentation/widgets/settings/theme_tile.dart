@@ -26,17 +26,19 @@ class ThemeTile extends StatelessWidget {
             segments: [
               ButtonSegment(
                 value: AppTheme.light,
-                label: Text(LocaleKeys.settingsThemeLight.tr()),
+                label: Text(LocaleKeys.settingsThemeLight.tr(context: context)),
                 icon: const Icon(Icons.light_mode_outlined),
               ),
               ButtonSegment(
                 value: AppTheme.system,
-                label: Text(LocaleKeys.settingsThemeSystem.tr()),
+                label: Text(
+                  LocaleKeys.settingsThemeSystem.tr(context: context),
+                ),
                 icon: const Icon(Icons.brightness_auto_outlined),
               ),
               ButtonSegment(
                 value: AppTheme.dark,
-                label: Text(LocaleKeys.settingsThemeDark.tr()),
+                label: Text(LocaleKeys.settingsThemeDark.tr(context: context)),
                 icon: const Icon(Icons.dark_mode_outlined),
               ),
             ],

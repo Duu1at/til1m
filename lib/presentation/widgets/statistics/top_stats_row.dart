@@ -17,7 +17,7 @@ class TopStatsRow extends StatelessWidget {
           child: StatCard(
             icon: Icons.check_circle_outline,
             value: '${data.knownCount}',
-            label: LocaleKeys.statisticsTotalKnown.tr(),
+            label: LocaleKeys.statisticsTotalKnown.tr(context: context),
           ),
         ),
         const SizedBox(width: AppConstants.paddingM),
@@ -25,7 +25,7 @@ class TopStatsRow extends StatelessWidget {
           child: StatCard(
             icon: Icons.local_fire_department_outlined,
             value: '${data.streakDays}',
-            label: LocaleKeys.statisticsStreak.tr(),
+            label: LocaleKeys.statisticsStreak.tr(context: context),
           ),
         ),
         const SizedBox(width: AppConstants.paddingM),
@@ -33,7 +33,7 @@ class TopStatsRow extends StatelessWidget {
           child: StatCard(
             icon: Icons.today_outlined,
             value: '${data.todayReviewed}',
-            label: LocaleKeys.homeReviewToday.tr(),
+            label: LocaleKeys.homeReviewToday.tr(context: context),
           ),
         ),
       ],

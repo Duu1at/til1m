@@ -82,7 +82,10 @@
     "new_words": "Новые слова",
     "start_learning": "Начать учиться",
     "goal_reached": "Цель выполнена! 🎉",
-    "no_words_today": "Все слова на сегодня изучены"
+    "no_words_today": "Все слова на сегодня изучены",
+    "stat_known": "Выучено",
+    "stat_learning": "Учу",
+    "stat_total": "Всего"
   },
 
   "word": {

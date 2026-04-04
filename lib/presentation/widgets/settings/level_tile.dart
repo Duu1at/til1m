@@ -23,7 +23,7 @@ class LevelTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            LocaleKeys.settingsLevel.tr(),
+            LocaleKeys.settingsLevel.tr(context: context),
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           DropdownButton<WordLevel>(

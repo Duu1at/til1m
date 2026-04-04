@@ -23,7 +23,7 @@ class AvatarSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final displayName = isGuest
-        ? LocaleKeys.profileGuest.tr()
+        ? LocaleKeys.profileGuest.tr(context: context)
         : (name ?? email ?? '—');
     final initials = _initials(name, email, isGuest);
 

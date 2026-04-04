@@ -15,7 +15,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(LocaleKeys.settingsTitle.tr()),
+        title: Text(LocaleKeys.settingsTitle.tr(context: context)),
         leading: BackButton(onPressed: () => context.go(AppRoutes.profile)),
       ),
       body: BlocBuilder<SettingsCubit, SettingsState>(

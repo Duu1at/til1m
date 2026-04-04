@@ -22,7 +22,7 @@ class MenuCard extends StatelessWidget {
         children: [
           MenuItem(
             icon: Icons.bar_chart_rounded,
-            label: LocaleKeys.statisticsTitle.tr(),
+            label: LocaleKeys.statisticsTitle.tr(context: context),
             onTap: () => context.go(AppRoutes.statistics),
             isFirst: true,
           ),
@@ -34,7 +34,7 @@ class MenuCard extends StatelessWidget {
           ),
           MenuItem(
             icon: Icons.settings_outlined,
-            label: LocaleKeys.settingsTitle.tr(),
+            label: LocaleKeys.settingsTitle.tr(context: context),
             onTap: () => context.go(AppRoutes.settings),
             isLast: true,
           ),

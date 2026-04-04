@@ -1,5 +1,5 @@
 // Generated locale keys — используй эти константы вместо raw строк
-// Пример: Text(LocaleKeys.homeTitle.tr())
+// Пример: Text(LocaleKeys.homeTitle.tr(context: context))
 abstract class LocaleKeys {
   // language select
   static const langSelectTitle = 'lang_select.title';
@@ -78,6 +78,9 @@ abstract class LocaleKeys {
   static const homeStartLearning = 'home.start_learning';
   static const homeGoalReached = 'home.goal_reached';
   static const homeNoWordsToday = 'home.no_words_today';
+  static const homeStatKnown = 'home.stat_known';
+  static const homeStatLearning = 'home.stat_learning';
+  static const homeStatTotal = 'home.stat_total';
 
   // word
   static const wordUnknownTranslation = 'word.unknown_translation';

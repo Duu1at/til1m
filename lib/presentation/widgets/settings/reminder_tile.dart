@@ -21,9 +21,11 @@ class ReminderTile extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppConstants.paddingXXL,
           ),
-          title: Text(LocaleKeys.settingsReminder.tr()),
+          title: Text(LocaleKeys.settingsReminder.tr(context: context)),
           subtitle: Text(
-            isEnabled ? currentTime! : LocaleKeys.settingsReminderOff.tr(),
+            isEnabled
+                ? currentTime!
+                : LocaleKeys.settingsReminderOff.tr(context: context),
           ),
           value: isEnabled,
           onChanged: (value) => unawaited(_handleToggle(context, value)),

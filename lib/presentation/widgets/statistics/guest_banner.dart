@@ -33,7 +33,7 @@ class GuestBanner extends StatelessWidget {
                 const SizedBox(width: AppConstants.paddingM),
                 Expanded(
                   child: Text(
-                    LocaleKeys.favoritesGuestSubtitle.tr(),
+                    LocaleKeys.favoritesGuestSubtitle.tr(context: context),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onTertiaryContainer,
                     ),

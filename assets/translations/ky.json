@@ -82,7 +82,10 @@
     "new_words": "Жаңы сөздөр",
     "start_learning": "Үйрөнүүнү баштоо",
     "goal_reached": "Максатка жетти! 🎉",
-    "no_words_today": "Бүгүнкү бардык сөздөр үйрөнүлдү"
+    "no_words_today": "Бүгүнкү бардык сөздөр үйрөнүлдү",
+    "stat_known": "Үйрөнүлдү",
+    "stat_learning": "Үйрөнүүдө",
+    "stat_total": "Жалпы"
   },
 
   "word": {

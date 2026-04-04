@@ -21,7 +21,7 @@ class GoalTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            LocaleKeys.settingsDailyGoal.tr(),
+            LocaleKeys.settingsDailyGoal.tr(context: context),
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: AppConstants.paddingS),

@@ -32,7 +32,9 @@ class QuickStatsRow extends StatelessWidget {
                   Expanded(
                     child: StatCell(
                       value: '${data.knownCount}',
-                      label: LocaleKeys.dictionaryFilterKnown.tr(),
+                      label: LocaleKeys.dictionaryFilterKnown.tr(
+                        context: context,
+                      ),
                       icon: Icons.check_circle_outline,
                     ),
                   ),
@@ -44,7 +46,9 @@ class QuickStatsRow extends StatelessWidget {
                   Expanded(
                     child: StatCell(
                       value: '${data.learningCount}',
-                      label: LocaleKeys.dictionaryFilterLearning.tr(),
+                      label: LocaleKeys.dictionaryFilterLearning.tr(
+                        context: context,
+                      ),
                       icon: Icons.school_outlined,
                     ),
                   ),
@@ -56,7 +60,7 @@ class QuickStatsRow extends StatelessWidget {
                   Expanded(
                     child: StatCell(
                       value: '${data.todayReviewed}',
-                      label: LocaleKeys.homeReviewToday.tr(),
+                      label: LocaleKeys.homeReviewToday.tr(context: context),
                       icon: Icons.today_outlined,
                     ),
                   ),
