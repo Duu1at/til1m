@@ -1,7 +1,7 @@
 # Til1m — Архитектура
 
 **Til1m** — Flutter-приложение для изучения английских слов (перевод: RU, KY). Алгоритм интервального повторения SM-2.
-**Платформы:** Android, iOS | **Версия:** v0.1
+**Платформы:** Android, iOS | **Версия:** v0.2
 
 ---
 
@@ -34,11 +34,19 @@ lib/
 │   │   ├── app_constants.dart       # SharedPrefs ключи, Hive боксы, SM-2 дефолты
 │   │   ├── locale_keys.dart         # Ключи локализации
 │   │   └── supabase_constants.dart  # URL, anon key, таблицы, бакеты
-│   ├── router/app_router.dart       # Все маршруты GoRouter
+│   ├── di/
+│   │   └── service_locator.dart     # Dependency injection (GetIt)
+│   ├── errors/
+│   │   ├── app_auth_exception.dart  # Кастомные исключения авторизации
+│   │   └── auth_error_mapper.dart   # Маппинг ошибок Supabase → AppAuthException
+│   ├── router/app_router.dart       # Все маршруты GoRouter + AppRoutes
 │   ├── shell/main_shell.dart        # BottomNavigationBar
-│   ├── theme/app_theme.dart         # Material3 light/dark темы
-│   ├── errors/                      # Кастомные исключения
-│   └── utils/                       # Утилиты, typedefs
+│   ├── theme/
+│   │   ├── app_theme.dart           # Material3 light/dark темы
+│   │   ├── app_colors.dart          # Цветовая палитра
+│   │   └── app_typography.dart      # Шрифты и стили текста
+│   └── utils/
+│       └── go_router_refresh_stream.dart
 │
 ├── domain/                          # Чистый Dart, без Flutter
 │   ├── entities/
@@ -57,25 +65,45 @@ lib/
 │   │   ├── local/                   # Hive
 │   │   └── remote/                  # Supabase
 │   ├── models/                      # JSON-сериализуемые модели
-│   └── repositories/                # Реализации domain-интерфейсов
+│   └── repositories/
+│       └── auth_repository_impl.dart
 │
 ├── presentation/
-│   ├── screens/                     # Экраны по фичам
-│   │   └── onboarding/
-│   │       ├
-│   │       │    welcome_screen.dart
-│   │       │    onboarding_screen.dart
-│   │       └── widgets/
-│   │           ├
-│   │           │    onboarding_goal_step.dart
-│   │           │    onboarding_level_step.dart
-│   │           │    onboarding_time_step.dart
-│   │           │    onboarding_progress_bar.dart
-│   │           │    onboarding_next_button.dart
-│   │           │
-│   ├── blocs/                       # BLoC / Cubit по фичам
-│   │   ├── auth/ │ words/ │ progress/ │ favorites/ │ settings/ │ statistics/
-│   └── widgets/                     # Переиспользуемые виджеты (1 файл = 1 виджет)
+│   ├── screens/
+│   │   ├── language_select/
+│   │   │   └── language_select_screen.dart   # Выбор языка интерфейса (первый экран)
+│   │   ├── onboarding/
+│   │   │   ├── welcome_screen.dart
+│   │   │   └── onboarding_screen.dart
+│   │   ├── auth/
+│   │   │   ├── login_screen.dart
+│   │   │   ├── register_screen.dart
+│   │   │   └── forgot_password_screen.dart
+│   │   ├── home/home_screen.dart
+│   │   ├── flashcards/flashcards_screen.dart
+│   │   ├── spelling/spelling_screen.dart
+│   │   ├── dictionary/dictionary_screen.dart
+│   │   ├── favorites/favorites_screen.dart
+│   │   ├── profile/profile_screen.dart
+│   │   ├── statistics/statistics_screen.dart
+│   │   ├── settings/settings_screen.dart
+│   │   └── word_detail/word_detail_screen.dart
+│   ├── blocs/
+│   │   ├── auth/
+│   │   │   ├── auth_cubit.dart
+│   │   │   └── auth_state.dart
+│   │   ├── settings/
+│   │   │   ├── settings_cubit.dart
+│   │   │   └── settings_state.dart
+│   │   └── statistics/
+│   │       ├── statistics_cubit.dart
+│   │       └── statistics_state.dart
+│   └── widgets/
+│       ├── auth/          # auth_email_field, auth_password_field, auth_social_button, auth_or_divider
+│       ├── onboarding/    # goal_step, level_step, time_step, progress_bar, next_button, level_card, goal_option, time_picker_card, welcome_feature_row
+│       ├── profile/       # avatar, avatar_section, level_badge, menu_card, menu_item, stat_cell, quick_stats_row, logout_button, guest_call_to_action
+│       ├── settings/      # goal_tile, level_tile, language_tile, theme_tile, reminder_tile, account_tile, section_header
+│       └── statistics/    # stat_card, top_stats_row, progress_card, level_progress_row, guest_banner
 │
 ├── services/
 │   ├── audio/
@@ -145,8 +173,8 @@ class UserSettings extends Equatable {
 
 ## State Management
 
-- **Cubit** — простые переходы: Settings, Theme, Onboarding
-- **BLoC** — сложная логика: Auth, Flashcards, Dictionary
+- **Cubit** — простые переходы: Auth, Settings, Statistics, Onboarding
+- **BLoC** — сложная логика с событиями: Flashcards, Dictionary (планируется)
 
 ```
 Widget → BLoC.add(Event) → UseCase → Repository → DataSource
@@ -154,36 +182,55 @@ Widget → BLoC.add(Event) → UseCase → Repository → DataSource
 Widget ← rebuild      ← BLoC.emit(State) ←────────────
 ```
 
-Структура файлов BLoC:
+Структура файлов Cubit:
 
 ```
-blocs/words/
-├── words_bloc.dart
-├── words_event.dart   # sealed class
-└── words_state.dart   # sealed class
+blocs/auth/
+├── auth_cubit.dart
+└── auth_state.dart    # sealed class
 ```
+
+Состояния `AuthCubit`:
+
+| Состояние                   | Описание                                    |
+| --------------------------- | ------------------------------------------- |
+| `AuthInitial`               | Начальное, идёт проверка сессии             |
+| `AuthLoading`               | Выполняется запрос к Supabase               |
+| `AuthAuthenticated`         | Пользователь вошёл                         |
+| `AuthUnauthenticated`       | Нет сессии                                  |
+| `AuthGuest`                 | Гостевой режим                              |
+| `AuthPasswordResetSent`     | Письмо для сброса пароля отправлено         |
+| `AuthEmailConfirmationSent` | Письмо подтверждения отправлено (+ email)   |
+| `AuthError`                 | Ошибка авторизации (+ message)              |
 
 ---
 
 ## Навигация (GoRouter)
 
-Все маршруты в `lib/core/router/app_router.dart`.
+Все маршруты в `lib/core/router/app_router.dart`. Начальный экран: `/language-select`.
 
-| Путь          | Экран            | Тип                 |
-| ------------- | ---------------- | ------------------- |
-| `/welcome`    | WelcomeScreen    | GoRoute             |
-| `/onboarding` | OnboardingScreen | GoRoute             |
-| `/login`      | LoginScreen      | GoRoute             |
-| `/register`   | RegisterScreen   | GoRoute             |
-| `/home`       | HomeScreen       | ShellRoute          |
-| `/flashcards` | FlashcardsScreen | ShellRoute          |
-| `/spelling`   | SpellingScreen   | ShellRoute          |
-| `/dictionary` | DictionaryScreen | ShellRoute          |
-| `/favorites`  | FavoritesScreen  | ShellRoute          |
-| `/profile`    | ProfileScreen    | ShellRoute          |
-| `/statistics` | StatisticsScreen | ShellRoute          |
-| `/settings`   | SettingsScreen   | ShellRoute          |
-| `/word/:id`   | WordDetailScreen | GoRoute (вне shell) |
+| Путь                | Экран                  | Тип                 |
+| ------------------- | ---------------------- | ------------------- |
+| `/language-select`  | LanguageSelectScreen   | GoRoute (начальный) |
+| `/welcome`          | WelcomeScreen          | GoRoute             |
+| `/onboarding`       | OnboardingScreen       | GoRoute             |
+| `/login`            | LoginScreen            | GoRoute             |
+| `/register`         | RegisterScreen         | GoRoute             |
+| `/forgot-password`  | ForgotPasswordScreen   | GoRoute             |
+| `/home`             | HomeScreen             | ShellRoute          |
+| `/flashcards`       | FlashcardsScreen       | ShellRoute          |
+| `/spelling`         | SpellingScreen         | ShellRoute          |
+| `/dictionary`       | DictionaryScreen       | ShellRoute          |
+| `/favorites`        | FavoritesScreen        | ShellRoute          |
+| `/profile`          | ProfileScreen          | ShellRoute          |
+| `/statistics`       | StatisticsScreen       | ShellRoute          |
+| `/settings`         | SettingsScreen         | ShellRoute          |
+| `/word/:id`         | WordDetailScreen       | GoRoute (вне shell) |
+
+**Redirect-логика:**
+- Неаутентифицированный пользователь (не гость) → `/login` при переходе на защищённые роуты
+- Аутентифицированный пользователь → `/home` при попытке открыть `/login` или `/register`
+- Гостевой режим (`AuthGuest`) даёт доступ к защищённым роутам
 
 **BottomNav (ShellRoute):** Главная · Учиться · Словарь · Профиль
 
@@ -270,7 +317,11 @@ Text(LocaleKeys.welcomeTitle.tr(context: context))
 
 ## Тема и стили
 
-Файл: `lib/core/theme/app_theme.dart` — Material3, light/dark.
+Material3, light/dark. Цвета и типографика вынесены в отдельные файлы:
+
+- `lib/core/theme/app_theme.dart` — сборка ThemeData
+- `lib/core/theme/app_colors.dart` — цветовая палитра
+- `lib/core/theme/app_typography.dart` — шрифты и стили текста
 
 |                 |                                         |
 | --------------- | --------------------------------------- |
@@ -317,12 +368,12 @@ Screen → BLoC.add(Event) → UseCase → Repository
 
 ## Роадмап
 
-| Версия   | Задачи                                               |
-| -------- | ---------------------------------------------------- |
-| **v0.1** | Welcome, Onboarding, навигация, Supabase подключение |
-| v0.2     | WordRepository, карточка слова, аудио, изображения   |
-| v0.3     | Flashcards + SM-2, Spelling                          |
-| v0.4     | Home Widget, Push-уведомления                        |
-| v0.5     | Auth (email + Google), синхронизация прогресса гостя |
-| v0.6     | Статистика, Streak, прогресс по уровням              |
-| v1.0     | Тестирование, публикация                             |
+| Версия       | Задачи                                                                                |
+| ------------ | ------------------------------------------------------------------------------------- |
+| ~~**v0.1**~~ | ~~Welcome, Onboarding, навигация, Supabase подключение~~ ✓                            |
+| **v0.2**     | Auth (email + Google + гость), Settings/Statistics BLoC, роутинг с redirect-логикой ✓ |
+| v0.3         | WordRepository, карточка слова, аудио, изображения                                    |
+| v0.4         | Flashcards + SM-2, Spelling                                                           |
+| v0.5         | Home Widget, Push-уведомления                                                         |
+| v0.6         | Статистика, Streak, прогресс по уровням                                               |
+| v1.0         | Тестирование, публикация                                                              |
