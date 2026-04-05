@@ -137,7 +137,9 @@
     "filter_learning": "В процессе",
     "filter_known": "Изучено",
     "empty": "Слова не найдены",
-    "words_count": "{count} слов"
+    "words_count": "{count} слов",
+    "sort_alpha": "А–Я",
+    "sort_level": "По уровню"
   },
 
   "favorites": {

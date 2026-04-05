@@ -50,7 +50,7 @@ final class WordExample extends Equatable {
 }
 
 @immutable
-final class Word extends Equatable {
+class Word extends Equatable {
   const Word({
     required this.id,
     required this.word,

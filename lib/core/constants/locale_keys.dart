@@ -127,6 +127,8 @@ abstract class LocaleKeys {
   static const dictionaryFilterKnown = 'dictionary.filter_known';
   static const dictionaryEmpty = 'dictionary.empty';
   static const dictionaryWordsCount = 'dictionary.words_count';
+  static const dictionarySortAlpha = 'dictionary.sort_alpha';
+  static const dictionarySortLevel = 'dictionary.sort_level';
 
   // favorites
   static const favoritesTitle = 'favorites.title';
