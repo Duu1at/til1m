@@ -15,10 +15,6 @@ class WordRemoteDataSource {
     word_translations(language, translation, synonyms)
   ''';
 
-  /// Fetches a paginated page of words.
-  ///
-  /// [inIds]      — include only words with these IDs (for learning/known filter).
-  /// [excludeIds] — exclude words with these IDs (for new-words filter).
   Future<({List<Word> words, bool hasMore})> fetchPage({
     required int offset,
     required int limit,
@@ -59,8 +55,6 @@ class WordRemoteDataSource {
     }
   }
 
-  /// Returns word IDs from user_word_progress.
-  /// If [status] is null — returns all word IDs the user has progress on.
   Future<List<String>> fetchProgressIds({
     required String userId,
     String? status,
@@ -79,7 +73,6 @@ class WordRemoteDataSource {
     }
   }
 
-  /// Returns a map of wordId → status string for the given word IDs.
   Future<Map<String, String>> fetchStatusMap({
     required String userId,
     required List<String> wordIds,

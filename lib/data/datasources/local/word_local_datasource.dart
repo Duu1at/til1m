@@ -31,14 +31,13 @@ class WordLocalDataSource {
     required int limit,
     String? searchQuery,
     WordLevel? level,
-    String? statusFilter, // 'newWord' | 'learning' | 'known' | null (all)
+    String? statusFilter,
     bool sortByLevel = false,
   }) async {
     try {
       final wordBox = await _wordsBox();
       final progressBox = await _progressBox();
 
-      // Build status map from progress box
       final statusMap = <String, String>{};
       for (final entry in progressBox.toMap().entries) {
         final value = entry.value;
@@ -49,7 +48,6 @@ class WordLocalDataSource {
         if (wordId.isNotEmpty && status != null) statusMap[wordId] = status;
       }
 
-      // Parse all cached words
       var words = <Word>[];
       for (final value in wordBox.values) {
         if (value is! Map) continue;
@@ -61,7 +59,6 @@ class WordLocalDataSource {
         }
       }
 
-      // Apply filters
       if (searchQuery != null && searchQuery.isNotEmpty) {
         final q = searchQuery.toLowerCase();
         words = words
@@ -85,7 +82,6 @@ class WordLocalDataSource {
         }
       }
 
-      // Sort
       if (sortByLevel) {
         words.sort((a, b) {
           final cmp = a.level.index.compareTo(b.level.index);
@@ -98,7 +94,6 @@ class WordLocalDataSource {
       final hasMore = words.length > offset + limit;
       final page = words.skip(offset).take(limit).toList();
 
-      // Build status map only for the current page
       final pageStatusMap = <String, String>{
         for (final w in page)
           if (statusMap.containsKey(w.id)) w.id: statusMap[w.id]!,

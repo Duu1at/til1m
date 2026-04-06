@@ -7,12 +7,15 @@ class ProgressRemoteDataSource {
 
   final SupabaseClient _client;
 
-  /// Returns progress rows where next_review_at <= now (due for review).
-  Future<List<Map<String, dynamic>>> fetchDueProgressEntries(String userId) async {
+  Future<List<Map<String, dynamic>>> fetchDueProgressEntries(
+    String userId,
+  ) async {
     try {
       final data = await _client
           .from(SupabaseConstants.tableUserWordProgress)
-          .select('word_id, ease_factor, repetitions, status, next_review_at, last_reviewed_at')
+          .select(
+            'word_id, ease_factor, repetitions, status, next_review_at, last_reviewed_at',
+          )
           .eq('user_id', userId)
           .lte('next_review_at', DateTime.now().toIso8601String());
       return data.map(Map<String, dynamic>.from).toList();
@@ -22,7 +25,6 @@ class ProgressRemoteDataSource {
     }
   }
 
-  /// Returns all word IDs that the user has any progress for.
   Future<List<String>> fetchAllProgressWordIds(String userId) async {
     try {
       final data = await _client
@@ -36,8 +38,6 @@ class ProgressRemoteDataSource {
     }
   }
 
-  /// Upserts a progress entry. [data] must contain user_id, word_id, status,
-  /// ease_factor, repetitions, next_review_at, last_reviewed_at.
   Future<void> upsertProgressEntry(Map<String, dynamic> data) async {
     try {
       await _client
