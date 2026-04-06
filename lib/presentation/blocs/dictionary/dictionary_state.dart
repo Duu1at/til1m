@@ -39,12 +39,14 @@ final class DictionaryLoaded extends DictionaryState {
     required this.statusFilter,
     required this.sort,
     this.levelFilter,
+    this.isFiltering = false,
   });
 
   const DictionaryLoaded.empty()
       : words = const [],
         hasMore = false,
         isLoadingMore = false,
+        isFiltering = false,
         query = '',
         statusFilter = WordStatusFilter.all,
         sort = DictionarySort.alphabetical,
@@ -53,6 +55,11 @@ final class DictionaryLoaded extends DictionaryState {
   final List<WordWithStatus> words;
   final bool hasMore;
   final bool isLoadingMore;
+
+  /// True while a search/filter refresh is running in the background.
+  /// The existing [words] list stays visible — no full-screen spinner.
+  final bool isFiltering;
+
   final String query;
   final WordStatusFilter statusFilter;
   final WordLevel? levelFilter;
@@ -62,6 +69,7 @@ final class DictionaryLoaded extends DictionaryState {
     List<WordWithStatus>? words,
     bool? hasMore,
     bool? isLoadingMore,
+    bool? isFiltering,
     String? query,
     WordStatusFilter? statusFilter,
     WordLevel? levelFilter,
@@ -71,6 +79,7 @@ final class DictionaryLoaded extends DictionaryState {
         words: words ?? this.words,
         hasMore: hasMore ?? this.hasMore,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+        isFiltering: isFiltering ?? this.isFiltering,
         query: query ?? this.query,
         statusFilter: statusFilter ?? this.statusFilter,
         levelFilter: levelFilter ?? this.levelFilter,
@@ -82,6 +91,7 @@ final class DictionaryLoaded extends DictionaryState {
         words,
         hasMore,
         isLoadingMore,
+        isFiltering,
         query,
         statusFilter,
         levelFilter,

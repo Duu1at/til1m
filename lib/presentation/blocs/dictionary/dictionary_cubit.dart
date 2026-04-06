@@ -49,7 +49,12 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     _cachedExcludeIds = null;
     _cachedFixedStatus = null;
 
-    emit(const DictionaryLoading());
+    final current = state;
+    if (current is DictionaryLoaded) {
+      emit(current.copyWith(isFiltering: true, isLoadingMore: false));
+    } else {
+      emit(const DictionaryLoading());
+    }
 
     try {
       final prefs = await SharedPreferences.getInstance();

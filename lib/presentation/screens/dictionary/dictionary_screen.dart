@@ -93,6 +93,7 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
     final words = widget.state.words;
     final hasMore = widget.state.hasMore;
     final isLoadingMore = widget.state.isLoadingMore;
+    final isFiltering = widget.state.isFiltering;
 
     return CustomScrollView(
       controller: _scrollController,
@@ -101,6 +102,10 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
           pinned: true,
           automaticallyImplyLeading: false,
           title: Text(LocaleKeys.dictionaryTitle.tr(context: context)),
+          actions: [
+            _SortButton(sort: widget.state.sort),
+            const SizedBox(width: AppConstants.paddingS),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(_sliverBottomHeight),
             child: Column(
@@ -123,7 +128,16 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
             ),
           ),
         ),
-        if (words.isEmpty)
+        SliverToBoxAdapter(
+          child: isFiltering
+              ? LinearProgressIndicator(
+                  minHeight: 2,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                )
+              : const SizedBox.shrink(),
+        ),
+        if (words.isEmpty && !isFiltering)
           const SliverFillRemaining(child: _EmptyState())
         else
           SliverList.separated(
@@ -144,6 +158,31 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
             },
           ),
       ],
+    );
+  }
+}
+
+final class _SortButton extends StatelessWidget {
+  const _SortButton({required this.sort});
+
+  final DictionarySort sort;
+
+  @override
+  Widget build(BuildContext context) {
+    final isAlpha = sort == DictionarySort.alphabetical;
+    return Tooltip(
+      message: isAlpha
+          ? LocaleKeys.dictionarySortLevel.tr(context: context)
+          : LocaleKeys.dictionarySortAlpha.tr(context: context),
+      child: IconButton(
+        icon: Icon(
+          isAlpha ? Icons.sort_by_alpha_rounded : Icons.layers_rounded,
+          size: 22,
+        ),
+        onPressed: () => context.read<DictionaryCubit>().onSortChanged(
+          isAlpha ? DictionarySort.byLevel : DictionarySort.alphabetical,
+        ),
+      ),
     );
   }
 }
