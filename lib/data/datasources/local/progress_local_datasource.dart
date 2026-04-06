@@ -3,11 +3,73 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
 
 class ProgressLocalDataSource {
+  Future<Box<dynamic>> _progressBox() async {
+    return Hive.isBoxOpen(AppConstants.hiveBoxProgress)
+        ? Hive.box<dynamic>(AppConstants.hiveBoxProgress)
+        : Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
+  }
+
+  Future<List<Map<String, dynamic>>> getDueProgressEntries() async {
+    try {
+      final box = await _progressBox();
+      final now = DateTime.now();
+      final result = <Map<String, dynamic>>[];
+
+      for (final value in box.values) {
+        if (value is! Map) continue;
+        final nextStr = value['next_review_at'] as String?;
+        if (nextStr == null) {
+          result.add(Map<String, dynamic>.from(value));
+          continue;
+        }
+        final dt = DateTime.tryParse(nextStr);
+        if (dt != null && !dt.isAfter(now)) {
+          result.add(Map<String, dynamic>.from(value));
+        }
+      }
+
+      return result;
+    } on Object catch (e, st) {
+      debugPrint('[ProgressLocal] getDueProgressEntries error: $e\n$st');
+      return [];
+    }
+  }
+
+  Future<List<String>> getAllProgressWordIds() async {
+    try {
+      final box = await _progressBox();
+      final ids = <String>[];
+
+      for (final entry in box.toMap().entries) {
+        final value = entry.value;
+        if (value is! Map) continue;
+        final wordId =
+            value['word_id'] as String? ?? entry.key as String? ?? '';
+        if (wordId.isNotEmpty) ids.add(wordId);
+      }
+
+      return ids;
+    } on Object catch (e, st) {
+      debugPrint('[ProgressLocal] getAllProgressWordIds error: $e\n$st');
+      return [];
+    }
+  }
+
+  Future<void> saveProgressEntry({
+    required String wordId,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final box = await _progressBox();
+      await box.put(wordId, data);
+    } on Object catch (e, st) {
+      debugPrint('[ProgressLocal] saveProgressEntry error: $e\n$st');
+    }
+  }
+
   Future<Map<String, int>> fetchProgressStats() async {
     try {
-      final box = Hive.isBoxOpen(AppConstants.hiveBoxProgress)
-          ? Hive.box<dynamic>(AppConstants.hiveBoxProgress)
-          : await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
+      final box = await _progressBox();
 
       final now = DateTime.now();
       final todayStart = DateTime(now.year, now.month, now.day);

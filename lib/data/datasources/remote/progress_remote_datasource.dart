@@ -7,6 +7,48 @@ class ProgressRemoteDataSource {
 
   final SupabaseClient _client;
 
+  /// Returns progress rows where next_review_at <= now (due for review).
+  Future<List<Map<String, dynamic>>> fetchDueProgressEntries(String userId) async {
+    try {
+      final data = await _client
+          .from(SupabaseConstants.tableUserWordProgress)
+          .select('word_id, ease_factor, repetitions, status, next_review_at, last_reviewed_at')
+          .eq('user_id', userId)
+          .lte('next_review_at', DateTime.now().toIso8601String());
+      return data.map(Map<String, dynamic>.from).toList();
+    } on Object catch (e, st) {
+      debugPrint('[ProgressRemote] fetchDueProgressEntries error: $e\n$st');
+      rethrow;
+    }
+  }
+
+  /// Returns all word IDs that the user has any progress for.
+  Future<List<String>> fetchAllProgressWordIds(String userId) async {
+    try {
+      final data = await _client
+          .from(SupabaseConstants.tableUserWordProgress)
+          .select('word_id')
+          .eq('user_id', userId);
+      return data.map((r) => r['word_id'] as String).toList();
+    } on Object catch (e, st) {
+      debugPrint('[ProgressRemote] fetchAllProgressWordIds error: $e\n$st');
+      rethrow;
+    }
+  }
+
+  /// Upserts a progress entry. [data] must contain user_id, word_id, status,
+  /// ease_factor, repetitions, next_review_at, last_reviewed_at.
+  Future<void> upsertProgressEntry(Map<String, dynamic> data) async {
+    try {
+      await _client
+          .from(SupabaseConstants.tableUserWordProgress)
+          .upsert(data, onConflict: 'user_id,word_id');
+    } on Object catch (e, st) {
+      debugPrint('[ProgressRemote] upsertProgressEntry error: $e\n$st');
+      rethrow;
+    }
+  }
+
   Future<Map<String, int>> fetchProgressStats(String userId) async {
     try {
       final data = await _client
