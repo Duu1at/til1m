@@ -83,29 +83,29 @@ final class LevelAndSortRow extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: AppConstants.paddingM),
-          child: SegmentedButton<DictionarySort>(
-            segments: const [
-              ButtonSegment(
-                value: DictionarySort.alphabetical,
-                icon: Icon(Icons.sort_by_alpha_rounded, size: 16),
-              ),
-              ButtonSegment(
-                value: DictionarySort.byLevel,
-                icon: Icon(Icons.layers_rounded, size: 16),
-              ),
-            ],
-            selected: {sort},
-            onSelectionChanged: (s) =>
-                context.read<DictionaryCubit>().onSortChanged(s.first),
-            showSelectedIcon: false,
-            style: const ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: VisualDensity.compact,
-            ),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.only(right: AppConstants.paddingM),
+        //   child: SegmentedButton<DictionarySort>(
+        //     segments: const [
+        //       ButtonSegment(
+        //         value: DictionarySort.alphabetical,
+        //         icon: Icon(Icons.sort_by_alpha_rounded, size: 16),
+        //       ),
+        //       ButtonSegment(
+        //         value: DictionarySort.byLevel,
+        //         icon: Icon(Icons.layers_rounded, size: 16),
+        //       ),
+        //     ],
+        //     selected: {sort},
+        //     onSelectionChanged: (s) =>
+        //         context.read<DictionaryCubit>().onSortChanged(s.first),
+        //     showSelectedIcon: false,
+        //     style: const ButtonStyle(
+        //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        //       visualDensity: VisualDensity.compact,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

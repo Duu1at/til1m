@@ -19,7 +19,7 @@ final class WordModel extends Word {
     return WordModel(
       id: json['id'] as String,
       word: json['word'] as String,
-      level: WordLevel.values.byName(json['level'] as String? ?? 'a1'),
+      level: _parseLevel(json['level'] as String?),
       partOfSpeech: _parsePos(json['part_of_speech'] as String?),
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -58,10 +58,20 @@ final class WordModel extends Word {
             .toList(),
       };
 
+  static WordLevel _parseLevel(String? value) {
+    if (value == null) return WordLevel.a1;
+    final lower = value.toLowerCase();
+    return WordLevel.values.firstWhere(
+      (e) => e.name == lower,
+      orElse: () => WordLevel.a1,
+    );
+  }
+
   static PartOfSpeech _parsePos(String? value) {
     if (value == null) return PartOfSpeech.noun;
+    final lower = value.toLowerCase();
     return PartOfSpeech.values.firstWhere(
-      (e) => e.name == value,
+      (e) => e.name == lower,
       orElse: () => PartOfSpeech.noun,
     );
   }

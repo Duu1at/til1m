@@ -29,24 +29,19 @@ class DictionaryCubit extends Cubit<DictionaryState> {
   final WordRemoteDataSource _wordRemote;
   final WordLocalDataSource _wordLocal;
 
-  // Persistent filter state
   String _query = '';
   WordStatusFilter _statusFilter = WordStatusFilter.all;
   WordLevel? _levelFilter;
   DictionarySort _sort = DictionarySort.alphabetical;
 
-  // Pagination
   int _page = 0;
   static const _pageSize = 20;
 
-  // Cached for pagination — avoids re-fetching progress IDs on loadMore
   List<String>? _cachedInIds;
   List<String>? _cachedExcludeIds;
   WordStatus? _cachedFixedStatus;
 
   Timer? _debounce;
-
-  // ─── Public API ────────────────────────────────────────────────────────────
 
   Future<void> load() async {
     _page = 0;
@@ -134,9 +129,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     return super.close();
   }
 
-  // ─── Private helpers ───────────────────────────────────────────────────────
-
-  /// Pre-fetches progress IDs for status-based filtering.
   Future<void> _prepareRemoteStatusFilter({required String userId}) async {
     switch (_statusFilter) {
       case WordStatusFilter.all:
@@ -163,7 +155,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     required String userId,
     required bool append,
   }) async {
-    // If filtering by specific IDs and none exist — return empty
     if (_cachedInIds != null && _cachedInIds!.isEmpty) {
       if (!isClosed) {
         if (append) {
@@ -188,7 +179,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       sortByLevel: _sort == DictionarySort.byLevel,
     );
 
-    // Fetch statuses per-page only when status is 'all'
     var statusMap = <String, String>{};
     if (_cachedFixedStatus == null && result.words.isNotEmpty) {
       try {

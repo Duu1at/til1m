@@ -35,7 +35,7 @@ class WordRemoteDataSource {
         q = q.ilike('word', '%$searchQuery%');
       }
       if (level != null) {
-        q = q.eq('level', level.name);
+        q = q.eq('level', level.name.toUpperCase());
       }
       if (inIds != null && inIds.isNotEmpty) {
         q = q.inFilter('id', inIds);

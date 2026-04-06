@@ -177,7 +177,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> migrateGuestProgress(String userId) async {
     try {
-      final progressBox = Hive.box<dynamic>(AppConstants.hiveBoxProgress);
+      final progressBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
       if (progressBox.isNotEmpty) {
         final progressRows = progressBox.keys.map((key) {
           final raw = Map<String, dynamic>.from(progressBox.get(key) as Map);
@@ -197,7 +197,7 @@ class AuthRepositoryImpl implements AuthRepository {
             .upsert(progressRows, onConflict: 'user_id,word_id');
       }
 
-      final favoritesBox = Hive.box<dynamic>(AppConstants.hiveBoxFavorites);
+      final favoritesBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
       if (favoritesBox.isNotEmpty) {
         final favRows = favoritesBox.keys
             .map((wordId) => {'user_id': userId, 'word_id': wordId as String})
@@ -219,8 +219,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> clearGuestLocalData() async {
-    await Hive.box<dynamic>(AppConstants.hiveBoxProgress).clear();
-    await Hive.box<dynamic>(AppConstants.hiveBoxFavorites).clear();
+    final progressBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
+    await progressBox.clear();
+    final favoritesBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
+    await favoritesBox.clear();
     debugPrint('[Auth] clearGuestLocalData done');
   }
 
