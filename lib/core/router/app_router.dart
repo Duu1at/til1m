@@ -9,7 +9,7 @@ import 'package:til1m/presentation/screens/dictionary/dictionary_screen.dart';
 import 'package:til1m/presentation/screens/favorites/favorites_screen.dart';
 import 'package:til1m/presentation/screens/flashcards/flashcards_screen.dart';
 import 'package:til1m/presentation/screens/home/home_screen.dart';
-import 'package:til1m/presentation/screens/language_select/language_select_screen.dart';
+import 'package:til1m/presentation/screens/onboarding/language_select_screen.dart';
 import 'package:til1m/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:til1m/presentation/screens/onboarding/welcome_screen.dart';
 import 'package:til1m/presentation/screens/profile/profile_screen.dart';
@@ -36,20 +36,27 @@ final class AppRoutes {
   static const String profile = '/profile';
 }
 
-const Set<String> _protectedRoutes = {
-  AppRoutes.home,
-  AppRoutes.flashcards,
-  AppRoutes.spelling,
-  AppRoutes.dictionary,
-  AppRoutes.favorites,
-  AppRoutes.statistics,
-  AppRoutes.settings,
-  AppRoutes.profile,
+// Setup screens that make no sense once the user is onboarded.
+const Set<String> _setupRoutes = {
+  AppRoutes.languageSelect,
+  AppRoutes.welcome,
+  AppRoutes.onboarding,
 };
 
+// Auth screens that logged-in / guest users should never land on.
 const Set<String> _authOnlyRoutes = {
   AppRoutes.login,
   AppRoutes.register,
+};
+
+// All routes that are openly accessible without any session.
+const Set<String> _publicRoutes = {
+  AppRoutes.languageSelect,
+  AppRoutes.welcome,
+  AppRoutes.onboarding,
+  AppRoutes.login,
+  AppRoutes.register,
+  AppRoutes.forgotPassword,
 };
 
 GoRouter createRouter(AuthCubit authCubit) => GoRouter(
@@ -57,20 +64,34 @@ GoRouter createRouter(AuthCubit authCubit) => GoRouter(
   refreshListenable: GoRouterRefreshStream(authCubit.stream),
   redirect: (context, state) {
     final authState = authCubit.state;
-
     if (authState is AuthInitial) return null;
 
     final isAuthenticated = authState is AuthAuthenticated;
     final isGuest = authState is AuthGuest;
-    final hasAccess = isAuthenticated || isGuest;
+    final isUnauthenticated = authState is AuthUnauthenticated;
+    final needsOnboarding = authState is AuthNeedsOnboarding;
     final location = state.matchedLocation;
 
-    if (!hasAccess && _protectedRoutes.contains(location)) {
-      return AppRoutes.login;
+    // User who needs onboarding is funneled exclusively to /onboarding until
+    // completeAuthenticatedOnboarding() emits AuthAuthenticated.
+    if (needsOnboarding && location != AppRoutes.onboarding) {
+      return AppRoutes.onboarding;
     }
 
-    if (isAuthenticated && _authOnlyRoutes.contains(location)) {
+    // Authenticated / explicit-guest users skip the setup flow.
+    if ((isAuthenticated || isGuest) && _setupRoutes.contains(location)) {
       return AppRoutes.home;
+    }
+
+    // Authenticated / guest users have no reason to be on login/register.
+    if ((isAuthenticated || isGuest) && _authOnlyRoutes.contains(location)) {
+      return AppRoutes.home;
+    }
+
+    // Unauthenticated (logged-out) users cannot access protected routes.
+    // They are sent to login; the welcome/onboarding slides are NOT shown.
+    if (isUnauthenticated && !_publicRoutes.contains(location)) {
+      return AppRoutes.login;
     }
 
     return null;

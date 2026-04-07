@@ -48,7 +48,7 @@ class GuestCallToAction extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => context.go(AppRoutes.register),
+                onPressed: () => context.push(AppRoutes.register),
                 child: Text(
                   LocaleKeys.favoritesBtnCreateAccount.tr(context: context),
                 ),

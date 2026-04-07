@@ -6,6 +6,11 @@ final class AuthInitial extends AuthState {}
 
 final class AuthAuthenticated extends AuthState {}
 
+/// User has a valid JWT but has not completed onboarding yet
+/// (no user_settings row in Supabase). The router funnels this
+/// state to /onboarding until [AuthAuthenticated] is emitted.
+final class AuthNeedsOnboarding extends AuthState {}
+
 final class AuthUnauthenticated extends AuthState {}
 
 final class AuthGuest extends AuthState {}

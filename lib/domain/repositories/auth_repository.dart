@@ -15,6 +15,7 @@ abstract interface class AuthRepository {
   Future<void> resetPassword(String email);
   Future<void> migrateGuestProgress(String userId);
   Future<void> clearGuestLocalData();
+  Future<void> clearAllLocalData();
   Future<UserSettings?> getUserSettings(String userId);
   Future<void> saveUserSettings(UserSettings settings);
 }

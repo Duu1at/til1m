@@ -73,10 +73,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded),
-              onPressed: () => context.go(AppRoutes.welcome),
-            ),
+            leading: context.canPop()
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded),
+                    onPressed: () => context.pop(),
+                  )
+                : null,
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -181,12 +183,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: AppConstants.paddingXL),
                   Center(
                     child: TextButton(
-                      onPressed: () => context.go(AppRoutes.register),
+                      onPressed: () => context.push(AppRoutes.register),
                       child: Text(
                         LocaleKeys.authNoAccount.tr(context: context),
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: TextButton(
+                      onPressed: isLoading
+                          ? null
+                          : () => context.push(AppRoutes.onboarding),
+                      child: Text(
+                        LocaleKeys.welcomeBtnGuest.tr(context: context),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 14,
                         ),
                       ),
                     ),

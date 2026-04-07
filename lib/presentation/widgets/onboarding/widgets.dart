@@ -1,3 +1,4 @@
+export 'lang_card.dart';
 export 'onboarding_goal_custom_option.dart';
 export 'onboarding_goal_option.dart';
 export 'onboarding_goal_step.dart';

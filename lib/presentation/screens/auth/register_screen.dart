@@ -67,30 +67,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           );
         } else if (state is AuthEmailConfirmationSent) {
-          unawaited(showDialog<void>(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => AlertDialog(
-              title: Text(
-                LocaleKeys.authConfirmEmailTitle.tr(context: context),
-              ),
-              content: Text(
-                LocaleKeys.authConfirmEmailBody.tr(
-                  context: context,
-                  args: [state.email],
+          unawaited(
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => AlertDialog(
+                title: Text(
+                  LocaleKeys.authConfirmEmailTitle.tr(context: context),
                 ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    context.go(AppRoutes.login);
-                  },
-                  child: Text(LocaleKeys.commonOk.tr(context: context)),
+                content: Text(
+                  LocaleKeys.authConfirmEmailBody.tr(
+                    context: context,
+                    args: [state.email],
+                  ),
                 ),
-              ],
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.go(AppRoutes.login);
+                    },
+                    child: Text(LocaleKeys.commonOk.tr(context: context)),
+                  ),
+                ],
+              ),
             ),
-          ));
+          );
         }
       },
       builder: (context, state) {
@@ -98,10 +100,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded),
-              onPressed: () => context.go(AppRoutes.welcome),
-            ),
+            leading: context.canPop()
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded),
+                    onPressed: () => context.pop(),
+                  )
+                : null,
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -192,7 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: AppConstants.paddingXL),
                   Center(
                     child: TextButton(
-                      onPressed: () => context.go(AppRoutes.login),
+                      onPressed: () => context.push(AppRoutes.login),
                       child: Text(
                         LocaleKeys.authHaveAccount.tr(context: context),
                         style: TextStyle(

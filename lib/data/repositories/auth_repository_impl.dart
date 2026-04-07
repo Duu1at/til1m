@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/core/constants/locale_keys.dart';
 import 'package:til1m/core/constants/supabase_constants.dart';
 import 'package:til1m/core/errors/app_auth_exception.dart';
 import 'package:til1m/core/errors/auth_error_mapper.dart';
@@ -125,6 +127,13 @@ class AuthRepositoryImpl implements AuthRepository {
         '[Auth] signInWithGoogle AuthException → ${e.message} (status: ${e.statusCode})',
       );
       throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
+    } on PlatformException catch (e) {
+      debugPrint('[Auth] signInWithGoogle PlatformException → code: ${e.code}, message: ${e.message}');
+      if (e.code == 'sign_in_cancelled') return;
+      if (e.code == 'network_error') {
+        throw const AppAuthException(LocaleKeys.errorsNoInternet);
+      }
+      throw const AppAuthException(LocaleKeys.authErrorGeneric);
     } catch (e, st) {
       debugPrint('[Auth] signInWithGoogle unexpected error → $e\n$st');
       rethrow;
@@ -224,6 +233,19 @@ class AuthRepositoryImpl implements AuthRepository {
     final favoritesBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
     await favoritesBox.clear();
     debugPrint('[Auth] clearGuestLocalData done');
+  }
+
+  @override
+  Future<void> clearAllLocalData() async {
+    final wordsBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxWords);
+    await wordsBox.clear();
+    final progressBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
+    await progressBox.clear();
+    final favoritesBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
+    await favoritesBox.clear();
+    final settingsBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxSettings);
+    await settingsBox.clear();
+    debugPrint('[Auth] clearAllLocalData done');
   }
 
   @override

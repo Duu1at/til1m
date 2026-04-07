@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:til1m/core/constants/app_constants.dart';
 import 'package:til1m/core/router/app_router.dart';
+import 'package:til1m/domain/entities/user_settings.dart';
 import 'package:til1m/domain/entities/word.dart';
 import 'package:til1m/presentation/presentation.dart';
 
@@ -69,10 +70,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _saveAndFinish() async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-      AppConstants.keyUserLevel,
-      (_selectedLevel ?? WordLevel.a1).name,
-    );
+    final level = _selectedLevel ?? WordLevel.a1;
+    await prefs.setString(AppConstants.keyUserLevel, level.name);
 
     final goal = _isCustomGoal
         ? (int.tryParse(_customGoalController.text) ?? 5)
@@ -83,24 +82,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       AppConstants.keyStudyTimeFrom,
       _formatTime(_studyFrom),
     );
-    await prefs.setString(
-      AppConstants.keyStudyTimeTo,
-      _formatTime(_studyTo),
-    );
+    await prefs.setString(AppConstants.keyStudyTimeTo, _formatTime(_studyTo));
 
     await prefs.setBool(AppConstants.keyOnboardingDone, true);
+
+    if (!mounted) return;
+    final authCubit = context.read<AuthCubit>();
+
+    // ── Path 1: user is already authenticated but had no user_settings ──
+    // (direct OAuth sign-up — Google / Apple without WelcomeScreen flow)
+    if (authCubit.state is AuthNeedsOnboarding) {
+      final uiLangName =
+          prefs.getString(AppConstants.keyUiLanguage) ?? UiLanguage.ru.name;
+      await authCubit.completeAuthenticatedOnboarding(
+        UserSettings(
+          dailyGoal: goal,
+          englishLevel: level,
+          uiLanguage: UiLanguage.values.firstWhere(
+            (l) => l.name == uiLangName,
+            orElse: () => UiLanguage.ru,
+          ),
+        ),
+      );
+      // Router automatically redirects to /home when AuthAuthenticated is emitted.
+      return;
+    }
 
     final pendingAuth = prefs.getString(AppConstants.keyPendingAuth);
     await prefs.remove(AppConstants.keyPendingAuth);
 
-    if (!mounted) return;
+    // ── Path 2: WelcomeScreen → onboarding → register (email sign-up) ──
     if (pendingAuth == 'register') {
-      context.go(AppRoutes.register);
-    } else {
-      await context.read<AuthCubit>().continueAsGuest();
       if (!mounted) return;
-      context.go(AppRoutes.home);
+      context.go(AppRoutes.register);
+      return;
     }
+
+    // ── Path 3: guest flow ───────────────────────────────────────────────
+    await authCubit.continueAsGuest();
+    // Router redirects to /home when AuthGuest is emitted on _setupRoutes.
   }
 
   String _formatTime(TimeOfDay t) {

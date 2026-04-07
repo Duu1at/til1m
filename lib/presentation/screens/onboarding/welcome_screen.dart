@@ -20,12 +20,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(AppConstants.keyPendingAuth, 'register');
     if (!mounted) return;
-    context.go(AppRoutes.onboarding);
+    unawaited(context.push(AppRoutes.onboarding));
   }
 
   Future<void> _continueAsGuest() async {
     if (!mounted) return;
-    context.go(AppRoutes.onboarding);
+    unawaited(context.push(AppRoutes.onboarding));
   }
 
   @override
@@ -121,7 +121,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               const SizedBox(height: AppConstants.paddingM),
               OutlinedButton(
-                onPressed: () => context.go(AppRoutes.login),
+                onPressed: () => context.push(AppRoutes.login),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(
                     double.infinity,
