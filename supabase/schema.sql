@@ -102,6 +102,20 @@ CREATE POLICY "words_public_read" ON words FOR SELECT USING (true);
 CREATE POLICY "word_translations_public_read" ON word_translations FOR SELECT USING (true);
 CREATE POLICY "word_examples_public_read" ON word_examples FOR SELECT USING (true);
 
+-- ==================== GRANTS ====================
+
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+
+-- Public tables: readable by everyone (including unauthenticated)
+GRANT SELECT ON words             TO anon, authenticated;
+GRANT SELECT ON word_translations TO anon, authenticated;
+GRANT SELECT ON word_examples     TO anon, authenticated;
+
+-- User tables: only authenticated users
+GRANT SELECT, INSERT, UPDATE, DELETE ON user_settings      TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON user_word_progress TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON user_favorites     TO authenticated;
+
 -- User settings: own data only
 CREATE POLICY "user_settings_own" ON user_settings
   USING (auth.uid() = user_id)

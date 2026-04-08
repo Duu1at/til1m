@@ -132,8 +132,9 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
           child: isFiltering
               ? LinearProgressIndicator(
                   minHeight: 2,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                 )
               : const SizedBox.shrink(),
         ),

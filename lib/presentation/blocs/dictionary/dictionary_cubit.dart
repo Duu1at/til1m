@@ -64,8 +64,13 @@ class DictionaryCubit extends Cubit<DictionaryState> {
 
       if (isAuth) {
         await _prepareRemoteStatusFilter(userId: userId);
-        await _loadRemotePage(userId: userId, append: false);
-      } else {
+      }
+      try {
+        await _loadRemotePage(userId: isAuth ? userId : null, append: false);
+      } on Object catch (e, st) {
+        debugPrint(
+          '[Dictionary] remote failed, falling back to local: $e\n$st',
+        );
         await _loadLocalPage(append: false);
       }
     } on Object catch (e, st) {
@@ -88,9 +93,12 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       final userId = _authRepo.currentUserId;
       final isAuth = !isGuest && userId != null;
 
-      if (isAuth) {
-        await _loadRemotePage(userId: userId, append: true);
-      } else {
+      try {
+        await _loadRemotePage(userId: isAuth ? userId : null, append: true);
+      } on Object catch (e, st) {
+        debugPrint(
+          '[Dictionary] remote loadMore failed, falling back to local: $e\n$st',
+        );
         await _loadLocalPage(append: true);
       }
     } on Object catch (e, st) {
@@ -157,7 +165,7 @@ class DictionaryCubit extends Cubit<DictionaryState> {
   }
 
   Future<void> _loadRemotePage({
-    required String userId,
+    required String? userId,
     required bool append,
   }) async {
     if (_cachedInIds != null && _cachedInIds!.isEmpty) {
@@ -185,7 +193,9 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     );
 
     var statusMap = <String, String>{};
-    if (_cachedFixedStatus == null && result.words.isNotEmpty) {
+    if (userId != null &&
+        _cachedFixedStatus == null &&
+        result.words.isNotEmpty) {
       try {
         statusMap = await _wordRemote.fetchStatusMap(
           userId: userId,
