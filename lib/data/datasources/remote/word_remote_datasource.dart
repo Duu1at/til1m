@@ -12,7 +12,8 @@ class WordRemoteDataSource {
   static const _wordSelect = '''
     id, word, level, part_of_speech, transcription_text,
     audio_url, image_url, created_at,
-    word_translations(language, translation, synonyms)
+    word_translations(language, translation, synonyms),
+    word_examples(example_en, example_ru, example_ky, order_index)
   ''';
 
   Future<({List<Word> words, bool hasMore})> fetchPage({

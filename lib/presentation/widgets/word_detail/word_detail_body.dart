@@ -19,7 +19,6 @@ class WordDetailBody extends StatelessWidget {
     final word = state.word;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
     final lang = context.locale.languageCode;
     final translation = word.translationFor(lang);
 
@@ -31,7 +30,6 @@ class WordDetailBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Word title
           Text(
             word.word,
             style: textTheme.displaySmall?.copyWith(

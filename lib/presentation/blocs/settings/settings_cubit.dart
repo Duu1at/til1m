@@ -23,11 +23,18 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> _load() async {
     emit(const SettingsLoading());
     try {
+      final prefs = await SharedPreferences.getInstance();
       final userId = _repo.currentUserId;
-      final settings = userId != null
+
+      final base = userId != null
           ? (await _repo.getUserSettings(userId)) ?? const UserSettings()
           : const UserSettings();
-      if (!isClosed) emit(SettingsLoaded(settings));
+      final savedTheme = AppTheme.values.firstWhere(
+        (t) => t.name == (prefs.getString(AppConstants.keyTheme) ?? ''),
+        orElse: () => base.theme,
+      );
+
+      if (!isClosed) emit(SettingsLoaded(base.copyWith(theme: savedTheme)));
     } on Object catch (e, st) {
       debugPrint('[Settings] load error: $e\n$st');
       if (!isClosed) emit(const SettingsLoaded(UserSettings()));

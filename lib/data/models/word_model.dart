@@ -16,6 +16,7 @@ final class WordModel extends Word {
 
   factory WordModel.fromJson(Map<String, dynamic> json) {
     final translationsRaw = json['word_translations'] as List<dynamic>? ?? [];
+    final examplesRaw = json['word_examples'] as List<dynamic>? ?? [];
     return WordModel(
       id: json['id'] as String,
       word: json['word'] as String,
@@ -35,28 +36,47 @@ final class WordModel extends Word {
           synonyms: (map['synonyms'] as List<dynamic>?)?.cast<String>() ?? [],
         );
       }).toList(),
+      examples:
+          (examplesRaw..sort(
+                (a, b) =>
+                    ((a as Map<String, dynamic>)['order_index'] as int? ?? 0)
+                        .compareTo(
+                          (b as Map<String, dynamic>)['order_index'] as int? ??
+                              0,
+                        ),
+              ))
+              .map((e) {
+                final map = e as Map<String, dynamic>;
+                return WordExample(
+                  exampleEn: map['example_en'] as String,
+                  exampleRu: map['example_ru'] as String?,
+                  exampleKy: map['example_ky'] as String?,
+                  orderIndex: map['order_index'] as int? ?? 0,
+                );
+              })
+              .toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'word': word,
-        'level': level.name,
-        'part_of_speech': partOfSpeech.name,
-        'created_at': createdAt.toIso8601String(),
-        'transcription_text': transcriptionText,
-        'audio_url': audioUrl,
-        'image_url': imageUrl,
-        'word_translations': translations
-            .map(
-              (t) => {
-                'language': t.language,
-                'translation': t.translation,
-                'synonyms': t.synonyms,
-              },
-            )
-            .toList(),
-      };
+    'id': id,
+    'word': word,
+    'level': level.name,
+    'part_of_speech': partOfSpeech.name,
+    'created_at': createdAt.toIso8601String(),
+    'transcription_text': transcriptionText,
+    'audio_url': audioUrl,
+    'image_url': imageUrl,
+    'word_translations': translations
+        .map(
+          (t) => {
+            'language': t.language,
+            'translation': t.translation,
+            'synonyms': t.synonyms,
+          },
+        )
+        .toList(),
+  };
 
   static WordLevel _parseLevel(String? value) {
     if (value == null) return WordLevel.a1;
