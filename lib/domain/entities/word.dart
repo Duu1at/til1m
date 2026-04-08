@@ -23,7 +23,7 @@ final class WordTranslation extends Equatable {
     this.synonyms = const [],
   });
 
-  final String language; // 'ru' or 'ky'
+  final String language;
   final String translation;
   final List<String> synonyms;
 

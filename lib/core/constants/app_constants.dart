@@ -45,7 +45,7 @@ class AppConstants {
   static const int sm2SecondInterval = 6;
 
   // Daily goal options
-  static const List<int> dailyGoalOptions = [3, 5, 10];
+  static const List<int> dailyGoalOptions = [3, 5, 7, 10, 12, 15];
 
   // Notification
   static const int notificationId = 1001;
