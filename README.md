@@ -31,10 +31,6 @@ flutter pub get
 flutter run \
   --dart-define=SUPABASE_URL=https://xxx.supabase.co \
   --dart-define=SUPABASE_ANON_KEY=eyJ...
-
-# Или через скрипты
-./run_dev.sh
-./run_prod.sh
 ```
 
 ---
