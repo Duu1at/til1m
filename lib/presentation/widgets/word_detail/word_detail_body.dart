@@ -19,6 +19,8 @@ class WordDetailBody extends StatelessWidget {
     final word = state.word;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    // Follow the app UI language automatically (set by user in language select screen)
     final lang = context.locale.languageCode;
     final translation = word.translationFor(lang);
 
@@ -30,6 +32,7 @@ class WordDetailBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Word title
           Text(
             word.word,
             style: textTheme.displaySmall?.copyWith(
@@ -39,6 +42,7 @@ class WordDetailBody extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.paddingM),
 
+          // Badges
           Row(
             children: [
               WordPosBadge(pos: word.partOfSpeech),
@@ -48,32 +52,37 @@ class WordDetailBody extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.paddingL),
 
-          if (word.transcriptionText != null || word.audioUrl != null)
-            _TranscriptionRow(state: state),
+          // Transcription + TTS button (always shown)
+          _TranscriptionRow(state: state),
 
+          // Image
           if (word.imageUrl != null) ...[
             const SizedBox(height: AppConstants.paddingL),
             _WordImage(imageUrl: word.imageUrl!),
           ],
           const SizedBox(height: AppConstants.paddingXXL),
 
+          // Translation in the app UI language
           Text(
-            translation ??
-                LocaleKeys.wordUnknownTranslation.tr(context: context),
+            translation ?? LocaleKeys.wordUnknownTranslation.tr(context: context),
             style: textTheme.headlineSmall,
           ),
 
+          // Examples
           if (word.examples.isNotEmpty) ...[
             const SizedBox(height: AppConstants.paddingXXL),
             WordExamplesSection(examples: word.examples, lang: lang),
           ],
 
+          // Padding for bottom button bar
           const SizedBox(height: AppConstants.paddingLarge),
         ],
       ),
     );
   }
 }
+
+// ─── Private sub-widgets ──────────────────────────────────────────────────────
 
 final class _TranscriptionRow extends StatelessWidget {
   const _TranscriptionRow({required this.state});
@@ -96,29 +105,30 @@ final class _TranscriptionRow extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
+          )
+        else
+          const Spacer(),
+        IconButton(
+          icon: AnimatedSwitcher(
+            duration: AppConstants.durationFast,
+            child: state.isPlaying
+                ? const SizedBox(
+                    key: ValueKey('loading'),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    key: const ValueKey('play'),
+                    Icons.volume_up_rounded,
+                    color: colorScheme.primary,
+                  ),
           ),
-        if (word.audioUrl != null)
-          IconButton(
-            icon: AnimatedSwitcher(
-              duration: AppConstants.durationFast,
-              child: state.isPlaying
-                  ? const SizedBox(
-                      key: ValueKey('loading'),
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Icon(
-                      key: const ValueKey('play'),
-                      Icons.volume_up_rounded,
-                      color: colorScheme.primary,
-                    ),
-            ),
-            tooltip: LocaleKeys.wordAudioPlay.tr(context: context),
-            onPressed: state.isPlaying
-                ? null
-                : () => context.read<WordDetailCubit>().playAudio(),
-          ),
+          tooltip: LocaleKeys.wordAudioPlay.tr(context: context),
+          onPressed: state.isPlaying
+              ? null
+              : () => context.read<WordDetailCubit>().playAudio(),
+        ),
       ],
     );
   }

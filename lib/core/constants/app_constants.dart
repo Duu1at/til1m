@@ -38,6 +38,9 @@ class AppConstants {
   static const String widgetName = 'Til1mWidget';
   static const String widgetGroupId = 'group.com.til1m.widget';
 
+  // TTS
+  static const double ttsDefaultRate = 0.5;
+
   // SM-2 defaults
   static const double sm2DefaultEaseFactor = 2.5;
   static const double sm2MinEaseFactor = 1.3;

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
@@ -27,19 +27,39 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
        _progressLocal = progressLocal,
        _progressRemote = progressRemote,
        _authRepository = authRepository,
-       super(const WordDetailInitial());
+       super(const WordDetailInitial()) {
+    unawaited(_initTts());
+  }
 
   final WordRepository _wordRepository;
   final ProgressLocalDataSource _progressLocal;
   final ProgressRemoteDataSource _progressRemote;
   final AuthRepository _authRepository;
-  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  final FlutterTts _tts = FlutterTts();
+  bool _ttsReady = false;
+
+  // ─── TTS init ─────────────────────────────────────────────────────────────
+
+  Future<void> _initTts() async {
+    try {
+      await _tts.setLanguage('en-US');
+      await _tts.setSpeechRate(AppConstants.ttsDefaultRate);
+      await _tts.setVolume(1);
+      await _tts.setPitch(1);
+      _ttsReady = true;
+    } on Object catch (e, st) {
+      debugPrint('[WordDetailCubit] TTS init: $e\n$st');
+    }
+  }
 
   @override
   Future<void> close() async {
-    await _audioPlayer.dispose();
+    await _tts.stop();
     return super.close();
   }
+
+  // ─── Public API ───────────────────────────────────────────────────────────────
 
   Future<void> load(String wordId) async {
     emit(const WordDetailLoading());
@@ -88,19 +108,23 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
   Future<void> playAudio() async {
     final s = state;
     if (s is! WordDetailLoaded || s.isPlaying) return;
-    final url = s.word.audioUrl;
-    if (url == null || url.isEmpty) return;
 
     emit(s.copyWith(isPlaying: true));
+
+    final completer = Completer<void>();
+    _tts
+      ..setCompletionHandler(() {
+        if (!completer.isCompleted) completer.complete();
+      })
+      ..setErrorHandler((msg) {
+        debugPrint('[WordDetailCubit] TTS error: $msg');
+        if (!completer.isCompleted) completer.complete();
+      });
+
     try {
-      await _audioPlayer.stop();
-      await _audioPlayer.setUrl(url);
-      unawaited(_audioPlayer.play());
-      await _audioPlayer.playerStateStream.firstWhere(
-        (ps) =>
-            ps.processingState == ProcessingState.completed ||
-            ps.processingState == ProcessingState.idle,
-      );
+      if (!_ttsReady) await _initTts();
+      await _tts.speak(s.word.word);
+      await completer.future;
     } on Object catch (e, st) {
       debugPrint('[WordDetailCubit] playAudio: $e\n$st');
     } finally {
@@ -156,10 +180,12 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
     }
   }
 
+  // ─── Private helpers ─────────────────────────────────────────────────────────
+
   Future<Box<dynamic>> _openFavoritesBox() =>
       Hive.isBoxOpen(AppConstants.hiveBoxFavorites)
-      ? Future.value(Hive.box<dynamic>(AppConstants.hiveBoxFavorites))
-      : Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
+          ? Future.value(Hive.box<dynamic>(AppConstants.hiveBoxFavorites))
+          : Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
 
   Future<bool> _isFavorite(String wordId) async {
     try {

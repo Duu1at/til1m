@@ -2,13 +2,12 @@ include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
   exclude:
-    - '**/*.g.dart'
-    - '**/*.freezed.dart'
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
 
 linter:
   rules:
     prefer_single_quotes: true
-    # public_member_api_docs is for published packages, not apps
     public_member_api_docs: false
-    # Project uses 120-char line limit (see docs/code_rules.md)
     lines_longer_than_80_chars: false
+    sort_pub_dependencies: false
