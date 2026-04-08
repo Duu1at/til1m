@@ -36,32 +36,25 @@ final class DictionaryLoaded extends DictionaryState {
     required this.hasMore,
     required this.isLoadingMore,
     required this.query,
-    required this.statusFilter,
     required this.sort,
     this.levelFilter,
     this.isFiltering = false,
   });
 
   const DictionaryLoaded.empty()
-      : words = const [],
-        hasMore = false,
-        isLoadingMore = false,
-        isFiltering = false,
-        query = '',
-        statusFilter = WordStatusFilter.all,
-        sort = DictionarySort.alphabetical,
-        levelFilter = null;
+    : words = const [],
+      hasMore = false,
+      isLoadingMore = false,
+      isFiltering = false,
+      query = '',
+      sort = DictionarySort.alphabetical,
+      levelFilter = null;
 
   final List<WordWithStatus> words;
   final bool hasMore;
   final bool isLoadingMore;
-
-  /// True while a search/filter refresh is running in the background.
-  /// The existing [words] list stays visible — no full-screen spinner.
   final bool isFiltering;
-
   final String query;
-  final WordStatusFilter statusFilter;
   final WordLevel? levelFilter;
   final DictionarySort sort;
 
@@ -74,27 +67,24 @@ final class DictionaryLoaded extends DictionaryState {
     WordStatusFilter? statusFilter,
     WordLevel? levelFilter,
     DictionarySort? sort,
-  }) =>
-      DictionaryLoaded(
-        words: words ?? this.words,
-        hasMore: hasMore ?? this.hasMore,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        isFiltering: isFiltering ?? this.isFiltering,
-        query: query ?? this.query,
-        statusFilter: statusFilter ?? this.statusFilter,
-        levelFilter: levelFilter ?? this.levelFilter,
-        sort: sort ?? this.sort,
-      );
+  }) => DictionaryLoaded(
+    words: words ?? this.words,
+    hasMore: hasMore ?? this.hasMore,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    isFiltering: isFiltering ?? this.isFiltering,
+    query: query ?? this.query,
+    levelFilter: levelFilter ?? this.levelFilter,
+    sort: sort ?? this.sort,
+  );
 
   @override
   List<Object?> get props => [
-        words,
-        hasMore,
-        isLoadingMore,
-        isFiltering,
-        query,
-        statusFilter,
-        levelFilter,
-        sort,
-      ];
+    words,
+    hasMore,
+    isLoadingMore,
+    isFiltering,
+    query,
+    levelFilter,
+    sort,
+  ];
 }

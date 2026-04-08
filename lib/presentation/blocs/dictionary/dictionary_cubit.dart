@@ -30,7 +30,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
   final WordLocalDataSource _wordLocal;
 
   String _query = '';
-  WordStatusFilter _statusFilter = WordStatusFilter.all;
   WordLevel? _levelFilter;
   DictionarySort _sort = DictionarySort.alphabetical;
 
@@ -62,9 +61,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       final userId = _authRepo.currentUserId;
       final isAuth = !isGuest && userId != null;
 
-      if (isAuth) {
-        await _prepareRemoteStatusFilter(userId: userId);
-      }
       try {
         await _loadRemotePage(userId: isAuth ? userId : null, append: false);
       } on Object catch (e, st) {
@@ -118,12 +114,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     });
   }
 
-  void onStatusFilterChanged(WordStatusFilter filter) {
-    if (_statusFilter == filter) return;
-    _statusFilter = filter;
-    unawaited(load());
-  }
-
   void onLevelFilterChanged(WordLevel? level) {
     if (_levelFilter == level) return;
     _levelFilter = level;
@@ -140,28 +130,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
   Future<void> close() {
     _debounce?.cancel();
     return super.close();
-  }
-
-  Future<void> _prepareRemoteStatusFilter({required String userId}) async {
-    switch (_statusFilter) {
-      case WordStatusFilter.all:
-        break;
-      case WordStatusFilter.newWord:
-        _cachedExcludeIds = await _wordRemote.fetchProgressIds(userId: userId);
-        _cachedFixedStatus = WordStatus.newWord;
-      case WordStatusFilter.learning:
-        _cachedInIds = await _wordRemote.fetchProgressIds(
-          userId: userId,
-          status: 'learning',
-        );
-        _cachedFixedStatus = WordStatus.learning;
-      case WordStatusFilter.known:
-        _cachedInIds = await _wordRemote.fetchProgressIds(
-          userId: userId,
-          status: 'known',
-        );
-        _cachedFixedStatus = WordStatus.known;
-    }
   }
 
   Future<void> _loadRemotePage({
@@ -229,7 +197,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
             hasMore: result.words.length > _pageSize,
             isLoadingMore: false,
             query: _query,
-            statusFilter: _statusFilter,
             levelFilter: _levelFilter,
             sort: _sort,
           ),
@@ -244,7 +211,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       limit: _pageSize + 1,
       searchQuery: _query.isEmpty ? null : _query,
       level: _levelFilter,
-      statusFilter: _statusFilterString,
       sortByLevel: _sort == DictionarySort.byLevel,
     );
 
@@ -275,7 +241,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
             hasMore: result.words.length > _pageSize,
             isLoadingMore: false,
             query: _query,
-            statusFilter: _statusFilter,
             levelFilter: _levelFilter,
             sort: _sort,
           ),
@@ -283,13 +248,6 @@ class DictionaryCubit extends Cubit<DictionaryState> {
       }
     }
   }
-
-  String get _statusFilterString => switch (_statusFilter) {
-    WordStatusFilter.all => 'all',
-    WordStatusFilter.newWord => 'newWord',
-    WordStatusFilter.learning => 'learning',
-    WordStatusFilter.known => 'known',
-  };
 
   WordStatus _parseStatus(String? s) => switch (s) {
     'learning' => WordStatus.learning,

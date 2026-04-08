@@ -56,13 +56,11 @@ final class _DictionaryBody extends StatefulWidget {
 
 final class _DictionaryBodyState extends State<_DictionaryBody> {
   final _scrollController = ScrollController();
-
-  static const double _searchHeight = 44;
+  static const double _searchHeight = 88;
   static const double _sliverBottomHeight =
       AppConstants.paddingM +
-      _searchHeight +
       AppConstants.paddingS +
-      DictionaryFilterBar.height +
+      _searchHeight +
       AppConstants.paddingXS +
       1.0;
 
@@ -121,7 +119,10 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
                   ),
                   child: DictionarySearchField(),
                 ),
-                DictionaryFilterBar(state: widget.state),
+                LevelAndSortRow(
+                  levelFilter: widget.state.levelFilter,
+                  sort: widget.state.sort,
+                ),
                 const SizedBox(height: AppConstants.paddingXS),
                 const Divider(height: 1),
               ],
