@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/constants/supabase_constants.dart';
+import 'package:til1m/domain/entities/user_progress.dart';
+import 'package:til1m/domain/entities/word_progress.dart';
 
 class ProgressRemoteDataSource {
   ProgressRemoteDataSource(this._client);
@@ -48,6 +50,89 @@ class ProgressRemoteDataSource {
       rethrow;
     }
   }
+
+  Future<WordProgress?> fetchProgressForWord({
+    required String userId,
+    required String wordId,
+  }) async {
+    try {
+      final data = await _client
+          .from(SupabaseConstants.tableUserWordProgress)
+          .select(
+            'word_id, ease_factor, repetitions, status, next_review_at, last_reviewed_at',
+          )
+          .eq('user_id', userId)
+          .eq('word_id', wordId)
+          .maybeSingle();
+      if (data == null) return null;
+      return WordProgress(
+        wordId: data['word_id'] as String,
+        status: _parseStatus(data['status'] as String?),
+        easeFactor: (data['ease_factor'] as num?)?.toDouble() ?? 2.5,
+        repetitions: data['repetitions'] as int? ?? 0,
+        nextReviewAt: _parseDate(data['next_review_at'] as String?),
+        lastReviewedAt: _parseDate(data['last_reviewed_at'] as String?),
+      );
+    } on Object catch (e, st) {
+      debugPrint('[ProgressRemote] fetchProgressForWord error: $e\n$st');
+      rethrow;
+    }
+  }
+
+  Future<void> syncProgress(WordProgress progress, String userId) async {
+    try {
+      await upsertProgressEntry({
+        'user_id': userId,
+        'word_id': progress.wordId,
+        'status': _statusStr(progress.status),
+        'ease_factor': progress.easeFactor,
+        'repetitions': progress.repetitions,
+        'next_review_at': progress.nextReviewAt?.toIso8601String(),
+        'last_reviewed_at': progress.lastReviewedAt?.toIso8601String(),
+      });
+    } on Object catch (e, st) {
+      debugPrint('[ProgressRemote] syncProgress error: $e\n$st');
+      rethrow;
+    }
+  }
+
+  Future<void> syncFavorite({
+    required String userId,
+    required String wordId,
+    required bool add,
+  }) async {
+    try {
+      if (add) {
+        await _client
+            .from(SupabaseConstants.tableUserFavorites)
+            .upsert({'user_id': userId, 'word_id': wordId});
+      } else {
+        await _client
+            .from(SupabaseConstants.tableUserFavorites)
+            .delete()
+            .eq('user_id', userId)
+            .eq('word_id', wordId);
+      }
+    } on Object catch (e, st) {
+      debugPrint('[ProgressRemote] syncFavorite error: $e\n$st');
+      rethrow;
+    }
+  }
+
+  static WordStatus _parseStatus(String? value) => switch (value) {
+    'learning' => WordStatus.learning,
+    'known' => WordStatus.known,
+    _ => WordStatus.newWord,
+  };
+
+  static String _statusStr(WordStatus status) => switch (status) {
+    WordStatus.newWord => 'new',
+    WordStatus.learning => 'learning',
+    WordStatus.known => 'known',
+  };
+
+  static DateTime? _parseDate(String? value) =>
+      value != null ? DateTime.tryParse(value) : null;
 
   Future<Map<String, int>> fetchProgressStats(String userId) async {
     try {

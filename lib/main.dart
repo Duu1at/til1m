@@ -6,6 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
 import 'package:til1m/core/constants/supabase_constants.dart';
 import 'package:til1m/core/di/service_locator.dart';
+import 'package:til1m/core/network/connectivity_service.dart';
+import 'package:til1m/data/datasources/sync/progress_sync_service.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/presentation/blocs/auth/auth_cubit.dart';
 import 'package:til1m/presentation/blocs/settings/settings_cubit.dart';
@@ -26,7 +28,16 @@ void main() async {
 
   setupServiceLocator();
 
-  // Read theme before runApp to avoid flash on startup.
+  final connectivity = sl<ConnectivityService>();
+
+  connectivity.onlineStream
+      .where((online) => online)
+      .take(1)
+      .listen((_) => _flushPendingSync());
+  if (connectivity.isOnline) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _flushPendingSync());
+  }
+
   final initialThemeMode = await _readSavedThemeMode();
 
   final repo = sl<AuthRepository>();
@@ -47,6 +58,16 @@ void main() async {
       ),
     ),
   );
+}
+
+Future<void> _flushPendingSync() async {
+  final authRepo = sl<AuthRepository>();
+  final userId = authRepo.currentUserId;
+  if (userId == null || authRepo.isGuest) return;
+  final result = await sl<ProgressSyncService>().flush(userId);
+  if (result.syncedCount > 0) {
+    debugPrint('[main] Startup sync: ${result.syncedCount} entries uploaded');
+  }
 }
 
 Future<ThemeMode> _readSavedThemeMode() async {

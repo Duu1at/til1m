@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:til1m/domain/entities/translation.dart';
+import 'package:til1m/domain/entities/word_example.dart';
+export 'package:til1m/domain/entities/translation.dart';
+export 'package:til1m/domain/entities/word_example.dart';
 
 enum WordLevel { a1, a2, b1, b2, c1, c2 }
 
@@ -15,39 +19,7 @@ extension PartOfSpeechExtension on PartOfSpeech {
   String get label => name;
 }
 
-@immutable
-final class WordTranslation extends Equatable {
-  const WordTranslation({
-    required this.language,
-    required this.translation,
-    this.synonyms = const [],
-  });
-
-  final String language;
-  final String translation;
-  final List<String> synonyms;
-
-  @override
-  List<Object?> get props => [language, translation, synonyms];
-}
-
-@immutable
-final class WordExample extends Equatable {
-  const WordExample({
-    required this.exampleEn,
-    this.exampleRu,
-    this.exampleKy,
-    this.orderIndex = 0,
-  });
-
-  final String exampleEn;
-  final String? exampleRu;
-  final String? exampleKy;
-  final int orderIndex;
-
-  @override
-  List<Object?> get props => [exampleEn, exampleRu, exampleKy, orderIndex];
-}
+typedef WordTranslation = Translation;
 
 @immutable
 class Word extends Equatable {
@@ -71,12 +43,13 @@ class Word extends Equatable {
   final String? imageUrl;
   final WordLevel level;
   final PartOfSpeech partOfSpeech;
-  final List<WordTranslation> translations;
+  final List<Translation> translations;
   final List<WordExample> examples;
   final DateTime createdAt;
 
   String? translationFor(String lang) {
-    final match = translations.where((t) => t.language == lang);
+    final language = TranslationLanguage.fromCode(lang);
+    final match = translations.where((t) => t.language == language);
     return match.isEmpty ? null : match.first.translation;
   }
 

@@ -33,6 +33,12 @@ class AppConstants {
   static const String hiveBoxProgress = 'progress';
   static const String hiveBoxFavorites = 'favorites';
   static const String hiveBoxSettings = 'settings';
+  static const String hiveBoxSession = 'session_state';
+  static const String hiveBoxPendingSync = 'pending_sync';
+  static const String hiveBoxGuestProgress = 'guest_progress';
+
+  // Guest prompts
+  static const String keyGuestSessionCount = 'guest_session_count';
 
   // Widget
   static const String widgetName = 'Til1mWidget';

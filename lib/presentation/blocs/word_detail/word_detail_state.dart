@@ -28,14 +28,17 @@ final class WordDetailLoaded extends WordDetailState {
 
   final Word word;
   final bool isFavorite;
-  final Map<String, dynamic>? progress;
+
+  /// SM-2 progress for the displayed word. Null until loaded or if not started.
+  final WordProgress? progress;
+
   final bool isProcessingProgress;
   final bool isPlaying;
   final bool? lastAnswerKnew;
 
   WordDetailLoaded copyWith({
     bool? isFavorite,
-    Map<String, dynamic>? progress,
+    WordProgress? progress,
     bool? isProcessingProgress,
     bool? isPlaying,
     bool? lastAnswerKnew,

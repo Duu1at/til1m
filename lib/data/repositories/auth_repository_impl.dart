@@ -29,6 +29,9 @@ class AuthRepositoryImpl implements AuthRepository {
   bool get isAuthenticated => _supabase.auth.currentSession != null;
 
   @override
+  bool get isGuest => !isAuthenticated;
+
+  @override
   String? get currentUserId => _supabase.auth.currentUser?.id;
 
   @override

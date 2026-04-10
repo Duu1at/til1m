@@ -30,8 +30,8 @@ final class WordModel extends Word {
       imageUrl: json['image_url'] as String?,
       translations: translationsRaw.map((t) {
         final map = t as Map<String, dynamic>;
-        return WordTranslation(
-          language: map['language'] as String,
+        return Translation(
+          language: TranslationLanguage.fromCode(map['language'] as String),
           translation: map['translation'] as String,
           synonyms: (map['synonyms'] as List<dynamic>?)?.cast<String>() ?? [],
         );
@@ -70,7 +70,7 @@ final class WordModel extends Word {
     'word_translations': translations
         .map(
           (t) => {
-            'language': t.language,
+            'language': t.language.name,
             'translation': t.translation,
             'synonyms': t.synonyms,
           },

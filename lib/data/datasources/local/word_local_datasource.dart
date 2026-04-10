@@ -130,7 +130,7 @@ class WordLocalDataSource {
     'word_translations': w.translations
         .map(
           (t) => {
-            'language': t.language,
+            'language': t.language.name,
             'translation': t.translation,
             'synonyms': t.synonyms,
           },

@@ -1,22 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:til1m/core/shell/main_shell.dart';
 import 'package:til1m/core/utils/go_router_refresh_stream.dart';
-import 'package:til1m/presentation/blocs/auth/auth_cubit.dart';
-import 'package:til1m/presentation/screens/auth/forgot_password_screen.dart';
-import 'package:til1m/presentation/screens/auth/login_screen.dart';
-import 'package:til1m/presentation/screens/auth/register_screen.dart';
-import 'package:til1m/presentation/screens/dictionary/dictionary_screen.dart';
-import 'package:til1m/presentation/screens/favorites/favorites_screen.dart';
-import 'package:til1m/presentation/screens/flashcards/flashcards_screen.dart';
-import 'package:til1m/presentation/screens/home/home_screen.dart';
-import 'package:til1m/presentation/screens/onboarding/language_select_screen.dart';
-import 'package:til1m/presentation/screens/onboarding/onboarding_screen.dart';
-import 'package:til1m/presentation/screens/onboarding/welcome_screen.dart';
-import 'package:til1m/presentation/screens/profile/profile_screen.dart';
-import 'package:til1m/presentation/screens/settings/settings_screen.dart';
-import 'package:til1m/presentation/screens/spelling/spelling_screen.dart';
-import 'package:til1m/presentation/screens/statistics/statistics_screen.dart';
-import 'package:til1m/presentation/screens/word_detail/word_detail_screen.dart';
+import 'package:til1m/presentation/presentation.dart';
 
 final class AppRoutes {
   static const String languageSelect = '/language-select';
@@ -137,7 +122,7 @@ GoRouter createRouter(AuthCubit authCubit) => GoRouter(
         ),
         GoRoute(
           path: AppRoutes.flashcards,
-          builder: (context, state) => const FlashcardsScreen(),
+          builder: (context, state) => const FlashcardScreen(),
         ),
         GoRoute(
           path: AppRoutes.spelling,

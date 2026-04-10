@@ -65,6 +65,3 @@ work/**
 .env.dev
 .env.prod
 
-# Scripts
-run_dev.sh
-run_prod.sh

@@ -4,16 +4,14 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
-import 'package:til1m/core/constants/supabase_constants.dart';
 import 'package:til1m/data/datasources/local/progress_local_datasource.dart';
 import 'package:til1m/data/datasources/remote/progress_remote_datasource.dart';
 import 'package:til1m/domain/entities/word.dart';
+import 'package:til1m/domain/entities/word_progress.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/domain/repositories/word_repository.dart';
+import 'package:til1m/domain/usecases/calculate_sm2.dart';
 
 part 'word_detail_state.dart';
 
@@ -35,6 +33,8 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
   final ProgressLocalDataSource _progressLocal;
   final ProgressRemoteDataSource _progressRemote;
   final AuthRepository _authRepository;
+
+  static const _sm2 = CalculateSm2();
 
   final FlutterTts _tts = FlutterTts();
   bool _ttsReady = false;
@@ -69,16 +69,10 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
         if (!isClosed) emit(const WordDetailError('Слово не найдено'));
         return;
       }
-      final isFavorite = await _isFavorite(word.id);
+      final isFavorite = await _progressLocal.isFavorite(word.id);
       final progress = await _loadProgress(word.id);
       if (!isClosed) {
-        emit(
-          WordDetailLoaded(
-            word: word,
-            isFavorite: isFavorite,
-            progress: progress,
-          ),
-        );
+        emit(WordDetailLoaded(word: word, isFavorite: isFavorite, progress: progress));
       }
     } on Object catch (e, st) {
       debugPrint('[WordDetailCubit] load: $e\n$st');
@@ -92,16 +86,11 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
     final newValue = !s.isFavorite;
     emit(s.copyWith(isFavorite: newValue));
     try {
-      final box = await _openFavoritesBox();
-      if (newValue) {
-        await box.put(s.word.id, true);
-      } else {
-        await box.delete(s.word.id);
-      }
+      await _progressLocal.setFavorite(s.word.id, add: newValue);
       unawaited(_syncFavorite(wordId: s.word.id, add: newValue));
     } on Object catch (e, st) {
       debugPrint('[WordDetailCubit] toggleFavorite: $e\n$st');
-      if (!isClosed) emit(s);
+      if (!isClosed) emit(s); // revert optimistic update
     }
   }
 
@@ -141,35 +130,22 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
 
     emit(s.copyWith(isProcessingProgress: true));
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-      final userId = _authRepository.currentUserId ?? 'guest';
+      final current = s.progress ?? WordProgress(wordId: s.word.id);
+      final result = _sm2.calculate(current: current, isCorrect: knew);
+      final updated = result.updatedProgress;
 
-      final easeFactor =
-          (s.progress?['ease_factor'] as num?)?.toDouble() ??
-          AppConstants.sm2DefaultEaseFactor;
-      final repetitions = s.progress?['repetitions'] as int? ?? 0;
+      await _progressLocal.saveProgress(updated);
 
-      final newProgress = _computeSm2(
-        wordId: s.word.id,
-        userId: userId,
-        knew: knew,
-        easeFactor: easeFactor,
-        repetitions: repetitions,
-      );
-
-      await _progressLocal.saveProgressEntry(
-        wordId: s.word.id,
-        data: newProgress,
-      );
-      if (!isGuest) unawaited(_syncProgress(newProgress));
+      if (!_authRepository.isGuest) {
+        unawaited(_syncProgress(updated));
+      }
 
       if (!isClosed) {
         emit(
           WordDetailLoaded(
             word: s.word,
             isFavorite: s.isFavorite,
-            progress: newProgress,
+            progress: updated,
             lastAnswerKnew: knew,
           ),
         );
@@ -182,45 +158,22 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
 
   // ─── Private helpers ─────────────────────────────────────────────────────────
 
-  Future<Box<dynamic>> _openFavoritesBox() =>
-      Hive.isBoxOpen(AppConstants.hiveBoxFavorites)
-          ? Future.value(Hive.box<dynamic>(AppConstants.hiveBoxFavorites))
-          : Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
+  /// Loads progress: local cache first, remote fallback for authenticated users.
+  Future<WordProgress?> _loadProgress(String wordId) async {
+    final local = await _progressLocal.getProgressForWord(wordId);
+    if (local != null) return local;
 
-  Future<bool> _isFavorite(String wordId) async {
-    try {
-      final box = await _openFavoritesBox();
-      return box.containsKey(wordId);
-    } on Object catch (e, st) {
-      debugPrint('[WordDetailCubit] _isFavorite: $e\n$st');
-      return false;
+    if (_authRepository.isGuest || _authRepository.currentUserId == null) {
+      return null;
     }
-  }
 
-  Future<Map<String, dynamic>?> _loadProgress(String wordId) async {
     try {
-      final progressBox = Hive.isBoxOpen(AppConstants.hiveBoxProgress)
-          ? Hive.box<dynamic>(AppConstants.hiveBoxProgress)
-          : await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
-      final local = progressBox.get(wordId);
-      if (local is Map) return Map<String, dynamic>.from(local);
-
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-      final userId = _authRepository.currentUserId;
-      if (isGuest || userId == null) return null;
-
-      final remote = await Supabase.instance.client
-          .from(SupabaseConstants.tableUserWordProgress)
-          .select(
-            'word_id, ease_factor, repetitions, status, next_review_at, last_reviewed_at',
-          )
-          .eq('user_id', userId)
-          .eq('word_id', wordId)
-          .maybeSingle();
-      return remote != null ? Map<String, dynamic>.from(remote) : null;
+      return await _progressRemote.fetchProgressForWord(
+        userId: _authRepository.currentUserId!,
+        wordId: wordId,
+      );
     } on Object catch (e, st) {
-      debugPrint('[WordDetailCubit] _loadProgress: $e\n$st');
+      debugPrint('[WordDetailCubit] _loadProgress remote: $e\n$st');
       return null;
     }
   }
@@ -229,74 +182,27 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
     required String wordId,
     required bool add,
   }) async {
+    if (_authRepository.isGuest || _authRepository.currentUserId == null) return;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-      final userId = _authRepository.currentUserId;
-      if (isGuest || userId == null) return;
-      if (add) {
-        await Supabase.instance.client
-            .from(SupabaseConstants.tableUserFavorites)
-            .upsert({'user_id': userId, 'word_id': wordId});
-      } else {
-        await Supabase.instance.client
-            .from(SupabaseConstants.tableUserFavorites)
-            .delete()
-            .eq('user_id', userId)
-            .eq('word_id', wordId);
-      }
+      await _progressRemote.syncFavorite(
+        userId: _authRepository.currentUserId!,
+        wordId: wordId,
+        add: add,
+      );
     } on Object catch (e, st) {
       debugPrint('[WordDetailCubit] _syncFavorite: $e\n$st');
     }
   }
 
-  Future<void> _syncProgress(Map<String, dynamic> data) async {
+  Future<void> _syncProgress(WordProgress progress) async {
+    if (_authRepository.currentUserId == null) return;
     try {
-      await _progressRemote.upsertProgressEntry(data);
+      await _progressRemote.syncProgress(
+        progress,
+        _authRepository.currentUserId!,
+      );
     } on Object catch (e, st) {
       debugPrint('[WordDetailCubit] _syncProgress: $e\n$st');
     }
-  }
-
-  Map<String, dynamic> _computeSm2({
-    required String wordId,
-    required String userId,
-    required bool knew,
-    required double easeFactor,
-    required int repetitions,
-  }) {
-    final now = DateTime.now();
-    if (!knew) {
-      return {
-        'word_id': wordId,
-        'user_id': userId,
-        'status': 'learning',
-        'repetitions': 0,
-        'ease_factor': (easeFactor - 0.2).clamp(
-          AppConstants.sm2MinEaseFactor,
-          double.infinity,
-        ),
-        'next_review_at': now.add(const Duration(hours: 1)).toIso8601String(),
-        'last_reviewed_at': now.toIso8601String(),
-      };
-    }
-    final newRepetitions = repetitions + 1;
-    final interval = switch (newRepetitions) {
-      1 => AppConstants.sm2FirstInterval,
-      2 => AppConstants.sm2SecondInterval,
-      _ => (easeFactor * (newRepetitions - 1)).round(),
-    };
-    return {
-      'word_id': wordId,
-      'user_id': userId,
-      'status': interval >= 21 ? 'known' : 'learning',
-      'repetitions': newRepetitions,
-      'ease_factor': (easeFactor + 0.1).clamp(
-        AppConstants.sm2MinEaseFactor,
-        double.infinity,
-      ),
-      'next_review_at': now.add(Duration(days: interval)).toIso8601String(),
-      'last_reviewed_at': now.toIso8601String(),
-    };
   }
 }

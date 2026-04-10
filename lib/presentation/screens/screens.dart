@@ -1,5 +1,15 @@
 export 'auth/forgot_password_screen.dart';
+export 'auth/login_screen.dart';
+export 'auth/register_screen.dart';
+export 'dictionary/dictionary_screen.dart';
+export 'favorites/favorites_screen.dart';
+export 'flashcard/flashcard_screen.dart';
 export 'home/home_screen.dart';
 export 'onboarding/language_select_screen.dart';
 export 'onboarding/onboarding_screen.dart';
 export 'onboarding/welcome_screen.dart';
+export 'profile/profile_screen.dart';
+export 'settings/settings_screen.dart';
+export 'spelling/spelling_screen.dart';
+export 'statistics/statistics_screen.dart';
+export 'word_detail/word_detail_screen.dart';

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
+import 'package:til1m/domain/entities/user_progress.dart';
+import 'package:til1m/domain/entities/word_progress.dart';
 
 class ProgressLocalDataSource {
   Future<Box<dynamic>> _progressBox() async {
@@ -66,6 +68,89 @@ class ProgressLocalDataSource {
       debugPrint('[ProgressLocal] saveProgressEntry error: $e\n$st');
     }
   }
+
+  /// Returns the locally-cached [WordProgress] for [wordId], or null.
+  Future<WordProgress?> getProgressForWord(String wordId) async {
+    try {
+      final box = await _progressBox();
+      final raw = box.get(wordId);
+      if (raw is! Map) return null;
+      final data = Map<String, dynamic>.from(raw);
+      return WordProgress(
+        wordId: wordId,
+        status: _parseStatus(data['status'] as String?),
+        easeFactor: (data['ease_factor'] as num?)?.toDouble() ?? 2.5,
+        repetitions: data['repetitions'] as int? ?? 0,
+        nextReviewAt: _parseDate(data['next_review_at'] as String?),
+        lastReviewedAt: _parseDate(data['last_reviewed_at'] as String?),
+      );
+    } on Object catch (e, st) {
+      debugPrint('[ProgressLocal] getProgressForWord error: $e\n$st');
+      return null;
+    }
+  }
+
+  /// Persists a [WordProgress] to the local Hive cache.
+  Future<void> saveProgress(WordProgress progress) async {
+    await saveProgressEntry(
+      wordId: progress.wordId,
+      data: {
+        'word_id': progress.wordId,
+        'status': _statusStr(progress.status),
+        'ease_factor': progress.easeFactor,
+        'repetitions': progress.repetitions,
+        'next_review_at': progress.nextReviewAt?.toIso8601String(),
+        'last_reviewed_at': progress.lastReviewedAt?.toIso8601String(),
+      },
+    );
+  }
+
+  // ─── Favorites ────────────────────────────────────────────────────────────────
+
+  Future<Box<dynamic>> _favoritesBox() async =>
+      Hive.isBoxOpen(AppConstants.hiveBoxFavorites)
+          ? Hive.box<dynamic>(AppConstants.hiveBoxFavorites)
+          : Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
+
+  Future<bool> isFavorite(String wordId) async {
+    try {
+      final box = await _favoritesBox();
+      return box.containsKey(wordId);
+    } on Object catch (e, st) {
+      debugPrint('[ProgressLocal] isFavorite error: $e\n$st');
+      return false;
+    }
+  }
+
+  Future<void> setFavorite(String wordId, {required bool add}) async {
+    try {
+      final box = await _favoritesBox();
+      if (add) {
+        await box.put(wordId, true);
+      } else {
+        await box.delete(wordId);
+      }
+    } on Object catch (e, st) {
+      debugPrint('[ProgressLocal] setFavorite error: $e\n$st');
+    }
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+  static WordStatus _parseStatus(String? value) => switch (value) {
+    'learning' => WordStatus.learning,
+    'known' => WordStatus.known,
+    _ => WordStatus.newWord,
+  };
+
+  static String _statusStr(WordStatus status) => switch (status) {
+    WordStatus.newWord => 'new',
+    WordStatus.learning => 'learning',
+    WordStatus.known => 'known',
+  };
+
+  static DateTime? _parseDate(String? value) =>
+      value != null ? DateTime.tryParse(value) : null;
 
   Future<Map<String, int>> fetchProgressStats() async {
     try {
