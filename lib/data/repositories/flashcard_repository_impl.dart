@@ -31,7 +31,8 @@ WordProgress _progressFromEntity(UserWordProgress p) => WordProgress(
 ///
 /// Every Supabase call is wrapped in try/catch; on network failure the method
 /// falls back to the local cache and logs the error via [debugPrint].
-final class FlashcardRepositoryImpl implements ProgressRepository {
+@immutable
+class FlashcardRepositoryImpl implements ProgressRepository {
   const FlashcardRepositoryImpl({
     required FlashcardRemoteDataSource remote,
     required FlashcardLocalDataSource local,

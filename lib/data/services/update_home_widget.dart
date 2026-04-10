@@ -8,14 +8,8 @@ import 'package:til1m/data/repositories/flashcard_repository_impl.dart';
 import 'package:til1m/domain/entities/word.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 
-/// Updates the home-screen widget with fresh progress data.
-///
-/// Called after:
-///   - A flashcard session completes (`FlashcardSessionComplete`).
-///   - The user answers "I know it" for a *new* (non-review) word.
-///
-/// All errors are swallowed; a widget update failure must never crash the app.
-final class UpdateHomeWidget {
+@immutable
+class UpdateHomeWidget {
   const UpdateHomeWidget({
     required FlashcardRepositoryImpl flashcardRepo,
     required AuthRepository authRepo,
@@ -40,14 +34,11 @@ final class UpdateHomeWidget {
         orElse: () => WordLevel.a1,
       );
 
-      // 1. Today's learned count.
       final todayLearned = await _repo.getTodayLearnedCount(userId);
       final goalReached = todayLearned >= dailyGoal;
 
-      // 2. Pick a word for the widget.
       final word = await _pickWord(userId, level);
 
-      // 3. Persist data for the widget renderer.
       await Future.wait([
         HomeWidget.saveWidgetData<String>('widget_word', word?.word ?? ''),
         HomeWidget.saveWidgetData<String>(
@@ -65,14 +56,12 @@ final class UpdateHomeWidget {
         HomeWidget.saveWidgetData<bool>('widget_goal_reached', goalReached),
       ]);
 
-      // 4. Trigger a redraw.
       await HomeWidget.updateWidget(name: _widgetName);
     } on Object catch (e, st) {
       debugPrint('[UpdateHomeWidget] error (non-fatal): $e\n$st');
     }
   }
 
-  /// Returns the next word due for review, or a random word at [level].
   Future<Word?> _pickWord(String userId, WordLevel level) async {
     try {
       final reviewItems = await _repo.getReviewSessionItems(userId);

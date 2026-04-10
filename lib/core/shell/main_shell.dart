@@ -14,18 +14,14 @@ final class MainShell extends StatelessWidget {
     if (location.startsWith(AppRoutes.home)) {
       return 0;
     }
-    if (location.startsWith(AppRoutes.flashcards) ||
-        location.startsWith(AppRoutes.spelling)) {
-      return 1;
-    }
     if (location.startsWith(AppRoutes.dictionary) ||
         location.startsWith(AppRoutes.favorites)) {
-      return 2;
+      return 1;
     }
     if (location.startsWith(AppRoutes.profile) ||
         location.startsWith(AppRoutes.statistics) ||
         location.startsWith(AppRoutes.settings)) {
-      return 3;
+      return 2;
     }
     return 0;
   }
@@ -41,10 +37,8 @@ final class MainShell extends StatelessWidget {
             case 0:
               context.go(AppRoutes.home);
             case 1:
-              context.go(AppRoutes.flashcards);
-            case 2:
               context.go(AppRoutes.dictionary);
-            case 3:
+            case 2:
               context.go(AppRoutes.profile);
           }
         },
@@ -54,11 +48,11 @@ final class MainShell extends StatelessWidget {
             selectedIcon: const Icon(Icons.home),
             label: LocaleKeys.navHome.tr(context: context),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.school_outlined),
-            selectedIcon: const Icon(Icons.school),
-            label: LocaleKeys.navLearn.tr(context: context),
-          ),
+          // NavigationDestination(
+          //   icon: const Icon(Icons.school_outlined),
+          //   selectedIcon: const Icon(Icons.school),
+          //   label: LocaleKeys.navLearn.tr(context: context),
+          // ),
           NavigationDestination(
             icon: const Icon(Icons.menu_book_outlined),
             selectedIcon: const Icon(Icons.menu_book),

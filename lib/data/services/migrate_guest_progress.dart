@@ -4,12 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/constants/app_constants.dart';
 import 'package:til1m/core/constants/supabase_constants.dart';
 
-/// Migrates locally-stored guest progress to a newly created Supabase account.
-///
-/// Conflict rule: **best result wins**.
-/// For each word, we compare the local `repetitions` to the server value.
-/// The record with higher `repetitions` (i.e. the one the user practiced more)
-/// is kept. Ties are broken by `last_reviewed_at` (more recent wins).
 final class MigrateGuestProgress {
   const MigrateGuestProgress(this._client);
 
@@ -38,14 +32,13 @@ final class MigrateGuestProgress {
         for (final row in serverRows) row['word_id'] as String: row,
       };
 
-      // Keep only the "better" entry per word.
       final toUpsert = <Map<String, dynamic>>[];
       for (final entry in localEntries) {
         final wordId = entry['word_id'] as String;
         final server = serverMap[wordId];
 
         if (server == null) {
-          toUpsert.add(entry); // word not on server yet → upload
+          toUpsert.add(entry);
           continue;
         }
 
@@ -53,14 +46,12 @@ final class MigrateGuestProgress {
         final serverReps = server['repetitions'] as int? ?? 0;
 
         if (localReps > serverReps) {
-          toUpsert.add(entry); // local is further along → overwrite
+          toUpsert.add(entry);
         } else if (localReps == serverReps) {
-          // Same progress — keep whichever was reviewed more recently.
           final localDate = _parseDate(entry['last_reviewed_at'] as String?);
           final serverDate = _parseDate(server['last_reviewed_at'] as String?);
           if (localDate.isAfter(serverDate)) toUpsert.add(entry);
         }
-        // server > local → server wins, skip
       }
 
       if (toUpsert.isNotEmpty) {
@@ -69,7 +60,6 @@ final class MigrateGuestProgress {
             .upsert(toUpsert, onConflict: 'user_id,word_id');
       }
 
-      // Clear guest progress after successful migration.
       await box.clear();
 
       debugPrint(
@@ -91,12 +81,10 @@ final class MigrateGuestProgress {
     }
   }
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────────
-
   Future<Box<dynamic>> _openBox() async =>
       Hive.isBoxOpen(AppConstants.hiveBoxProgress)
-          ? Hive.box<dynamic>(AppConstants.hiveBoxProgress)
-          : Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
+      ? Hive.box<dynamic>(AppConstants.hiveBoxProgress)
+      : Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
 
   List<Map<String, dynamic>> _readLocalEntries(
     Box<dynamic> box,
@@ -122,6 +110,7 @@ final class MigrateGuestProgress {
     return entries;
   }
 
-  static DateTime _parseDate(String? value) =>
-      value != null ? DateTime.tryParse(value) ?? DateTime(1970) : DateTime(1970);
+  static DateTime _parseDate(String? value) => value != null
+      ? DateTime.tryParse(value) ?? DateTime(1970)
+      : DateTime(1970);
 }
