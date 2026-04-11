@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:til1m/core/constants/app_constants.dart';
@@ -24,6 +25,20 @@ class _MockAuthRepo extends Mock implements AuthRepository {}
 class _MockSyncService extends Mock implements ProgressSyncService {}
 
 class _MockUpdateHomeWidget extends Mock implements UpdateHomeWidget {}
+
+class _MockFlutterTts extends Mock implements FlutterTts {}
+
+_MockFlutterTts _buildMockTts() {
+  final tts = _MockFlutterTts();
+  when(() => tts.setLanguage(any())).thenAnswer((_) async => 1);
+  when(() => tts.setSpeechRate(any())).thenAnswer((_) async => 1);
+  when(() => tts.setVolume(any())).thenAnswer((_) async => 1);
+  when(() => tts.setPitch(any())).thenAnswer((_) async => 1);
+  when(tts.stop).thenAnswer((_) async => 1);
+  when(() => tts.speak(any())).thenAnswer((_) async => 1);
+  when(() => tts.setCompletionHandler(any())).thenAnswer((_) async {});
+  return tts;
+}
 
 /// Fake connectivity service with a controllable online flag.
 class _FakeConnectivity extends Fake implements ConnectivityService {
@@ -58,6 +73,7 @@ void main() {
   late _MockUpdateHomeWidget homeWidget;
 
   setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
     registerFallbackValue(testUserWordProgress());
     registerFallbackValue(WordLevel.a1);
     registerFallbackValue(<String>[]);
@@ -76,6 +92,7 @@ void main() {
 
     // Default stubs so tests that don't care about these calls won't throw.
     when(() => repo.saveProgress(any())).thenAnswer((_) async {});
+    when(() => repo.saveSession(any())).thenAnswer((_) async {});
     when(() => repo.clearSession()).thenAnswer((_) async {});
     when(() => repo.getTodayLearnedCount(any())).thenAnswer((_) async => 0);
     when(() => repo.restoreSession()).thenAnswer((_) async => null);
@@ -103,6 +120,7 @@ void main() {
     connectivity: connectivity,
     syncService: syncService,
     updateHomeWidget: homeWidget,
+    tts: _buildMockTts(),
   );
 
   // ─── StartSession ────────────────────────────────────────────────────────
@@ -539,8 +557,8 @@ void main() {
       act: (bloc) => bloc.add(const FlashcardResumeSession()),
       expect: () => [
         isA<FlashcardLoading>(),
-        // Falls back to StartSession → emits Loading again then Empty.
-        isA<FlashcardLoading>(),
+        // FlashcardLoading is equatable — bloc deduplicates the second Loading
+        // emitted by the fallback StartSession, so only Empty follows.
         isA<FlashcardEmpty>(),
       ],
     );
@@ -561,7 +579,6 @@ void main() {
       build: buildBloc,
       act: (bloc) => bloc.add(const FlashcardResumeSession()),
       expect: () => [
-        isA<FlashcardLoading>(),
         isA<FlashcardLoading>(),
         isA<FlashcardEmpty>(),
       ],

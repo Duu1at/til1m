@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:til1m/domain/entities/translation.dart';
 import 'package:til1m/domain/entities/word_example.dart';
 import 'package:til1m/presentation/widgets/flashcard/back_face.dart';
@@ -37,19 +38,27 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
       path: 'assets/translations',
       fallbackLocale: const Locale('ru'),
       assetLoader: const _InlineLoader(),
-      child: MaterialApp(
-        locale: const Locale('ru'),
-        home: Scaffold(body: child),
+      child: Builder(
+        builder: (context) => MaterialApp(
+          locale: const Locale('ru'),
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          home: Scaffold(body: child),
+        ),
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  // Process microtasks and let EasyLocalization finish its async init.
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 300));
 }
 
 // ─── Shared fixtures ─────────────────────────────────────────────────────────
 
 void main() {
   setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     await EasyLocalization.ensureInitialized();
   });
 

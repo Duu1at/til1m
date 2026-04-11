@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:til1m/core/constants/app_constants.dart';
@@ -32,6 +33,8 @@ class _MockSyncService extends Mock implements ProgressSyncService {}
 
 class _MockUpdateHomeWidget extends Mock implements UpdateHomeWidget {}
 
+class _MockFlutterTts extends Mock implements FlutterTts {}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 void _setupDefaultPrefs() {
@@ -41,12 +44,27 @@ void _setupDefaultPrefs() {
   });
 }
 
+_MockFlutterTts _buildMockTts() {
+  final tts = _MockFlutterTts();
+  when(() => tts.setLanguage(any())).thenAnswer((_) async => 1);
+  when(() => tts.setSpeechRate(any())).thenAnswer((_) async => 1);
+  when(() => tts.setVolume(any())).thenAnswer((_) async => 1);
+  when(() => tts.setPitch(any())).thenAnswer((_) async => 1);
+  when(tts.stop).thenAnswer((_) async => 1);
+  when(() => tts.speak(any())).thenAnswer((_) async => 1);
+  when(
+    () => tts.setCompletionHandler(any()),
+  ).thenAnswer((_) async {});
+  return tts;
+}
+
 FlashcardBloc _buildBloc({
   required _MockFlashcardRepo repo,
   required _MockAuthRepo authRepo,
   _FakeConnectivityService? connectivity,
   _MockSyncService? syncService,
   _MockUpdateHomeWidget? homeWidget,
+  _MockFlutterTts? tts,
 }) {
   return FlashcardBloc(
     flashcardRepo: repo,
@@ -54,6 +72,7 @@ FlashcardBloc _buildBloc({
     connectivity: connectivity ?? _FakeConnectivityService(),
     syncService: syncService ?? _MockSyncService(),
     updateHomeWidget: homeWidget ?? _MockUpdateHomeWidget(),
+    tts: tts ?? _buildMockTts(),
   );
 }
 
@@ -62,6 +81,7 @@ void main() {
   late _MockAuthRepo authRepo;
 
   setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
     registerFallbackValue(WordLevel.a1);
     registerFallbackValue(<String>[]);
     registerFallbackValue(testUserWordProgress());

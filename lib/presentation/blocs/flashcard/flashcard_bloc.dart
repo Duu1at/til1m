@@ -44,11 +44,13 @@ final class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
     required ConnectivityService connectivity,
     required ProgressSyncService syncService,
     required UpdateHomeWidget updateHomeWidget,
+    FlutterTts? tts,
   }) : _repo = flashcardRepo,
        _authRepo = authRepo,
        _connectivity = connectivity,
        _syncService = syncService,
        _updateHomeWidget = updateHomeWidget,
+       _tts = tts ?? FlutterTts(),
        super(const FlashcardInitial()) {
     on<FlashcardStartSession>(_onStartSession);
     on<FlashcardResumeSession>(_onResumeSession);
@@ -87,7 +89,7 @@ final class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
   bool _isOffline = false;
   StreamSubscription<bool>? _connectivitySub;
 
-  final FlutterTts _tts = FlutterTts();
+  final FlutterTts _tts;
   bool _ttsReady = false;
 
   Future<void> _initTts() async {
