@@ -112,20 +112,20 @@ GoRouter createRouter(AuthCubit authCubit) => GoRouter(
         return WordDetailScreen(wordId: wordId);
       },
     ),
+    GoRoute(
+      path: AppRoutes.flashcards,
+      builder: (context, state) => const FlashcardScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.spelling,
+      builder: (context, state) => const SpellingScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
       routes: [
         GoRoute(
           path: AppRoutes.home,
           builder: (context, state) => const HomeScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.flashcards,
-          builder: (context, state) => const FlashcardScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.spelling,
-          builder: (context, state) => const SpellingScreen(),
         ),
         GoRoute(
           path: AppRoutes.dictionary,

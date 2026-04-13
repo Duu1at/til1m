@@ -11,7 +11,6 @@ abstract class LocaleKeys {
 
   // nav
   static const navHome = 'nav.home';
-  static const navLearn = 'nav.learn';
   static const navDictionary = 'nav.dictionary';
   static const navProfile = 'nav.profile';
 

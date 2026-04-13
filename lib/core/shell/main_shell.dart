@@ -48,11 +48,6 @@ final class MainShell extends StatelessWidget {
             selectedIcon: const Icon(Icons.home),
             label: LocaleKeys.navHome.tr(context: context),
           ),
-          // NavigationDestination(
-          //   icon: const Icon(Icons.school_outlined),
-          //   selectedIcon: const Icon(Icons.school),
-          //   label: LocaleKeys.navLearn.tr(context: context),
-          // ),
           NavigationDestination(
             icon: const Icon(Icons.menu_book_outlined),
             selectedIcon: const Icon(Icons.menu_book),
