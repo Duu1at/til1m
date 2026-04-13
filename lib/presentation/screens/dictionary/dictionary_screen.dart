@@ -35,7 +35,7 @@ final class _DictionaryView extends StatelessWidget {
       body: BlocBuilder<DictionaryCubit, DictionaryState>(
         builder: (context, state) {
           if (state is DictionaryInitial || state is DictionaryLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const DictionaryShimmer();
           }
           final loaded = state as DictionaryLoaded;
           return _DictionaryBody(state: loaded);
@@ -151,10 +151,7 @@ final class _DictionaryBodyState extends State<_DictionaryBody> {
             ),
             itemBuilder: (context, index) {
               if (index >= words.length) {
-                return const Padding(
-                  padding: EdgeInsets.all(AppConstants.paddingL),
-                  child: Center(child: CircularProgressIndicator()),
-                );
+                return const DictionaryLoadMoreShimmer();
               }
               return WordListTile(item: words[index], lang: lang);
             },

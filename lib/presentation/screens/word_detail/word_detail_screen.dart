@@ -11,6 +11,7 @@ import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/domain/repositories/word_repository.dart';
 import 'package:til1m/presentation/blocs/word_detail/word_detail_cubit.dart';
 import 'package:til1m/presentation/widgets/word_detail/word_detail.dart';
+import 'package:til1m/presentation/widgets/word_detail/word_detail_shimmer.dart';
 
 class WordDetailScreen extends StatelessWidget {
   const WordDetailScreen({required this.wordId, super.key});
@@ -61,9 +62,7 @@ final class _WordDetailView extends StatelessWidget {
         );
       },
       builder: (context, state) => switch (state) {
-        WordDetailInitial() ||
-        WordDetailLoading() =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+        WordDetailInitial() || WordDetailLoading() => const WordDetailShimmer(),
         WordDetailError(:final message) => Scaffold(
             appBar: AppBar(),
             body: Center(child: Text(message)),

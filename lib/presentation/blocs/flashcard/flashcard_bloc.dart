@@ -215,13 +215,24 @@ final class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
 
       if (event.source != FlashcardSource.review) {
         final level = await _userLevel();
+        final prefs = await SharedPreferences.getInstance();
+        final dailyGoal = prefs.getInt(AppConstants.keyDailyGoal) ?? 5;
+
+        var todayLearned = 0;
+        try {
+          todayLearned = await _repo.getTodayLearnedCount(_userId);
+        } on Object catch (e, st) {
+          debugPrint('[FlashcardBloc] getTodayLearnedCount: $e\n$st');
+        }
+        final newWordsLimit = (dailyGoal - todayLearned).clamp(1, dailyGoal);
+
         final excludedIds = await _repo.getProgressWordIds(_userId);
         _loadedNewWordIds.addAll(excludedIds);
 
         final words = await _repo.getNewWords(
           level: level,
           excludeIds: excludedIds,
-          limit: _loadMoreLimit,
+          limit: newWordsLimit,
         );
         for (final w in words) {
           _loadedNewWordIds.add(w.id);

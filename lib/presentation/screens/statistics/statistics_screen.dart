@@ -20,7 +20,7 @@ class StatisticsScreen extends StatelessWidget {
       body: BlocBuilder<StatisticsCubit, StatisticsState>(
         builder: (context, state) {
           if (state is StatisticsInitial || state is StatisticsLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const StatisticsShimmer();
           }
           final data = state is StatisticsLoaded
               ? state.data

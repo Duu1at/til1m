@@ -7,8 +7,10 @@ import 'package:til1m/data/datasources/remote/progress_remote_datasource.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/presentation/blocs/auth/auth_cubit.dart';
 import 'package:til1m/presentation/blocs/home/home_cubit.dart';
+import 'package:til1m/presentation/blocs/settings/settings_cubit.dart';
 import 'package:til1m/presentation/widgets/home/daily_progress_card.dart';
 import 'package:til1m/presentation/widgets/home/home_header.dart';
+import 'package:til1m/presentation/widgets/home/home_shimmer.dart';
 import 'package:til1m/presentation/widgets/home/home_stats_row.dart';
 import 'package:til1m/presentation/widgets/home/quick_actions_row.dart';
 
@@ -33,39 +35,47 @@ final class _HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
-            if (state is HomeInitial || state is HomeLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return BlocListener<SettingsCubit, SettingsState>(
+      listenWhen: (prev, curr) =>
+          curr is SettingsLoaded &&
+          prev is SettingsLoaded &&
+          (prev.settings.dailyGoal != curr.settings.dailyGoal ||
+              prev.settings.englishLevel != curr.settings.englishLevel),
+      listener: (context, _) => context.read<HomeCubit>().load(),
+      child: Scaffold(
+        body: SafeArea(
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (state is HomeInitial || state is HomeLoading) {
+                return const HomeShimmer();
+              }
 
-            final data = (state as HomeLoaded).data;
+              final data = (state as HomeLoaded).data;
 
-            return RefreshIndicator(
-              onRefresh: () => context.read<HomeCubit>().load(),
-              child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.paddingL,
-                  vertical: AppConstants.paddingXXL,
-                ),
-                children: [
-                  HomeHeader(
-                    data: data,
-                    userName: context.read<AuthCubit>().currentUserName,
+              return RefreshIndicator(
+                onRefresh: () => context.read<HomeCubit>().load(),
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppConstants.paddingL,
+                    vertical: AppConstants.paddingXXL,
                   ),
-                  const SizedBox(height: AppConstants.paddingXXL),
-                  DailyProgressCard(data: data),
-                  const SizedBox(height: AppConstants.paddingL),
-                  QuickActionsRow(data: data),
-                  const SizedBox(height: AppConstants.paddingXXL),
-                  HomeStatsRow(data: data),
-                  const SizedBox(height: AppConstants.paddingL),
-                ],
-              ),
-            );
-          },
+                  children: [
+                    HomeHeader(
+                      data: data,
+                      userName: context.read<AuthCubit>().currentUserName,
+                    ),
+                    const SizedBox(height: AppConstants.paddingXXL),
+                    DailyProgressCard(data: data),
+                    const SizedBox(height: AppConstants.paddingL),
+                    QuickActionsRow(data: data),
+                    const SizedBox(height: AppConstants.paddingXXL),
+                    HomeStatsRow(data: data),
+                    const SizedBox(height: AppConstants.paddingL),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

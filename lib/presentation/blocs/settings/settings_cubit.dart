@@ -33,8 +33,20 @@ class SettingsCubit extends Cubit<SettingsState> {
         (t) => t.name == (prefs.getString(AppConstants.keyTheme) ?? ''),
         orElse: () => base.theme,
       );
+      final settings = base.copyWith(theme: savedTheme);
 
-      if (!isClosed) emit(SettingsLoaded(base.copyWith(theme: savedTheme)));
+      // Mirror all settings to SharedPreferences so other cubits (HomeCubit,
+      // FlashcardBloc) always read up-to-date values even before they call
+      // their own load().
+      await prefs.setInt(AppConstants.keyDailyGoal, settings.dailyGoal);
+      await prefs.setString(AppConstants.keyUserLevel, settings.englishLevel.name);
+      await prefs.setString(AppConstants.keyTheme, settings.theme.name);
+      await prefs.setString(AppConstants.keyUiLanguage, settings.uiLanguage.name);
+      if (settings.reminderTime != null) {
+        await prefs.setString(AppConstants.keyReminderTime, settings.reminderTime!);
+      }
+
+      if (!isClosed) emit(SettingsLoaded(settings));
     } on Object catch (e, st) {
       debugPrint('[Settings] load error: $e\n$st');
       if (!isClosed) emit(const SettingsLoaded(UserSettings()));
@@ -70,9 +82,17 @@ class SettingsCubit extends Cubit<SettingsState> {
     final updated = updater(current.settings);
     emit(SettingsLoaded(updated));
     try {
-      // Persist theme locally so it's available instantly on next startup.
+      // Persist settings locally so HomeCubit can read them without Supabase.
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(AppConstants.keyTheme, updated.theme.name);
+      await prefs.setInt(AppConstants.keyDailyGoal, updated.dailyGoal);
+      await prefs.setString(AppConstants.keyUserLevel, updated.englishLevel.name);
+      await prefs.setString(AppConstants.keyUiLanguage, updated.uiLanguage.name);
+      if (updated.reminderTime != null) {
+        await prefs.setString(AppConstants.keyReminderTime, updated.reminderTime!);
+      } else {
+        await prefs.remove(AppConstants.keyReminderTime);
+      }
 
       final userId = _repo.currentUserId;
       if (userId != null) {

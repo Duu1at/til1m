@@ -177,6 +177,7 @@ class AuthCubit extends Cubit<AuthState> {
     // (via router redirect) instead of /welcome.
     await prefs.remove(AppConstants.keyUserLevel);
     await prefs.remove(AppConstants.keyDailyGoal);
+    await prefs.remove(AppConstants.keyReminderTime);
     await prefs.remove(AppConstants.keyStudyTimeFrom);
     await prefs.remove(AppConstants.keyStudyTimeTo);
     await prefs.remove(AppConstants.keyPendingAuth);
