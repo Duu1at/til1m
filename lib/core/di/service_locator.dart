@@ -12,7 +12,6 @@ import 'package:til1m/data/datasources/sync/progress_sync_service.dart';
 import 'package:til1m/data/repositories/auth_repository_impl.dart';
 import 'package:til1m/data/repositories/flashcard_repository_impl.dart';
 import 'package:til1m/data/repositories/word_repository_impl.dart';
-import 'package:til1m/data/services/migrate_guest_progress.dart';
 import 'package:til1m/data/services/update_home_widget.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/domain/repositories/word_repository.dart';
@@ -81,10 +80,6 @@ void setupServiceLocator() {
         flashcardRepo: sl<FlashcardRepositoryImpl>(),
         authRepo: sl<AuthRepository>(),
       ),
-    )
-    // Guest progress migration
-    ..registerLazySingleton<MigrateGuestProgress>(
-      () => MigrateGuestProgress(Supabase.instance.client),
     )
     // Home widget updater
     ..registerLazySingleton<UpdateHomeWidget>(

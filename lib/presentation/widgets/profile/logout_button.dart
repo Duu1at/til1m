@@ -6,9 +6,7 @@ import 'package:til1m/core/constants/locale_keys.dart';
 import 'package:til1m/presentation/presentation.dart';
 
 class LogoutButton extends StatelessWidget {
-  const LogoutButton({required this.isGuest, super.key});
-
-  final bool isGuest;
+  const LogoutButton({super.key});
 
   @override
   Widget build(BuildContext context) {

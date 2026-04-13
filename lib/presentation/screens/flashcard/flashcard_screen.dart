@@ -14,7 +14,6 @@ import 'package:til1m/data/services/update_home_widget.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/domain/usecases/prefetch_flashcard_data.dart';
 import 'package:til1m/presentation/blocs/flashcard/flashcard_bloc.dart';
-import 'package:til1m/presentation/widgets/auth/soft_auth_prompt.dart';
 import 'package:til1m/presentation/widgets/flashcard/flashcard_card.dart';
 import 'package:til1m/presentation/widgets/flashcard/flashcard_empty_screen.dart';
 import 'package:til1m/presentation/widgets/flashcard/flashcard_progress_bar.dart';
@@ -72,15 +71,7 @@ class _FlashcardView extends StatelessWidget {
             ),
           );
         }
-        if (state is FlashcardSessionComplete) {
-          unawaited(
-            SoftAuthPrompt.showIfNeeded(
-              context,
-              authRepo: sl<AuthRepository>(),
-              trigger: SoftAuthTrigger.sessionComplete,
-            ),
-          );
-        }
+        // Session complete — handled in result screen.
       },
       builder: (context, state) {
         return switch (state) {

@@ -135,10 +135,7 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
       final updated = result.updatedProgress;
 
       await _progressLocal.saveProgress(updated);
-
-      if (!_authRepository.isGuest) {
-        unawaited(_syncProgress(updated));
-      }
+      unawaited(_syncProgress(updated));
 
       if (!isClosed) {
         emit(
@@ -163,7 +160,7 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
     final local = await _progressLocal.getProgressForWord(wordId);
     if (local != null) return local;
 
-    if (_authRepository.isGuest || _authRepository.currentUserId == null) {
+    if (_authRepository.currentUserId == null) {
       return null;
     }
 
@@ -182,7 +179,7 @@ final class WordDetailCubit extends Cubit<WordDetailState> {
     required String wordId,
     required bool add,
   }) async {
-    if (_authRepository.isGuest || _authRepository.currentUserId == null) return;
+    if (_authRepository.currentUserId == null) return;
     try {
       await _progressRemote.syncFavorite(
         userId: _authRepository.currentUserId!,

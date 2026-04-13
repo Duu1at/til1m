@@ -24,10 +24,10 @@ WordProgress _progressFromEntity(UserWordProgress p) => WordProgress(
   lastReviewedAt: p.lastReviewedAt,
 );
 
-/// Implements [ProgressRepository] with online/guest dual mode:
+/// Implements [ProgressRepository] with online/offline dual mode:
 ///
 /// - **Authenticated** → Supabase as primary, Hive as write-through cache.
-/// - **Guest** → Hive only; progress synced to Supabase on account creation.
+/// - **Unauthenticated/offline** → Hive fallback.
 ///
 /// Every Supabase call is wrapped in try/catch; on network failure the method
 /// falls back to the local cache and logs the error via [debugPrint].
@@ -53,7 +53,7 @@ class FlashcardRepositoryImpl implements ProgressRepository {
 
   static const _sm2 = CalculateSm2();
 
-  bool get _isAuth => !_authRepo.isGuest && _authRepo.currentUserId != null;
+  bool get _isAuth => _authRepo.currentUserId != null;
 
   // ─── Review queue ─────────────────────────────────────────────────────────────
 

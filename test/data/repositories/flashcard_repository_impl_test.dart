@@ -46,12 +46,8 @@ void main() {
     registerFallbackValue(WordLevel.a1);
   });
 
-  FlashcardRepositoryImpl buildRepo({
-    bool isGuest = false,
-    String? userId = 'user-1',
-  }) {
-    when(() => auth.isGuest).thenReturn(isGuest);
-    when(() => auth.currentUserId).thenReturn(isGuest ? null : userId);
+  FlashcardRepositoryImpl buildRepo({String? userId = 'user-1'}) {
+    when(() => auth.currentUserId).thenReturn(userId);
     return FlashcardRepositoryImpl(
       remote: remote,
       local: local,
@@ -239,65 +235,6 @@ void main() {
       verifyNever(() => remote.saveProgress(any()));
       // Must be queued for later sync.
       verify(() => syncService.addPending(any())).called(1);
-    });
-  });
-
-  // ─── Guest mode ───────────────────────────────────────────────────────────
-
-  group('guest user', () {
-    setUp(() => sut = buildRepo(isGuest: true, userId: null));
-
-    test(
-      'getTodayReviewQueue reads only from Hive — remote is never called',
-      () async {
-        when(
-          () => local.getDueProgress(),
-        ).thenAnswer((_) async => [testProgress()]);
-
-        final result = await sut.getTodayReviewQueue('guest');
-
-        expect(result, hasLength(1));
-        verifyNever(
-          () => remote.getWordsForReview(
-            userId: any(named: 'userId'),
-            limit: any(named: 'limit'),
-          ),
-        );
-      },
-    );
-
-    test('getNewWords reads only from Hive — remote is never called', () async {
-      when(
-        () => local.getCachedWords(
-          level: any(named: 'level'),
-          excludeIds: any(named: 'excludeIds'),
-          limit: any(named: 'limit'),
-        ),
-      ).thenAnswer((_) async => [testWord()]);
-
-      final result = await sut.getNewWords(
-        level: WordLevel.a1,
-        excludeIds: const [],
-      );
-
-      expect(result, hasLength(1));
-      verifyNever(
-        () => remote.getWordsByLevel(
-          level: any(named: 'level'),
-          excludeIds: any(named: 'excludeIds'),
-          limit: any(named: 'limit'),
-        ),
-      );
-    });
-
-    test('saveProgress writes only to Hive — remote is never called', () async {
-      final progress = testUserWordProgress(userId: 'guest');
-
-      await sut.saveProgress(progress);
-
-      verify(() => local.saveProgress(any())).called(1);
-      verifyNever(() => remote.saveProgress(any()));
-      verifyNever(() => syncService.addPending(any()));
     });
   });
 

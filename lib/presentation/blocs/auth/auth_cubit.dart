@@ -31,9 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(onboardingDone ? AuthAuthenticated() : AuthNeedsOnboarding());
       }
     } else {
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-      if (!isClosed) emit(isGuest ? AuthGuest() : AuthUnauthenticated());
+      if (!isClosed) emit(AuthUnauthenticated());
     }
 
     _authSub = _repo.authStateChanges.listen((isAuth) async {
@@ -46,23 +44,6 @@ class AuthCubit extends Cubit<AuthState> {
         if (state is AuthAuthenticated || state is AuthNeedsOnboarding) return;
 
         final prefs = await SharedPreferences.getInstance();
-
-        final wasGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-        if (wasGuest) {
-          final userId = _repo.currentUserId;
-          if (userId != null) {
-            try {
-              await _repo.migrateGuestProgress(userId);
-              await _repo.clearGuestLocalData();
-              await prefs.remove(AppConstants.keyGuestMode);
-            } on Object catch (e, st) {
-              // Migration failed — Hive data is preserved (clearGuestLocalData
-              // was not called). keyGuestMode stays set so a future session
-              // can detect the pending migration and offer a retry.
-              debugPrint('[AuthCubit] guest migration failed → $e\n$st');
-            }
-          }
-        }
 
         final onboardingDone =
             prefs.getBool(AppConstants.keyOnboardingDone) ?? false;
@@ -94,9 +75,7 @@ class AuthCubit extends Cubit<AuthState> {
 
         if (!isClosed) emit(AuthAuthenticated());
       } else {
-        final prefs = await SharedPreferences.getInstance();
-        final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-        if (!isClosed) emit(isGuest ? AuthGuest() : AuthUnauthenticated());
+        if (!isClosed) emit(AuthUnauthenticated());
       }
     });
   }
@@ -150,9 +129,7 @@ class AuthCubit extends Cubit<AuthState> {
     // If the repo returned without authenticating (e.g. user cancelled),
     // restore the previous state.
     if (!isClosed && !_repo.isAuthenticated) {
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
-      if (!isClosed) emit(isGuest ? AuthGuest() : AuthUnauthenticated());
+      if (!isClosed) emit(AuthUnauthenticated());
     }
   }
 
@@ -165,12 +142,6 @@ class AuthCubit extends Cubit<AuthState> {
     } on Object catch (e) {
       emit(AuthError(e.toString()));
     }
-  }
-
-  Future<void> continueAsGuest() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.keyGuestMode, true);
-    if (!isClosed) emit(AuthGuest());
   }
 
   /// Called at the end of onboarding when the user is already authenticated
@@ -204,7 +175,6 @@ class AuthCubit extends Cubit<AuthState> {
     // the language choice should survive re-login, and keeping
     // keyOnboardingDone ensures a cold start after sign-out goes to /login
     // (via router redirect) instead of /welcome.
-    await prefs.remove(AppConstants.keyGuestMode);
     await prefs.remove(AppConstants.keyUserLevel);
     await prefs.remove(AppConstants.keyDailyGoal);
     await prefs.remove(AppConstants.keyStudyTimeFrom);

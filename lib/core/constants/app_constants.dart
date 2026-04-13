@@ -17,7 +17,6 @@ class AppConstants {
   // SharedPreferences keys
   static const String keyIsFirstLaunch = 'is_first_launch';
   static const String keyOnboardingDone = 'onboarding_done';
-  static const String keyGuestMode = 'guest_mode';
   static const String keyUserLevel = 'user_level';
   static const String keyDailyGoal = 'daily_goal';
   static const String keyUiLanguage = 'ui_language';
@@ -35,11 +34,6 @@ class AppConstants {
   static const String hiveBoxSettings = 'settings';
   static const String hiveBoxSession = 'session_state';
   static const String hiveBoxPendingSync = 'pending_sync';
-  static const String hiveBoxGuestProgress = 'guest_progress';
-
-  // Guest prompts
-  static const String keyGuestSessionCount = 'guest_session_count';
-
   // Widget
   static const String widgetName = 'Til1mWidget';
   static const String widgetGroupId = 'group.com.til1m.widget';

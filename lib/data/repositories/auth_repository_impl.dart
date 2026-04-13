@@ -29,9 +29,6 @@ class AuthRepositoryImpl implements AuthRepository {
   bool get isAuthenticated => _supabase.auth.currentSession != null;
 
   @override
-  bool get isGuest => !isAuthenticated;
-
-  @override
   String? get currentUserId => _supabase.auth.currentUser?.id;
 
   @override
@@ -184,58 +181,6 @@ class AuthRepositoryImpl implements AuthRepository {
     } on AuthException catch (e) {
       throw AppAuthException(AuthErrorMapper.toLocaleKey(e.message, e.statusCode));
     }
-  }
-
-  @override
-  Future<void> migrateGuestProgress(String userId) async {
-    try {
-      final progressBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
-      if (progressBox.isNotEmpty) {
-        final progressRows = progressBox.keys.map((key) {
-          final raw = Map<String, dynamic>.from(progressBox.get(key) as Map);
-          return {
-            'user_id': userId,
-            'word_id': key as String,
-            'status': raw['status'] as String? ?? 'new',
-            'ease_factor': (raw['ease_factor'] as num?)?.toDouble() ?? 2.5,
-            'repetitions': raw['repetitions'] as int? ?? 0,
-            'next_review_at': raw['next_review_at'] as String?,
-            'last_reviewed_at': raw['last_reviewed_at'] as String?,
-          };
-        }).toList();
-
-        await _supabase
-            .from(SupabaseConstants.tableUserWordProgress)
-            .upsert(progressRows, onConflict: 'user_id,word_id');
-      }
-
-      final favoritesBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
-      if (favoritesBox.isNotEmpty) {
-        final favRows = favoritesBox.keys
-            .map((wordId) => {'user_id': userId, 'word_id': wordId as String})
-            .toList();
-        await _supabase
-            .from(SupabaseConstants.tableUserFavorites)
-            .upsert(favRows, onConflict: 'user_id,word_id');
-      }
-
-      debugPrint(
-        '[Auth] migrateGuestProgress done → '
-        '${progressBox.length} progress, ${favoritesBox.length} favorites',
-      );
-    } catch (e, st) {
-      debugPrint('[Auth] migrateGuestProgress error → $e\n$st');
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> clearGuestLocalData() async {
-    final progressBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxProgress);
-    await progressBox.clear();
-    final favoritesBox = await Hive.openBox<dynamic>(AppConstants.hiveBoxFavorites);
-    await favoritesBox.clear();
-    debugPrint('[Auth] clearGuestLocalData done');
   }
 
   @override

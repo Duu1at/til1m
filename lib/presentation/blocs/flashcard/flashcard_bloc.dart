@@ -127,7 +127,7 @@ final class FlashcardBloc extends Bloc<FlashcardEvent, FlashcardState> {
 
     emit(s.copyWith(isOffline: false));
     final userId = _authRepo.currentUserId;
-    if (userId == null || _authRepo.isGuest) return;
+    if (userId == null) return;
 
     final result = await _syncService.flush(userId);
     if (result.outcome == SyncOutcome.noData) return;

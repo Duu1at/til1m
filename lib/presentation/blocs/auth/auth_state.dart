@@ -13,8 +13,6 @@ final class AuthNeedsOnboarding extends AuthState {}
 
 final class AuthUnauthenticated extends AuthState {}
 
-final class AuthGuest extends AuthState {}
-
 final class AuthLoading extends AuthState {}
 
 final class AuthPasswordResetSent extends AuthState {}

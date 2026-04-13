@@ -118,9 +118,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       return;
     }
 
-    // ── Path 3: guest flow ───────────────────────────────────────────────
-    await authCubit.continueAsGuest();
-    // Router redirects to /home when AuthGuest is emitted on _setupRoutes.
+    // ── Path 3: no pending auth — go to login ───────────────────────────
+    if (!mounted) return;
+    context.go(AppRoutes.login);
   }
 
   String _formatTime(TimeOfDay t) {

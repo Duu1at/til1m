@@ -18,7 +18,7 @@ final class PrefetchFlashcardData {
   final AuthRepository _authRepo;
 
   Future<void> call() async {
-    if (_authRepo.isGuest || _authRepo.currentUserId == null) return;
+    if (_authRepo.currentUserId == null) return;
     final userId = _authRepo.currentUserId!;
 
     try {

@@ -93,7 +93,6 @@ void main() {
     authRepo = _MockAuthRepo();
 
     when(() => authRepo.currentUserId).thenReturn('user-1');
-    when(() => authRepo.isGuest).thenReturn(false);
 
     // Default: no review items, no new words.
     when(() => repo.getReviewSessionItems(any())).thenAnswer((_) async => []);

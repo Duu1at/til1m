@@ -5,8 +5,6 @@ abstract interface class AuthRepository {
 
   bool get isAuthenticated;
 
-  bool get isGuest;
-
   String? get currentUserId;
 
   String? get currentUserEmail;
@@ -26,10 +24,6 @@ abstract interface class AuthRepository {
   Future<void> signOut();
 
   Future<void> resetPassword(String email);
-
-  Future<void> migrateGuestProgress(String userId);
-
-  Future<void> clearGuestLocalData();
 
   Future<void> clearAllLocalData();
 

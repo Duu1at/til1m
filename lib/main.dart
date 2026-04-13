@@ -119,7 +119,7 @@ void _handleWidgetDeepLink(Uri? uri) {
 Future<void> _flushPendingSync() async {
   final authRepo = sl<AuthRepository>();
   final userId = authRepo.currentUserId;
-  if (userId == null || authRepo.isGuest) return;
+  if (userId == null) return;
   final result = await sl<ProgressSyncService>().flush(userId);
   if (result.syncedCount > 0) {
     debugPrint('[main] Startup sync: ${result.syncedCount} entries uploaded');

@@ -23,11 +23,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     unawaited(context.push(AppRoutes.onboarding));
   }
 
-  Future<void> _continueAsGuest() async {
-    if (!mounted) return;
-    unawaited(context.push(AppRoutes.onboarding));
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -141,19 +136,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppConstants.paddingL),
-              Center(
-                child: TextButton(
-                  onPressed: () => unawaited(_continueAsGuest()),
-                  child: Text(
-                    LocaleKeys.welcomeBtnGuest.tr(context: context),
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
                   ),
                 ),
               ),

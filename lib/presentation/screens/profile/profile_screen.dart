@@ -19,9 +19,8 @@ class ProfileScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(LocaleKeys.profileTitle.tr(context: context)),
         ),
-        body: BlocBuilder<AuthCubit, AuthState>(
-          builder: (context, authState) {
-            final isGuest = authState is AuthGuest;
+        body: Builder(
+          builder: (context) {
             final authCubit = context.read<AuthCubit>();
             return SingleChildScrollView(
               padding: const EdgeInsets.all(AppConstants.paddingXXL),
@@ -32,18 +31,13 @@ class ProfileScreen extends StatelessWidget {
                     name: authCubit.currentUserName,
                     email: authCubit.currentUserEmail,
                     avatarUrl: authCubit.currentUserAvatarUrl,
-                    isGuest: isGuest,
                   ),
                   const SizedBox(height: AppConstants.paddingSection),
                   const QuickStatsRow(),
-                  if (isGuest) ...[
-                    const SizedBox(height: AppConstants.paddingXXL),
-                    const GuestCallToAction(),
-                  ],
                   const SizedBox(height: AppConstants.paddingSection),
                   const MenuCard(),
                   const SizedBox(height: AppConstants.paddingLarge),
-                  LogoutButton(isGuest: isGuest),
+                  const LogoutButton(),
                   const SizedBox(height: AppConstants.paddingXXL),
                 ],
               ),

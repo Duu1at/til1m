@@ -1,8 +1,6 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:til1m/core/constants/app_constants.dart';
-import 'package:til1m/core/constants/locale_keys.dart';
 import 'package:til1m/presentation/presentation.dart';
 
 class AvatarSection extends StatelessWidget {
@@ -10,26 +8,22 @@ class AvatarSection extends StatelessWidget {
     required this.name,
     required this.email,
     required this.avatarUrl,
-    required this.isGuest,
     super.key,
   });
 
   final String? name;
   final String? email;
   final String? avatarUrl;
-  final bool isGuest;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final displayName = isGuest
-        ? LocaleKeys.profileGuest.tr(context: context)
-        : (name ?? email ?? '—');
-    final initials = _initials(name, email, isGuest);
+    final displayName = name ?? email ?? '—';
+    final initials = _initials(name, email);
 
     return Column(
       children: [
-        Avatar(avatarUrl: avatarUrl, initials: initials, isGuest: isGuest),
+        Avatar(avatarUrl: avatarUrl, initials: initials),
         const SizedBox(height: AppConstants.paddingM),
         Text(
           displayName,
@@ -38,7 +32,7 @@ class AvatarSection extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        if (!isGuest && email != null && name != null) ...[
+        if (email != null && name != null) ...[
           const SizedBox(height: AppConstants.paddingXS),
           Text(
             email!,
@@ -61,8 +55,7 @@ class AvatarSection extends StatelessWidget {
     );
   }
 
-  String _initials(String? name, String? email, bool isGuest) {
-    if (isGuest) return '?';
+  String _initials(String? name, String? email) {
     final source = name ?? email ?? '?';
     return source.isNotEmpty ? source[0].toUpperCase() : '?';
   }

@@ -9,7 +9,6 @@ final class HomeData extends Equatable {
     required this.dueCount,
     required this.streakDays,
     required this.userLevel,
-    required this.isGuest,
   });
 
   final int dailyGoal;
@@ -19,7 +18,6 @@ final class HomeData extends Equatable {
   final int dueCount;
   final int streakDays;
   final String userLevel;
-  final bool isGuest;
 
   static const empty = HomeData(
     dailyGoal: 5,
@@ -29,7 +27,6 @@ final class HomeData extends Equatable {
     dueCount: 0,
     streakDays: 0,
     userLevel: 'a1',
-    isGuest: false,
   );
 
   @override
@@ -41,7 +38,6 @@ final class HomeData extends Equatable {
         dueCount,
         streakDays,
         userLevel,
-        isGuest,
       ];
 }
 

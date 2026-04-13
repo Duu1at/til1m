@@ -35,10 +35,9 @@ class HomeCubit extends Cubit<HomeState> {
       final prefs = await SharedPreferences.getInstance();
       final dailyGoal = prefs.getInt(AppConstants.keyDailyGoal) ?? 5;
       final userLevel = prefs.getString(AppConstants.keyUserLevel) ?? 'a1';
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
 
       Map<String, int> stats;
-      if (!isGuest && _authRepo.isAuthenticated) {
+      if (_authRepo.isAuthenticated) {
         final userId = _authRepo.currentUserId!;
         try {
           stats = await _remote.fetchProgressStats(userId);
@@ -61,7 +60,6 @@ class HomeCubit extends Cubit<HomeState> {
               dueCount: stats['due'] ?? 0,
               streakDays: 0,
               userLevel: userLevel,
-              isGuest: isGuest,
             ),
           ),
         );

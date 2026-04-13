@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:til1m/core/constants/app_constants.dart';
 import 'package:til1m/data/datasources/local/word_local_datasource.dart';
 import 'package:til1m/data/datasources/remote/word_remote_datasource.dart';
 import 'package:til1m/domain/entities/user_progress.dart';
@@ -56,13 +54,10 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     }
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
       final userId = _authRepo.currentUserId;
-      final isAuth = !isGuest && userId != null;
 
       try {
-        await _loadRemotePage(userId: isAuth ? userId : null, append: false);
+        await _loadRemotePage(userId: userId, append: false);
       } on Object catch (e, st) {
         debugPrint(
           '[Dictionary] remote failed, falling back to local: $e\n$st',
@@ -84,13 +79,10 @@ class DictionaryCubit extends Cubit<DictionaryState> {
     _page++;
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool(AppConstants.keyGuestMode) ?? false;
       final userId = _authRepo.currentUserId;
-      final isAuth = !isGuest && userId != null;
 
       try {
-        await _loadRemotePage(userId: isAuth ? userId : null, append: true);
+        await _loadRemotePage(userId: userId, append: true);
       } on Object catch (e, st) {
         debugPrint(
           '[Dictionary] remote loadMore failed, falling back to local: $e\n$st',

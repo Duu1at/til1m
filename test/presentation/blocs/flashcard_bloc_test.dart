@@ -88,7 +88,6 @@ void main() {
     homeWidget = _MockUpdateHomeWidget();
 
     when(() => authRepo.currentUserId).thenReturn('user-1');
-    when(() => authRepo.isGuest).thenReturn(false);
 
     // Default stubs so tests that don't care about these calls won't throw.
     when(() => repo.saveProgress(any())).thenAnswer((_) async {});

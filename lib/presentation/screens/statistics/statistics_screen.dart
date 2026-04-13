@@ -36,15 +36,6 @@ class StatisticsScreen extends StatelessWidget {
                   TopStatsRow(data: data),
                   const SizedBox(height: AppConstants.paddingXXL),
                   ProgressCard(data: data),
-                  const SizedBox(height: AppConstants.paddingXXL),
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, authState) {
-                      if (authState is AuthGuest) {
-                        return const GuestBanner();
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
                 ],
               ),
             ),

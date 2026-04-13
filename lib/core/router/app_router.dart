@@ -28,7 +28,7 @@ const Set<String> _setupRoutes = {
   AppRoutes.onboarding,
 };
 
-// Auth screens that logged-in / guest users should never land on.
+// Auth screens that logged-in users should never land on.
 const Set<String> _authOnlyRoutes = {
   AppRoutes.login,
   AppRoutes.register,
@@ -52,7 +52,6 @@ GoRouter createRouter(AuthCubit authCubit) => GoRouter(
     if (authState is AuthInitial) return null;
 
     final isAuthenticated = authState is AuthAuthenticated;
-    final isGuest = authState is AuthGuest;
     final isUnauthenticated = authState is AuthUnauthenticated;
     final needsOnboarding = authState is AuthNeedsOnboarding;
     final location = state.matchedLocation;
@@ -63,13 +62,13 @@ GoRouter createRouter(AuthCubit authCubit) => GoRouter(
       return AppRoutes.onboarding;
     }
 
-    // Authenticated / explicit-guest users skip the setup flow.
-    if ((isAuthenticated || isGuest) && _setupRoutes.contains(location)) {
+    // Authenticated users skip the setup flow.
+    if (isAuthenticated && _setupRoutes.contains(location)) {
       return AppRoutes.home;
     }
 
-    // Authenticated / guest users have no reason to be on login/register.
-    if ((isAuthenticated || isGuest) && _authOnlyRoutes.contains(location)) {
+    // Authenticated users have no reason to be on login/register.
+    if (isAuthenticated && _authOnlyRoutes.contains(location)) {
       return AppRoutes.home;
     }
 
