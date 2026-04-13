@@ -182,7 +182,13 @@
     "btn_logout": "Выйти из аккаунта",
     "btn_logout_confirm": "Вы уверены, что хотите выйти?",
     "btn_cancel": "Отмена",
-    "btn_confirm": "Выйти"
+    "btn_confirm": "Выйти",
+    "btn_share": "Поделиться приложением",
+    "contact_section": "Связаться с разработчиком",
+    "btn_delete_account": "Удалить аккаунт",
+    "delete_account_title": "Удалить аккаунт?",
+    "delete_account_body": "Все ваши данные и прогресс будут удалены безвозвратно. Это действие нельзя отменить.",
+    "delete_account_confirm": "Удалить"
   },
 
   "errors": {

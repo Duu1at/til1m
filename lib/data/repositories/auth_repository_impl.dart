@@ -175,6 +175,31 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> deleteAccount() async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    try {
+      // Delete personal data from all user tables.
+      await _supabase
+          .from(SupabaseConstants.tableUserWordProgress)
+          .delete()
+          .eq('user_id', userId);
+      await _supabase
+          .from(SupabaseConstants.tableUserSettings)
+          .delete()
+          .eq('user_id', userId);
+      await _supabase
+          .from(SupabaseConstants.tableUserFavorites)
+          .delete()
+          .eq('user_id', userId);
+    } on Object catch (e, st) {
+      debugPrint('[Auth] deleteAccount remote error → $e\n$st');
+    }
+    await clearAllLocalData();
+    await _supabase.auth.signOut();
+  }
+
+  @override
   Future<void> resetPassword(String email) async {
     try {
       await _supabase.auth.resetPasswordForEmail(email);

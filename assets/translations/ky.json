@@ -182,7 +182,13 @@
     "btn_logout": "Аккаунттан чыгуу",
     "btn_logout_confirm": "Чыгууга ишенесизби?",
     "btn_cancel": "Жок",
-    "btn_confirm": "Чыгуу"
+    "btn_confirm": "Чыгуу",
+    "btn_share": "Колдонмону бөлүшүү",
+    "contact_section": "Иштеп чыгуучу менен байланышуу",
+    "btn_delete_account": "Аккаунтту жок кылуу",
+    "delete_account_title": "Аккаунтту жок кылуу?",
+    "delete_account_body": "Бардык маалыматыңыз жана прогрессиңиз биротоло жок кылынат. Бул аракетти артка кайтаруу мүмкүн эмес.",
+    "delete_account_confirm": "Жок кылуу"
   },
 
   "errors": {

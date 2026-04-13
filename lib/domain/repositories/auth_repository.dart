@@ -23,6 +23,10 @@ abstract interface class AuthRepository {
 
   Future<void> signOut();
 
+  /// Deletes all personal data from Supabase and signs the user out.
+  /// Full auth-user removal requires a server-side Edge Function.
+  Future<void> deleteAccount();
+
   Future<void> resetPassword(String email);
 
   Future<void> clearAllLocalData();

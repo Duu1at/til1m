@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:til1m/core/constants/app_constants.dart';
 import 'package:til1m/core/constants/locale_keys.dart';
 import 'package:til1m/core/router/app_router.dart';
@@ -32,10 +33,30 @@ class MenuCard extends StatelessWidget {
             indent: AppConstants.paddingXXL + 22 + AppConstants.paddingM,
             color: theme.dividerColor,
           ),
+          Divider(
+            height: AppConstants.dividerThickness,
+            thickness: AppConstants.dividerThickness,
+            indent: AppConstants.paddingXXL + 22 + AppConstants.paddingM,
+            color: theme.dividerColor,
+          ),
           MenuItem(
             icon: Icons.settings_outlined,
             label: LocaleKeys.settingsTitle.tr(context: context),
             onTap: () => context.go(AppRoutes.settings),
+          ),
+          Divider(
+            height: AppConstants.dividerThickness,
+            thickness: AppConstants.dividerThickness,
+            indent: AppConstants.paddingXXL + 22 + AppConstants.paddingM,
+            color: theme.dividerColor,
+          ),
+          MenuItem(
+            icon: Icons.share_rounded,
+            label: LocaleKeys.profileBtnShare.tr(context: context),
+            onTap: () => Share.share(
+              'Учи английские слова с Til1m!\n'
+              'Карточки + алгоритм SM-2 для быстрого запоминания. 📚',
+            ),
             isLast: true,
           ),
         ],

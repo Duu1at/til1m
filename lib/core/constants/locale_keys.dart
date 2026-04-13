@@ -167,6 +167,12 @@ abstract class LocaleKeys {
   static const profileBtnLogoutConfirm = 'profile.btn_logout_confirm';
   static const profileBtnCancel = 'profile.btn_cancel';
   static const profileBtnConfirm = 'profile.btn_confirm';
+  static const profileBtnShare = 'profile.btn_share';
+  static const profileContactSection = 'profile.contact_section';
+  static const profileBtnDeleteAccount = 'profile.btn_delete_account';
+  static const profileDeleteAccountTitle = 'profile.delete_account_title';
+  static const profileDeleteAccountBody = 'profile.delete_account_body';
+  static const profileDeleteAccountConfirm = 'profile.delete_account_confirm';
 
   // errors
   static const errorsNoInternet = 'errors.no_internet';

@@ -165,6 +165,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> deleteAccount() async {
+    emit(AuthLoading());
+    try {
+      await _repo.deleteAccount();
+      // AuthUnauthenticated is emitted automatically via _authSub listener.
+    } on Object catch (e) {
+      if (!isClosed) emit(AuthError(e.toString()));
+    }
+  }
+
   Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
     // Clear all Hive caches regardless of user type (guest or authenticated).

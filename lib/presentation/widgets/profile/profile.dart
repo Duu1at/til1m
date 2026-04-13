@@ -1,5 +1,7 @@
 export 'avatar.dart';
 export 'avatar_section.dart';
+export 'contact_card.dart';
+export 'delete_account_button.dart';
 export 'level_badge.dart';
 export 'logout_button.dart';
 export 'menu_card.dart';
