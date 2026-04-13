@@ -1,7 +1,7 @@
 # Til1m — Архитектура
 
 **Til1m** — Flutter-приложение для изучения английских слов (перевод: RU, KY). Алгоритм интервального повторения SM-2.
-**Платформы:** Android, iOS | **Версия:** v0.2
+**Платформы:** Android, iOS | **Версия:** v0.3
 
 ---
 
@@ -15,12 +15,21 @@
 | Backend           | supabase_flutter            | ^2.9.1  |
 | Локальный кэш     | hive_flutter                | ^1.1.0  |
 | Простое хранилище | shared_preferences          | ^2.5.3  |
-| Аудио             | just_audio                  | ^0.10.5 |
+| Аудио (TTS)       | flutter_tts                 | ^4.2.5  |
+| Аудио (сеть)      | just_audio                  | ^0.10.5 |
+| HTTP-клиент       | dio                         | ^5.8.0+1|
+| Авторизация (G)   | google_sign_in              | ^6.2.2  |
+| Авторизация (A)   | sign_in_with_apple          | ^6.1.4  |
+| Сеть              | connectivity_plus           | ^7.1.0  |
+| Изображения       | cached_network_image        | ^3.4.1  |
 | Уведомления       | flutter_local_notifications | ^21.0.0 |
 | Домашний виджет   | home_widget                 | ^0.9.0  |
 | Локализация       | easy_localization           | ^3.0.8  |
+| DI                | get_it                      | ^9.2.1  |
 | Сериализация      | json_serializable           | ^6.9.4  |
+| Утилиты           | uuid, intl, crypto          | latest  |
 | Кодогенерация     | build_runner                | ^2.4.15 |
+| Тесты             | bloc_test, mocktail         | latest  |
 | Линтинг           | very_good_analysis          | ^10.2.0 |
 
 ---
@@ -39,6 +48,8 @@ lib/
 │   ├── errors/
 │   │   ├── app_auth_exception.dart  # Кастомные исключения авторизации
 │   │   └── auth_error_mapper.dart   # Маппинг ошибок Supabase → AppAuthException
+│   ├── network/
+│   │   └── connectivity_service.dart  # Мониторинг сети (connectivity_plus)
 │   ├── router/app_router.dart       # Все маршруты GoRouter + AppRoutes
 │   ├── shell/main_shell.dart        # BottomNavigationBar
 │   ├── theme/
@@ -50,29 +61,50 @@ lib/
 │
 ├── domain/                          # Чистый Dart, без Flutter
 │   ├── entities/
-│   │   ├── word.dart                # Word, WordTranslation, WordExample
-│   │   ├── user_progress.dart       # UserWordProgress (SM-2)
-│   │   └── user_settings.dart       # UserSettings
+│   │   ├── word.dart                # Word, WordLevel, PartOfSpeech
+│   │   ├── translation.dart         # WordTranslation
+│   │   ├── word_example.dart        # WordExample
+│   │   ├── word_progress.dart       # WordProgress (лёгкая, сессионная)
+│   │   ├── user_progress.dart       # UserWordProgress (полная, синхронизируемая) + WordStatus
+│   │   ├── user_settings.dart       # UserSettings
+│   │   └── flashcard_session.dart   # FlashcardSession, FlashcardSessionItem
 │   ├── repositories/                # abstract interface классы
 │   │   ├── word_repository.dart
 │   │   ├── auth_repository.dart
 │   │   └── progress_repository.dart
 │   └── usecases/
-│       └── apply_sm2_result.dart
+│       ├── calculate_sm2.dart       # CalculateSm2 → Sm2Result
+│       └── prefetch_flashcard_data.dart
 │
 ├── data/
 │   ├── datasources/
-│   │   ├── local/                   # Hive
-│   │   └── remote/                  # Supabase
-│   ├── models/                      # JSON-сериализуемые модели
-│   └── repositories/
-│       └── auth_repository_impl.dart
+│   │   ├── local/
+│   │   │   ├── word_local_datasource.dart
+│   │   │   ├── progress_local_datasource.dart
+│   │   │   └── flashcard_local_datasource.dart   # Сохранение/восстановление сессии
+│   │   ├── remote/
+│   │   │   ├── word_remote_datasource.dart
+│   │   │   ├── progress_remote_datasource.dart
+│   │   │   └── flashcard_remote_datasource.dart
+│   │   └── sync/
+│   │       └── progress_sync_service.dart        # Flush офлайн-прогресса в Supabase
+│   ├── models/
+│   │   ├── word_model.dart
+│   │   ├── word_progress_model.dart
+│   │   ├── user_word_progress_model.dart
+│   │   └── flashcard_session_model.dart
+│   ├── repositories/
+│   │   ├── auth_repository_impl.dart
+│   │   ├── word_repository_impl.dart
+│   │   └── flashcard_repository_impl.dart
+│   └── services/
+│       ├── update_home_widget.dart   # Обновляет домашний виджет
+│       └── migrate_guest_progress.dart
 │
 ├── presentation/
 │   ├── screens/
-│   │   ├── language_select/
-│   │   │   └── language_select_screen.dart   # Выбор языка интерфейса (первый экран)
 │   │   ├── onboarding/
+│   │   │   ├── language_select_screen.dart
 │   │   │   ├── welcome_screen.dart
 │   │   │   └── onboarding_screen.dart
 │   │   ├── auth/
@@ -80,36 +112,32 @@ lib/
 │   │   │   ├── register_screen.dart
 │   │   │   └── forgot_password_screen.dart
 │   │   ├── home/home_screen.dart
-│   │   ├── flashcards/flashcards_screen.dart
+│   │   ├── flashcard/flashcard_screen.dart
 │   │   ├── spelling/spelling_screen.dart
 │   │   ├── dictionary/dictionary_screen.dart
 │   │   ├── favorites/favorites_screen.dart
+│   │   ├── word_detail/word_detail_screen.dart
 │   │   ├── profile/profile_screen.dart
 │   │   ├── statistics/statistics_screen.dart
-│   │   ├── settings/settings_screen.dart
-│   │   └── word_detail/word_detail_screen.dart
+│   │   └── settings/settings_screen.dart
 │   ├── blocs/
-│   │   ├── auth/
-│   │   │   ├── auth_cubit.dart
-│   │   │   └── auth_state.dart
-│   │   ├── settings/
-│   │   │   ├── settings_cubit.dart
-│   │   │   └── settings_state.dart
-│   │   └── statistics/
-│   │       ├── statistics_cubit.dart
-│   │       └── statistics_state.dart
+│   │   ├── auth/           # auth_cubit.dart, auth_state.dart
+│   │   ├── home/           # home_cubit.dart, home_state.dart
+│   │   ├── flashcard/      # flashcard_bloc.dart, flashcard_event.dart, flashcard_state.dart
+│   │   ├── word_detail/    # word_detail_cubit.dart, word_detail_state.dart
+│   │   ├── dictionary/     # dictionary_cubit.dart, dictionary_state.dart
+│   │   ├── settings/       # settings_cubit.dart, settings_state.dart
+│   │   └── statistics/     # statistics_cubit.dart, statistics_state.dart
 │   └── widgets/
-│       ├── auth/          # auth_email_field, auth_password_field, auth_social_button, auth_or_divider
-│       ├── onboarding/    # goal_step, level_step, time_step, progress_bar, next_button, level_card, goal_option, time_picker_card, welcome_feature_row
-│       ├── profile/       # avatar, avatar_section, level_badge, menu_card, menu_item, stat_cell, quick_stats_row, logout_button, guest_call_to_action
-│       ├── settings/      # goal_tile, level_tile, language_tile, theme_tile, reminder_tile, account_tile, section_header
-│       └── statistics/    # stat_card, top_stats_row, progress_card, level_progress_row, guest_banner
-│
-├── services/
-│   ├── audio/
-│   ├── notifications/
-│   ├── sync/
-│   └── widget_service/
+│       ├── auth/           # auth_email_field, auth_password_field, soft_auth_prompt, ...
+│       ├── onboarding/     # goal_step, level_step, time_step, lang_card, ...
+│       ├── flashcard/      # flashcard_card, flashcard_front_face, back_face, flashcard_result_screen, ...
+│       ├── word_detail/    # word_detail_body, word_examples_section, word_know_buttons, ...
+│       ├── home/           # home_header, home_stats_row
+│       ├── dictionary/     # word_list_tile, dictionary_search_field, level_and_sort_row
+│       ├── profile/        # avatar, menu_card, quick_stats_row, guest_call_to_action, ...
+│       ├── settings/       # goal_tile, level_tile, language_tile, theme_tile, ...
+│       └── statistics/     # stat_card, top_stats_row, level_progress_row, guest_banner
 │
 └── main.dart
 ```
@@ -131,14 +159,14 @@ Data (Repos impl + Models + DataSources)
 | `domain/`       | Entities, Use Cases, Repository interfaces | Dart SDK + equatable    |
 | `data/`         | Repository impl, Models, DataSources       | domain + supabase/hive  |
 | `presentation/` | Screens, BLoC/Cubit, Widgets               | domain + flutter_bloc   |
-| `core/`         | Router, Theme, Constants, Errors           | Flutter SDK             |
-| `services/`     | Audio, Notifications, Sync, Widget         | domain + внешние пакеты |
+| `core/`         | Router, Theme, Constants, Errors, Network  | Flutter SDK             |
 
 ---
 
 ## Ключевые сущности
 
 ```dart
+// Слово из словаря
 class Word extends Equatable {
   final String id;
   final String word;
@@ -147,21 +175,48 @@ class Word extends Equatable {
   final String? audioUrl;
   final String? imageUrl;
   final String? partOfSpeech;
-  final List<WordTranslation> translations;  // ru / ky / en
+  final List<WordTranslation> translations;  // ru / ky
   final List<WordExample> examples;
 }
 
-class UserWordProgress extends Equatable {
+// Лёгкий прогресс — используется в сессии флэш-карточек
+class WordProgress extends Equatable {
   final String wordId;
-  final String userId;
-  final double easeFactor;       // min 1.3
+  final WordStatus status;    // newWord / learning / known
+  final double easeFactor;    // default 2.5, min 1.3
   final int repetitions;
-  final DateTime nextReviewAt;
-  final WordStatus status;       // new / learning / known
+  final DateTime? nextReviewAt;
+  final DateTime? lastReviewedAt;
+
+  bool get isDueNow => nextReviewAt == null || nextReviewAt!.isBefore(now);
+}
+
+// Полный прогресс — сохраняется в Supabase / Hive, включает userId
+class UserWordProgress extends Equatable {
+  final String id;        // '{userId}_{wordId}'
+  final String userId;
+  final String wordId;
+  final WordStatus status;
+  final double easeFactor;
+  final int repetitions;
+  final DateTime? nextReviewAt;
+  final DateTime? lastReviewedAt;
+}
+
+// Сессия флэш-карточек
+class FlashcardSession extends Equatable {
+  final List<FlashcardSessionItem> items;
+  final int currentIndex;
+  final List<String> failedWordIds;
+  final DateTime sessionStartedAt;
+  final int answeredCount;
+  final int correctCount;
+
+  bool get isComplete => currentIndex >= items.length;
 }
 
 class UserSettings extends Equatable {
-  final int dailyGoal;           // 3, 5, 10 или кастомное
+  final int dailyGoal;
   final WordLevel englishLevel;
   final String uiLanguage;       // 'ru', 'ky', 'en'
   final TimeOfDay? reminderTime;
@@ -173,8 +228,8 @@ class UserSettings extends Equatable {
 
 ## State Management
 
-- **Cubit** — простые переходы: Auth, Settings, Statistics, Onboarding
-- **BLoC** — сложная логика с событиями: Flashcards, Dictionary (планируется)
+- **Cubit** — простые переходы: Auth, Home, WordDetail, Dictionary, Settings, Statistics
+- **BLoC** — сложная логика с событиями: Flashcard
 
 ```
 Widget → BLoC.add(Event) → UseCase → Repository → DataSource
@@ -182,26 +237,75 @@ Widget → BLoC.add(Event) → UseCase → Repository → DataSource
 Widget ← rebuild      ← BLoC.emit(State) ←────────────
 ```
 
-Структура файлов Cubit:
+### FlashcardBloc
+
+Файлы: `blocs/flashcard/flashcard_bloc.dart|event.dart|state.dart`
+
+| Событие                    | Описание                                           |
+| -------------------------- | -------------------------------------------------- |
+| `FlashcardStartSession`    | Начать новую сессию (source: review/newWords/mixed) |
+| `FlashcardResumeSession`   | Восстановить прерванную сессию из Hive             |
+| `FlashcardFlipCard`        | Перевернуть карточку (лицо/оборот)                 |
+| `FlashcardAnswer`          | Ответить «знаю» / «не знаю»                        |
+| `FlashcardUndo`            | Отменить последний ответ (стек до 5 шагов)         |
+| `FlashcardSkip`            | Пропустить карточку без оценки                     |
+| `FlashcardPlayAudio`       | Произнести слово через TTS                         |
+| `FlashcardLoadMore`        | Добавить ещё 10 новых слов в очередь               |
+| `FlashcardEndSession`      | Завершить сессию и показать результат              |
+
+| Состояние                  | Описание                                          |
+| -------------------------- | ------------------------------------------------- |
+| `FlashcardInitial`         | Начальное                                         |
+| `FlashcardLoading`         | Загрузка данных                                   |
+| `FlashcardActive`          | Активная сессия (текущее слово, прогресс, флаги)  |
+| `FlashcardSessionComplete` | Итоги сессии (счёт, время, dailyGoalReached)      |
+| `FlashcardEmpty`           | Нет слов для данного источника                    |
+| `FlashcardError`           | Ошибка загрузки                                   |
+
+`FlashcardActive` содержит флаг `isOffline` — при потере сети прогресс буферизуется и отправляется в Supabase при восстановлении связи (`ProgressSyncService.flush`).
+
+### AuthCubit — состояния
+
+| Состояние                   | Описание                                  |
+| --------------------------- | ----------------------------------------- |
+| `AuthInitial`               | Проверка сессии                           |
+| `AuthLoading`               | Запрос к Supabase                         |
+| `AuthAuthenticated`         | Пользователь вошёл                        |
+| `AuthUnauthenticated`       | Нет сессии                                |
+| `AuthGuest`                 | Гостевой режим                            |
+| `AuthPasswordResetSent`     | Письмо для сброса пароля отправлено       |
+| `AuthEmailConfirmationSent` | Письмо подтверждения отправлено (+ email) |
+| `AuthError`                 | Ошибка авторизации (+ message)            |
+
+---
+
+## SM-2 алгоритм
+
+Файл: `lib/domain/usecases/calculate_sm2.dart`  
+Класс: `CalculateSm2` → возвращает `Sm2Result(updatedProgress, interval, returnToQueue)`
 
 ```
-blocs/auth/
-├── auth_cubit.dart
-└── auth_state.dart    # sealed class
+Знаю (isCorrect = true):
+  repetitions += 1
+  interval:  rep=1→1d, rep=2→6d, rep≥3→prevInterval × easeFactor
+  easeFactor += 0.0  (при quality=4)
+  nextReviewAt = now + interval (days)
+  status = repetitions >= 3 ? 'known' : 'learning'
+  returnToQueue = false
+
+Не знаю (isCorrect = false):
+  repetitions = 0
+  easeFactor -= 0.2  (min 1.3)
+  nextReviewAt = now  (карточка возвращается в очередь немедленно)
+  status = 'learning'
+  returnToQueue = true  (слово добавляется в конец сессии, max 3 раза)
 ```
 
-Состояния `AuthCubit`:
-
-| Состояние                   | Описание                                    |
-| --------------------------- | ------------------------------------------- |
-| `AuthInitial`               | Начальное, идёт проверка сессии             |
-| `AuthLoading`               | Выполняется запрос к Supabase               |
-| `AuthAuthenticated`         | Пользователь вошёл                         |
-| `AuthUnauthenticated`       | Нет сессии                                  |
-| `AuthGuest`                 | Гостевой режим                              |
-| `AuthPasswordResetSent`     | Письмо для сброса пароля отправлено         |
-| `AuthEmailConfirmationSent` | Письмо подтверждения отправлено (+ email)   |
-| `AuthError`                 | Ошибка авторизации (+ message)              |
+| Повторение | Интервал                  |
+| ---------- | ------------------------- |
+| 1-е        | 1 день                    |
+| 2-е        | 6 дней                    |
+| 3-е+       | `предыдущий × easeFactor` |
 
 ---
 
@@ -218,7 +322,7 @@ blocs/auth/
 | `/register`         | RegisterScreen         | GoRoute             |
 | `/forgot-password`  | ForgotPasswordScreen   | GoRoute             |
 | `/home`             | HomeScreen             | ShellRoute          |
-| `/flashcards`       | FlashcardsScreen       | ShellRoute          |
+| `/flashcards`       | FlashcardScreen        | ShellRoute          |
 | `/spelling`         | SpellingScreen         | ShellRoute          |
 | `/dictionary`       | DictionaryScreen       | ShellRoute          |
 | `/favorites`        | FavoritesScreen        | ShellRoute          |
@@ -257,12 +361,13 @@ blocs/auth/
 
 **Hive** — коллекции и кэш:
 
-| Box             | Содержит                                   |
-| --------------- | ------------------------------------------ |
-| `words_box`     | Кэш слов из Supabase                       |
-| `progress_box`  | Прогресс (для гостей — основное хранилище) |
-| `settings_box`  | Настройки пользователя                     |
-| `favorites_box` | Избранные (только для гостей)              |
+| Box             | Содержит                                        |
+| --------------- | ----------------------------------------------- |
+| `words_box`     | Кэш слов из Supabase                            |
+| `progress_box`  | Прогресс (для гостей — основное хранилище)      |
+| `settings_box`  | Настройки пользователя                          |
+| `favorites_box` | Избранные (только для гостей)                   |
+| `session_box`   | Сохранённая незавершённая сессия флэш-карточек  |
 
 **SharedPreferences** — примитивы и флаги:
 
@@ -270,29 +375,14 @@ blocs/auth/
 
 ---
 
-## SM-2 алгоритм
+## Оффлайн-синхронизация
 
-Файл: `lib/domain/usecases/apply_sm2_result.dart`
+`ProgressSyncService` (`data/datasources/sync/progress_sync_service.dart`):
 
-```
-Знаю:
-  repetitions += 1
-  easeFactor = max(1.3, easeFactor + 0.1)
-  nextReviewAt = now + interval
-  if interval >= 21d → status = 'known'
-
-Не знаю:
-  repetitions = 0
-  easeFactor = max(1.3, easeFactor - 0.2)
-  nextReviewAt = now + 1h
-  status = 'learning'
-```
-
-| Повторение | Интервал                  |
-| ---------- | ------------------------- |
-| 1-е        | 1 день                    |
-| 2-е        | 6 дней                    |
-| 3-е+       | `предыдущий × easeFactor` |
+1. Прогресс всегда сначала пишется в Hive.
+2. `ConnectivityService` (`core/network/`) следит за состоянием сети.
+3. При появлении сети `FlashcardBloc` вызывает `flush(userId)` — все буферизованные записи отправляются в `user_word_progress` Supabase.
+4. Результат `SyncOutcome`: `success | partialSuccess | error | noData`.
 
 ---
 
@@ -323,12 +413,12 @@ Material3, light/dark. Цвета и типографика вынесены в 
 - `lib/core/theme/app_colors.dart` — цветовая палитра
 - `lib/core/theme/app_typography.dart` — шрифты и стили текста
 
-|                 |                                         |
-| --------------- | --------------------------------------- |
-| Primary         | `#4F46E5` (Indigo)                      |
-| Background dark | `#0F172A`                               |
-| Surface dark    | `#1E293B`                               |
-| Шрифт           | Inter (Regular, Medium, SemiBold, Bold) |
+|                 |                                                    |
+| --------------- | -------------------------------------------------- |
+| Primary         | `#4F46E5` (Indigo)                                 |
+| Background dark | `#0F172A`                                          |
+| Surface dark    | `#1E293B`                                          |
+| Шрифт           | NotoSans (Regular, Medium 500, SemiBold 600, Bold 700) |
 
 Цвета уровней: A1 Green · A2 Lime · B1 Amber · B2 Red · C1 Purple · C2 Sky
 
@@ -338,7 +428,7 @@ Material3, light/dark. Цвета и типографика вынесены в 
 
 1. Нажать «Продолжить как гость» → `guest_mode = true` в SharedPreferences
 2. Прогресс хранится в Hive, Supabase не используется
-3. При регистрации: `AuthRepository.migrateGuestProgress()` → переносит данные из Hive в Supabase
+3. При регистрации: `MigrateGuestProgress` (`data/services/`) → переносит данные из Hive в Supabase
 
 ---
 
@@ -359,7 +449,7 @@ flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co --dart-define=SUP
 ```
 Screen → BLoC.add(Event) → UseCase → Repository
                                          ├─ [Online]  RemoteDataSource (Supabase) → кэш в Hive
-                                         └─ [Offline] LocalDataSource (Hive)
+                                         └─ [Offline] LocalDataSource (Hive) → SyncService при reconnect
                                                 ↓
                               BLoC.emit(State) → Screen rebuild
 ```
@@ -368,12 +458,12 @@ Screen → BLoC.add(Event) → UseCase → Repository
 
 ## Роадмап
 
-| Версия       | Задачи                                                                                |
-| ------------ | ------------------------------------------------------------------------------------- |
-| ~~**v0.1**~~ | ~~Welcome, Onboarding, навигация, Supabase подключение~~ ✓                            |
-| **v0.2**     | Auth (email + Google + гость), Settings/Statistics BLoC, роутинг с redirect-логикой ✓ |
-| v0.3         | WordRepository, карточка слова, аудио, изображения                                    |
-| v0.4         | Flashcards + SM-2, Spelling                                                           |
-| v0.5         | Home Widget, Push-уведомления                                                         |
-| v0.6         | Статистика, Streak, прогресс по уровням                                               |
-| v1.0         | Тестирование, публикация                                                              |
+| Версия       | Задачи                                                                                 |
+| ------------ | -------------------------------------------------------------------------------------- |
+| ~~**v0.1**~~ | ~~Welcome, Onboarding, навигация, Supabase подключение~~ ✓                             |
+| ~~**v0.2**~~ | ~~Auth (email + Google + гость), Settings/Statistics BLoC, роутинг с redirect-логикой~~ ✓ |
+| ~~**v0.3**~~ | ~~WordRepository, карточка слова, Flashcards + SM-2, TTS, оффлайн-синхронизация~~ ✓   |
+| **v0.4**     | Home Widget, Push-уведомления                                                          |
+| v0.5         | Spelling (все уровни)                                                                  |
+| v0.6         | Статистика, Streak, прогресс по уровням                                                |
+| v1.0         | Тестирование, публикация                                                               |

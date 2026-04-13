@@ -43,6 +43,13 @@ class AppConstants {
   // Widget
   static const String widgetName = 'Til1mWidget';
   static const String widgetGroupId = 'group.com.til1m.widget';
+  static const List<String> androidWidgetProviders = [
+    'TilimWidgetProvider',
+    'TilimWidgetSmallProvider',
+    'TilimWidgetLargeProvider',
+  ];
+  static const String iosWidgetName = 'TilimWidget';
+  static const String androidWidgetPackage = 'com.til1m.til1m';
 
   // TTS
   static const double ttsDefaultRate = 0.5;

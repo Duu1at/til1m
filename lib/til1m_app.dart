@@ -12,12 +12,13 @@ import 'package:til1m/presentation/blocs/auth/auth_cubit.dart';
 import 'package:til1m/presentation/blocs/settings/settings_cubit.dart';
 import 'package:til1m/presentation/blocs/statistics/statistics_cubit.dart';
 
-class Til1imApp extends StatefulWidget {
-  const Til1imApp({
+class Til1mApp extends StatefulWidget {
+  const Til1mApp({
     required this.authCubit,
     required this.settingsCubit,
     required this.statisticsCubit,
     required this.initialThemeMode,
+    this.onRouterCreated,
     super.key,
   });
 
@@ -25,18 +26,20 @@ class Til1imApp extends StatefulWidget {
   final SettingsCubit settingsCubit;
   final StatisticsCubit statisticsCubit;
   final ThemeMode initialThemeMode;
+  final void Function(GoRouter router)? onRouterCreated;
 
   @override
-  State<Til1imApp> createState() => _Til1imAppState();
+  State<Til1mApp> createState() => _Til1mAppState();
 }
 
-class _Til1imAppState extends State<Til1imApp> {
+class _Til1mAppState extends State<Til1mApp> {
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
     _router = createRouter(widget.authCubit);
+    widget.onRouterCreated?.call(_router);
   }
 
   @override
@@ -56,10 +59,10 @@ class _Til1imAppState extends State<Til1imApp> {
         BlocProvider.value(value: widget.statisticsCubit),
       ],
       child: BlocListener<SettingsCubit, SettingsState>(
-        listenWhen: (prev, curr) {
-          if (curr is! SettingsLoaded) return false;
-          if (prev is SettingsLoaded) {
-            return prev.settings.uiLanguage != curr.settings.uiLanguage;
+        listenWhen: (p, c) {
+          if (c is! SettingsLoaded) return false;
+          if (p is SettingsLoaded) {
+            return p.settings.uiLanguage != c.settings.uiLanguage;
           }
           return true;
         },

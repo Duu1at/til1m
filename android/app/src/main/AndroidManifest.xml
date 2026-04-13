@@ -30,7 +30,53 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="com.til1m"/>
             </intent-filter>
+            <!-- Widget deep-link scheme -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="til1m"/>
+            </intent-filter>
         </activity>
+
+        <!-- Home-screen widget: small (2×2) -->
+        <receiver
+            android:name=".TilimWidgetSmallProvider"
+            android:exported="true"
+            android:label="TIl1m — маленький виджет">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_small_info"/>
+        </receiver>
+
+        <!-- Home-screen widget: medium (4×2) -->
+        <receiver
+            android:name=".TilimWidgetProvider"
+            android:exported="true"
+            android:label="TIl1m — средний виджет">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_medium_info"/>
+        </receiver>
+
+        <!-- Home-screen widget: large (4×4) -->
+        <receiver
+            android:name=".TilimWidgetLargeProvider"
+            android:exported="true"
+            android:label="TIl1m — большой виджет">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_large_info"/>
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:til1m/core/network/connectivity_service.dart';
@@ -16,11 +17,21 @@ import 'package:til1m/data/services/update_home_widget.dart';
 import 'package:til1m/domain/repositories/auth_repository.dart';
 import 'package:til1m/domain/repositories/word_repository.dart';
 import 'package:til1m/domain/usecases/prefetch_flashcard_data.dart';
+import 'package:til1m/services/widget_service/widget_service.dart';
 
 final GetIt sl = GetIt.instance;
 
 void setupServiceLocator() {
   sl
+    // HTTP client — shared, configured with timeouts
+    ..registerLazySingleton<Dio>(
+      () => Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 30),
+        ),
+      ),
+    )
     // Repositories
     ..registerLazySingleton<AuthRepository>(AuthRepositoryImpl.new)
     // Network
@@ -81,5 +92,7 @@ void setupServiceLocator() {
         flashcardRepo: sl<FlashcardRepositoryImpl>(),
         authRepo: sl<AuthRepository>(),
       ),
-    );
+    )
+    // Widget service — uses shared Dio for image caching
+    ..registerLazySingleton<WidgetService>(() => WidgetService(dio: sl<Dio>()));
 }
