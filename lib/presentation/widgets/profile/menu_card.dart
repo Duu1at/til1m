@@ -10,6 +10,17 @@ import 'package:til1m/presentation/presentation.dart';
 class MenuCard extends StatelessWidget {
   const MenuCard({super.key});
 
+  Future<void> _share(BuildContext context) async {
+    const text = 'Учи английские слова с Til1m!\n'
+        'Карточки + алгоритм SM-2 для быстрого запоминания. 📚';
+    final box = context.findRenderObject() as RenderBox?;
+    await Share.share(
+      text,
+      sharePositionOrigin:
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -33,12 +44,6 @@ class MenuCard extends StatelessWidget {
             indent: AppConstants.paddingXXL + 22 + AppConstants.paddingM,
             color: theme.dividerColor,
           ),
-          Divider(
-            height: AppConstants.dividerThickness,
-            thickness: AppConstants.dividerThickness,
-            indent: AppConstants.paddingXXL + 22 + AppConstants.paddingM,
-            color: theme.dividerColor,
-          ),
           MenuItem(
             icon: Icons.settings_outlined,
             label: LocaleKeys.settingsTitle.tr(context: context),
@@ -50,14 +55,13 @@ class MenuCard extends StatelessWidget {
             indent: AppConstants.paddingXXL + 22 + AppConstants.paddingM,
             color: theme.dividerColor,
           ),
-          MenuItem(
-            icon: Icons.share_rounded,
-            label: LocaleKeys.profileBtnShare.tr(context: context),
-            onTap: () => Share.share(
-              'Учи английские слова с Til1m!\n'
-              'Карточки + алгоритм SM-2 для быстрого запоминания. 📚',
+          Builder(
+            builder: (ctx) => MenuItem(
+              icon: Icons.share_rounded,
+              label: LocaleKeys.profileBtnShare.tr(context: context),
+              onTap: () => _share(ctx),
+              isLast: true,
             ),
-            isLast: true,
           ),
         ],
       ),
